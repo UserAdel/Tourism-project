@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import type { Activity } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Clock, Users, MapPin } from 'lucide-react';
+import { getPrimaryPricingField } from '../utils/pricing';
 
 interface ActivityCardProps {
   activity: Activity;
@@ -9,6 +10,8 @@ interface ActivityCardProps {
 
 export default function ActivityCard({ activity }: ActivityCardProps) {
   const { language, t } = useLanguage();
+  const primaryPricing = getPrimaryPricingField(activity);
+  const isPrivatePrice = primaryPricing?.id === 'private';
 
   return (
     <Link
@@ -42,10 +45,10 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[var(--teal)] text-2xl font-semibold">
-              €{activity.pricing.adult || activity.pricing.private}
+              €{primaryPricing?.price ?? 0}
             </span>
             <span className="text-gray-500 dark:text-gray-400 text-sm ml-1">
-              {activity.pricing.private ? t('pricing.perGroup') : t('pricing.perPerson')}
+              {isPrivatePrice ? t('pricing.perGroup') : t('pricing.perPerson')}
             </span>
           </div>
           <div className="flex gap-2">

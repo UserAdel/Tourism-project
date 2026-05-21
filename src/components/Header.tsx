@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { Menu, X, Globe, Moon, Sun } from 'lucide-react';
+import { Menu, X, Globe, Moon, Sun, ShieldCheck } from 'lucide-react';
 import logoPath from '../assets/tourism/WhatsApp_Image_2026-05-17_at_3.34.53_PM.jpeg';
 
 export default function Header() {
@@ -79,6 +79,15 @@ export default function Header() {
               {t('nav.bookNow')}
             </Link>
 
+            <Link
+              to="/admin"
+              className="hidden sm:inline-flex items-center justify-center rounded-lg bg-[var(--sand)] p-2.5 text-[var(--teal)] transition-all hover:bg-[var(--gold)] dark:bg-[var(--muted)] dark:text-[var(--gold)] dark:hover:bg-[var(--teal)]"
+              aria-label="Admin dashboard"
+              title="Admin dashboard"
+            >
+              <ShieldCheck className="h-5 w-5" />
+            </Link>
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 text-gray-700 hover:text-[var(--teal)]"
@@ -112,6 +121,13 @@ export default function Header() {
               className="px-4 py-3 bg-[var(--teal)] text-white rounded-lg text-center font-medium hover:bg-[var(--teal-dark)] transition-colors mt-2"
             >
               {t('nav.bookNow')}
+            </Link>
+            <Link
+              to="/admin"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-4 py-3 rounded-lg text-gray-700 hover:bg-[var(--sand)]"
+            >
+              Admin
             </Link>
           </nav>
         </div>

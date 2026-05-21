@@ -11,8 +11,10 @@ import {
   XCircle,
   Calendar,
   MessageCircle,
-  ArrowLeft
+  ArrowLeft,
+  Shield
 } from 'lucide-react';
+import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
 
 export default function ActivityDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -39,6 +41,9 @@ export default function ActivityDetail() {
   const relatedActivities = activities
     .filter((a) => a.category === activity.category && a.id !== activity.id)
     .slice(0, 3);
+  const pricingFields = getPricingFields(activity);
+  const primaryPricing = getPrimaryPricingField(activity);
+  const isPrivatePrice = primaryPricing?.id === 'private';
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -114,32 +119,12 @@ export default function ActivityDetail() {
                 {t('activity.pricing')}
               </h2>
               <div className="space-y-4">
-                {activity.pricing.adult && (
-                  <div className="flex items-center justify-between p-4 bg-[var(--sand)] rounded-xl">
-                    <span className="font-medium text-[var(--navy)]">{t('pricing.adult')}</span>
-                    <span className="text-2xl font-bold text-[var(--teal)]">€{activity.pricing.adult}</span>
+                {pricingFields.map((field, index) => (
+                  <div key={`${field.id ?? field.name.en}-${index}`} className="flex items-center justify-between p-4 bg-[var(--sand)] rounded-xl">
+                    <span className="font-medium text-[var(--navy)]">{formatPricingLabel(field, language)}</span>
+                    <span className="text-2xl font-bold text-[var(--teal)]">€{field.price}</span>
                   </div>
-                )}
-                {activity.pricing.child && (
-                  <div className="flex items-center justify-between p-4 bg-[var(--sand)] rounded-xl">
-                    <span className="font-medium text-[var(--navy)]">{t('pricing.child')}</span>
-                    <span className="text-2xl font-bold text-[var(--teal)]">€{activity.pricing.child}</span>
-                  </div>
-                )}
-                {activity.pricing.private && (
-                  <div className="flex items-center justify-between p-4 bg-[var(--sand)] rounded-xl">
-                    <span className="font-medium text-[var(--navy)]">{t('pricing.private')}</span>
-                    <span className="text-2xl font-bold text-[var(--teal)]">€{activity.pricing.private}</span>
-                  </div>
-                )}
-                {activity.pricing.visitor && (
-                  <div className="flex items-center justify-between p-4 bg-[var(--sand)] rounded-xl">
-                    <span className="font-medium text-[var(--navy)]">
-                      {language === 'en' ? 'Visitor Only' : 'Visiteur Uniquement'}
-                    </span>
-                    <span className="text-2xl font-bold text-[var(--teal)]">€{activity.pricing.visitor}</span>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
 
@@ -191,10 +176,10 @@ export default function ActivityDetail() {
             <div className="sticky top-24 bg-white rounded-2xl p-6 shadow-xl border-2 border-[var(--gold)]">
               <div className="text-center mb-6">
                 <div className="text-[var(--teal)] text-4xl font-bold mb-2">
-                  €{activity.pricing.adult || activity.pricing.private}
+                  €{primaryPricing?.price ?? 0}
                 </div>
                 <div className="text-gray-500">
-                  {activity.pricing.private ? t('pricing.perGroup') : t('pricing.perPerson')}
+                  {isPrivatePrice ? t('pricing.perGroup') : t('pricing.perPerson')}
                 </div>
               </div>
 
@@ -213,10 +198,18 @@ export default function ActivityDetail() {
                     <span>{language === 'en' ? 'Hotel pickup included' : 'Transfert hôtel inclus'}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-3 text-gray-700">
-                  <Calendar className="w-5 h-5 text-[var(--teal)]" />
-                  <span>{language === 'en' ? 'Available daily' : 'Disponible quotidiennement'}</span>
-                </div>
+                {activity.availableDaily !== false && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Calendar className="w-5 h-5 text-[var(--teal)]" />
+                    <span>{language === 'en' ? 'Available daily' : 'Disponible quotidiennement'}</span>
+                  </div>
+                )}
+                {activity.freeCancellation !== false && (
+                  <div className="flex items-center gap-3 text-gray-700">
+                    <Shield className="w-5 h-5 text-[var(--teal)]" />
+                    <span>{language === 'en' ? 'Free cancellation' : 'Annulation gratuite'}</span>
+                  </div>
+                )}
               </div>
 
               <Link to={`/book?activity=${activity.slug}`}>

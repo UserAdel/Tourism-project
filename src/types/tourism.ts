@@ -1,15 +1,21 @@
+export interface LocalizedString {
+  en: string;
+  fr: string;
+}
+
+export interface PricingField {
+  id?: string;
+  name: LocalizedString;
+  price: number;
+  isMain?: boolean;
+}
+
 export interface Activity {
   id: string;
-  name: {
-    en: string;
-    fr: string;
-  };
+  name: LocalizedString;
   slug: string;
   category: string;
-  description: {
-    en: string;
-    fr: string;
-  };
+  description: LocalizedString;
   highlights: {
     en: string[];
     fr: string[];
@@ -21,10 +27,8 @@ export interface Activity {
     extraPerson?: number;
     visitor?: number;
   };
-  ageRestrictions: {
-    en: string;
-    fr: string;
-  };
+  pricingFields?: PricingField[];
+  ageRestrictions: LocalizedString;
   duration: string;
   startTime?: string;
   endTime?: string;
@@ -40,9 +44,13 @@ export interface Activity {
     fr: string[];
   };
   imageUrl: string;
+  galleryImages?: string[];
   featured?: boolean;
   childFriendly: boolean;
+  familyFriendly: boolean;
   pickupIncluded: boolean;
+  availableDaily?: boolean;
+  freeCancellation?: boolean;
   privateAvailable: boolean;
   groupAvailable: boolean;
 }

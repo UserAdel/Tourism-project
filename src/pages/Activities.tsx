@@ -1,16 +1,24 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { activities, categories } from '../data/activities';
+import { activities as fallbackActivities, categories as fallbackCategories } from '../data/activities';
 import ActivityCard from '../components/ActivityCard';
-import { Filter } from 'lucide-react';
+import { Filter, Search } from 'lucide-react';
+import { useActivities, useCategories } from '../hooks/queries';
+import { normalizeActivity } from '../utils/activityImages';
+import { getPrimaryPrice } from '../utils/pricing';
 
 export default function Activities() {
   const { language, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const { data: apiActivities, isLoading, isError } = useActivities();
+  const { data: apiCategories } = useCategories();
+  const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
+  const categories = apiCategories ?? fallbackCategories;
 
   const [filters, setFilters] = useState({
+    search: '',
     category: searchParams.get('category') || '',
     priceMin: '',
     priceMax: '',
@@ -22,9 +30,18 @@ export default function Activities() {
 
   const filteredActivities = useMemo(() => {
     return activities.filter((activity) => {
+      const query = filters.search.trim().toLowerCase();
+      if (
+        query &&
+        ![activity.name.en, activity.name.fr]
+          .some((name) => name.toLowerCase().includes(query))
+      ) {
+        return false;
+      }
+
       if (filters.category && activity.category !== filters.category) return false;
 
-      const price = activity.pricing.adult || activity.pricing.private || 0;
+      const price = getPrimaryPrice(activity);
       if (filters.priceMin && price < parseInt(filters.priceMin)) return false;
       if (filters.priceMax && price > parseInt(filters.priceMax)) return false;
 
@@ -35,7 +52,7 @@ export default function Activities() {
 
       return true;
     });
-  }, [filters]);
+  }, [activities, filters]);
 
   const handleFilterChange = (key: string, value: string | boolean) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -43,6 +60,7 @@ export default function Activities() {
 
   const clearFilters = () => {
     setFilters({
+      search: '',
       category: '',
       priceMin: '',
       priceMax: '',
@@ -72,9 +90,21 @@ export default function Activities() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {isError && (
+          <div className="mb-6 rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-800">
+            {language === 'en'
+              ? 'The API is unavailable, so cached local activities are being shown.'
+              : 'L API est indisponible, les activités locales en cache sont affichées.'}
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600 dark:text-gray-300">
-            {filteredActivities.length} {language === 'en' ? 'activities found' : 'activités trouvées'}
+            {isLoading && !apiActivities
+              ? t('common.loading')
+              : `${filteredActivities.length} ${
+                  language === 'en' ? 'activities found' : 'activités trouvées'
+                }`}
           </p>
           <button
             onClick={() => setFiltersOpen(!filtersOpen)}
@@ -211,6 +241,22 @@ export default function Activities() {
           </aside>
 
           <div className="flex-1">
+            <div className="mb-6">
+              <label className="sr-only">
+                {language === 'en' ? 'Search by name' : 'Recherche par nom'}
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="search"
+                  value={filters.search}
+                  onChange={(e) => handleFilterChange('search', e.target.value)}
+                  placeholder={language === 'en' ? 'Search activities by name' : 'Rechercher les activités par nom'}
+                  className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-700 dark:bg-[var(--dark-card)] dark:text-white"
+                />
+              </div>
+            </div>
+
             {filteredActivities.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredActivities.map((activity) => (

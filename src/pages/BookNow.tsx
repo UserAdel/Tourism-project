@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { activities } from '../data/activities';
+import { activities as fallbackActivities } from '../data/activities';
 import Button from '../components/Button';
 import type { BookingFormData } from '../types';
 import { CheckCircle, MessageCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { useActivities, useCreateBookingRequest } from '../hooks/queries';
+import { normalizeActivity } from '../utils/activityImages';
 
 export default function BookNow() {
   const { language, t } = useLanguage();
   const [searchParams] = useSearchParams();
   const preselectedActivity = searchParams.get('activity') || '';
+  const { data: apiActivities } = useActivities();
+  const createBookingRequest = useCreateBookingRequest();
+  const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
 
   const [formData, setFormData] = useState<BookingFormData>({
     fullName: '',
@@ -34,7 +40,8 @@ export default function BookNow() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const nextValue = name === 'adults' || name === 'children' ? Number(value) : value;
+    setFormData((prev) => ({ ...prev, [name]: nextValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,14 +69,22 @@ ${formData.roomNumber ? `*Room:* ${formData.roomNumber}` : ''}
 ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` : ''}
     `.trim();
 
-    setTimeout(() => {
+    try {
+      await createBookingRequest.mutateAsync(formData);
       setIsSubmitting(false);
       setSubmitted(true);
       window.open(
         `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
         '_blank'
       );
-    }, 1000);
+    } catch (error) {
+      setIsSubmitting(false);
+      toast.error(
+        language === 'en'
+          ? 'Could not save your booking request. Please try again.'
+          : 'Impossible d enregistrer votre demande. Veuillez réessayer.'
+      );
+    }
   };
 
   if (submitted) {
@@ -84,8 +99,8 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             {language === 'en'
-              ? 'Your booking request has been sent via WhatsApp. Our team will confirm your booking shortly.'
-              : 'Votre demande de réservation a été envoyée via WhatsApp. Notre équipe confirmera votre réservation sous peu.'}
+              ? 'Your booking request was saved and WhatsApp has opened for quick confirmation.'
+              : 'Votre demande de réservation a été enregistrée et WhatsApp est ouvert pour confirmation rapide.'}
           </p>
           <Button onClick={() => setSubmitted(false)} className="w-full">
             {language === 'en' ? 'Make Another Booking' : 'Faire une Autre Réservation'}

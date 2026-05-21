@@ -7,6 +7,8 @@ import About from '../pages/About'
 import FAQ from '../pages/FAQ'
 import Contact from '../pages/Contact'
 import BookNow from '../pages/BookNow'
+import AdminDashboard from '../pages/AdminDashboard'
+import AdminActivityDetail from '../pages/AdminActivityDetail'
 import NotFound from '../pages/NotFound'
 
 export const router = createBrowserRouter([
@@ -21,6 +23,8 @@ export const router = createBrowserRouter([
       { path: 'faq', element: <FAQ /> },
       { path: 'contact', element: <Contact /> },
       { path: 'book', element: <BookNow /> },
+      { path: 'admin', element: <AdminDashboard /> },
+      { path: 'admin/activities/:id', element: <AdminActivityDetail /> },
       { path: '*', element: <NotFound /> },
     ],
   },

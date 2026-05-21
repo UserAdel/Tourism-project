@@ -36,6 +36,7 @@ export const activities: Activity[] = [
     imageUrl: tourismImages.redSea,
     featured: true,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: true
@@ -73,6 +74,7 @@ export const activities: Activity[] = [
     imageUrl: tourismImages.dolphinWater,
     featured: true,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: false,
     groupAvailable: true
@@ -110,6 +112,7 @@ export const activities: Activity[] = [
     imageUrl: tourismImages.luxor,
     featured: true,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: true
@@ -148,6 +151,7 @@ export const activities: Activity[] = [
     imageUrl: tourismImages.temple,
     featured: true,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: true
@@ -182,6 +186,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.dolphinWater,
     childFriendly: true,
+    familyFriendly: false,
     pickupIncluded: true,
     privateAvailable: false,
     groupAvailable: true
@@ -219,6 +224,7 @@ export const activities: Activity[] = [
     imageUrl: tourismImages.boat,
     featured: true,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: false
@@ -255,6 +261,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.seaAdventure,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: false,
     groupAvailable: true
@@ -290,6 +297,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.seaAdventure,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: false,
     groupAvailable: true
@@ -327,6 +335,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.island,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: true
@@ -365,6 +374,7 @@ export const activities: Activity[] = [
     imageUrl: tourismImages.redSea,
     featured: true,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: true
@@ -399,6 +409,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.localTourism,
     childFriendly: false,
+    familyFriendly: false,
     pickupIncluded: false,
     privateAvailable: true,
     groupAvailable: false
@@ -436,6 +447,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.island,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: true,
     groupAvailable: true
@@ -471,6 +483,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.dolphinWater,
     childFriendly: true,
+    familyFriendly: true,
     pickupIncluded: true,
     privateAvailable: false,
     groupAvailable: true
@@ -509,6 +522,7 @@ export const activities: Activity[] = [
     },
     imageUrl: tourismImages.boat,
     childFriendly: true,
+    familyFriendly: false,
     pickupIncluded: false,
     privateAvailable: false,
     groupAvailable: true

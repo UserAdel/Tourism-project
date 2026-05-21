@@ -2,22 +2,28 @@ import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import Button from '../components/Button';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Send } from 'lucide-react';
+import { toast } from 'sonner';
+import { useCreateContactRequest } from '../hooks/queries';
 
 export default function Contact() {
   const { language, t } = useLanguage();
+  const createContactRequest = useCreateContactRequest();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const whatsappMessage = `
 *Contact Form Message*
 
@@ -26,11 +32,22 @@ export default function Contact() {
 *Message:* ${formData.message}
     `.trim();
 
-    window.open(
-      `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
-      '_blank'
-    );
-    setSubmitted(true);
+    try {
+      await createContactRequest.mutateAsync(formData);
+      setSubmitted(true);
+      window.open(
+        `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
+        '_blank'
+      );
+    } catch (error) {
+      toast.error(
+        language === 'en'
+          ? 'Could not save your message. Please try again.'
+          : 'Impossible d enregistrer votre message. Veuillez réessayer.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -159,8 +176,8 @@ export default function Contact() {
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
                   {language === 'en'
-                    ? 'Your message has been sent via WhatsApp. We\'ll respond shortly.'
-                    : 'Votre message a été envoyé via WhatsApp. Nous répondrons sous peu.'}
+                    ? 'Your message was saved and WhatsApp has opened for quick follow-up.'
+                    : 'Votre message a été enregistré et WhatsApp est ouvert pour un suivi rapide.'}
                 </p>
                 <Button onClick={() => setSubmitted(false)} variant="outline">
                   {language === 'en' ? 'Send Another Message' : 'Envoyer Un Autre Message'}
@@ -210,9 +227,15 @@ export default function Contact() {
                   />
                 </div>
 
-                <Button type="submit" size="lg" className="w-full">
-                  <Send className="w-5 h-5 mr-2" />
-                  {t('contact.send')}
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    language === 'en' ? 'Sending...' : 'Envoi...'
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2" />
+                      {t('contact.send')}
+                    </>
+                  )}
                 </Button>
 
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center">

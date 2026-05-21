@@ -1,1 +1,1 @@
-export type { Activity, BookingFormData, Language } from './tourism'
+export type { Activity, BookingFormData, Language, PricingField } from './tourism'
