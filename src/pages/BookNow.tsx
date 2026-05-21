@@ -4,9 +4,9 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { activities as fallbackActivities } from '../data/activities';
 import Button from '../components/Button';
 import type { BookingFormData } from '../types';
-import { CheckCircle, MessageCircle } from 'lucide-react';
+import { CheckCircle, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
-import { useActivities, useCreateBookingRequest } from '../hooks/queries';
+import { useActivities, useCreateBookingRequest, useInitiatePayment } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 
 export default function BookNow() {
@@ -15,6 +15,7 @@ export default function BookNow() {
   const preselectedActivity = searchParams.get('activity') || '';
   const { data: apiActivities } = useActivities();
   const createBookingRequest = useCreateBookingRequest();
+  const initiatePayment = useInitiatePayment();
   const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
 
   const [formData, setFormData] = useState<BookingFormData>({
@@ -49,40 +50,50 @@ export default function BookNow() {
     setIsSubmitting(true);
 
     const selectedActivityData = activities.find((a) => a.slug === formData.selectedActivity);
-    const activityName = selectedActivityData?.name[language] || formData.selectedActivity;
-
-    const whatsappMessage = `
-*New Booking Request*
-
-*Activity:* ${activityName}
-*Name:* ${formData.fullName}
-*Email:* ${formData.email}
-*Phone:* ${formData.phone}
-*WhatsApp:* ${formData.whatsapp}
-*Hotel:* ${formData.hotelName}
-${formData.roomNumber ? `*Room:* ${formData.roomNumber}` : ''}
-*Nationality:* ${formData.nationality}
-*Date:* ${formData.preferredDate}
-*Adults:* ${formData.adults}
-*Children:* ${formData.children}
-*Language:* ${formData.language}
-${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` : ''}
-    `.trim();
 
     try {
-      await createBookingRequest.mutateAsync(formData);
-      setIsSubmitting(false);
-      setSubmitted(true);
-      window.open(
-        `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
-        '_blank'
-      );
+      // 1. Create booking request
+      const booking = await createBookingRequest.mutateAsync(formData);
+
+      // 2. Calculate total amount from activity pricing
+      const pricing = selectedActivityData?.pricing;
+      const adultPrice = pricing?.adult || 0;
+      const childPrice = pricing?.child || 0;
+      const totalAmount = adultPrice * formData.adults + childPrice * formData.children;
+
+      if (totalAmount <= 0) {
+        setIsSubmitting(false);
+        toast.error(
+          language === 'en'
+            ? 'Could not determine the price for this activity.'
+            : 'Impossible de déterminer le prix de cette activité.'
+        );
+        return;
+      }
+
+      // 3. Initiate Kashier payment
+      const paymentResponse = await initiatePayment.mutateAsync({
+        bookingRequestId: booking._id,
+        amount: totalAmount,
+        customer: {
+          name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+        },
+      });
+
+      // 4. Redirect to Kashier payment page
+      if (paymentResponse.sessionUrl) {
+        window.location.href = paymentResponse.sessionUrl;
+      } else {
+        throw new Error('No session URL returned');
+      }
     } catch (error) {
       setIsSubmitting(false);
       toast.error(
         language === 'en'
-          ? 'Could not save your booking request. Please try again.'
-          : 'Impossible d enregistrer votre demande. Veuillez réessayer.'
+          ? 'Could not process your booking. Please try again.'
+          : 'Impossible de traiter votre réservation. Veuillez réessayer.'
       );
     }
   };
@@ -99,8 +110,8 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             {language === 'en'
-              ? 'Your booking request was saved and WhatsApp has opened for quick confirmation.'
-              : 'Votre demande de réservation a été enregistrée et WhatsApp est ouvert pour confirmation rapide.'}
+              ? 'Your booking request has been saved. You will be redirected to the payment page shortly.'
+              : 'Votre demande de réservation a été enregistrée. Vous serez redirigé vers la page de paiement.'}
           </p>
           <Button onClick={() => setSubmitted(false)} className="w-full">
             {language === 'en' ? 'Make Another Booking' : 'Faire une Autre Réservation'}
@@ -266,12 +277,12 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
                   {t('booking.adults')} *
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="adults"
                   value={formData.adults}
                   onChange={handleChange}
                   required
-                  min="1"
+                  placeholder={language === 'en' ? 'e.g. 2' : 'ex. 2'}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
@@ -281,12 +292,12 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
                   {t('booking.children')} *
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="children"
                   value={formData.children}
                   onChange={handleChange}
                   required
-                  min="0"
+                  placeholder={language === 'en' ? 'e.g. 0' : 'ex. 0'}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
@@ -325,8 +336,8 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
             <div className="bg-[var(--sand)] dark:bg-[var(--dark-muted)] p-4 rounded-lg">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 {language === 'en'
-                  ? 'By submitting this form, you will be redirected to WhatsApp to send your booking request. No payment is required at this stage.'
-                  : 'En soumettant ce formulaire, vous serez redirigé vers WhatsApp pour envoyer votre demande de réservation. Aucun paiement n\'est requis à ce stade.'}
+                  ? 'By submitting this form, you will be redirected to a secure payment page to complete your booking.'
+                  : 'En soumettant ce formulaire, vous serez redirigé vers une page de paiement sécurisée pour finaliser votre réservation.'}
               </p>
             </div>
 
@@ -335,8 +346,8 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
                 t('booking.submitting')
               ) : (
                 <>
-                  <MessageCircle className="w-5 h-5 mr-2" />
-                  {t('booking.submit')}
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  {language === 'en' ? 'Book & Pay Now' : 'Réserver & Payer'}
                 </>
               )}
             </Button>

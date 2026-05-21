@@ -10,6 +10,7 @@ import BookNow from '../pages/BookNow'
 import AdminDashboard from '../pages/AdminDashboard'
 import AdminActivityDetail from '../pages/AdminActivityDetail'
 import NotFound from '../pages/NotFound'
+import PaymentStatus from '../pages/PaymentStatus'
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       { path: 'faq', element: <FAQ /> },
       { path: 'contact', element: <Contact /> },
       { path: 'book', element: <BookNow /> },
+      { path: 'payment-status', element: <PaymentStatus /> },
       { path: 'admin', element: <AdminDashboard /> },
       { path: 'admin/activities/:id', element: <AdminActivityDetail /> },
       { path: '*', element: <NotFound /> },

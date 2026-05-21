@@ -29,6 +29,15 @@ export interface ContactFormData {
 export interface AdminBookingRequest extends BookingFormData {
   _id: string;
   activityName: string;
+  paidAmount: number;
+  payment?: {
+    amount: number;
+    amountWithFees: number;
+    status: 'pending' | 'success' | 'failed' | 'cancelled';
+    orderId: string;
+    transactionId?: string;
+    updatedAt?: string;
+  } | null;
   status: 'new' | 'contacted' | 'confirmed' | 'cancelled';
   adminNotes?: string;
   createdAt: string;
@@ -136,6 +145,23 @@ export function useCreateBookingRequest() {
     mutationFn: async (payload: BookingFormData) => {
       const response = await api.post('/bookings', payload);
       return response.data.data.booking;
+    },
+  });
+}
+
+export function useInitiatePayment() {
+  return useMutation({
+    mutationFn: async (payload: {
+      bookingRequestId: string;
+      amount: number;
+      customer: { name: string; email: string; phone: string };
+    }) => {
+      const response = await api.post('/payments/initiate', payload);
+      return response.data.data as {
+        orderId: string;
+        amountWithFees: number;
+        sessionUrl: string;
+      };
     },
   });
 }

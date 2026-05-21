@@ -1,5 +1,5 @@
-import { type FormEvent, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { type Dispatch, type FormEvent, type SetStateAction, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CheckCircle,
   Edit3,
@@ -8,9 +8,10 @@ import {
   MessageSquare,
   Phone,
   Plus,
-  Trash2,
   Search,
   Tags,
+  Trash2,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -74,6 +75,16 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function formatPaidAmount(amount?: number) {
+  if (!amount) return '€0';
+
+  return new Intl.NumberFormat('en', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
 function statusClass(status: string) {
   if (status === 'new') return 'bg-blue-50 text-blue-800 border-blue-200';
   if (status === 'confirmed' || status === 'replied') {
@@ -85,7 +96,265 @@ function statusClass(status: string) {
   return 'bg-orange-50 text-orange-800 border-orange-200';
 }
 
+function BookingDetailModal({
+  booking,
+  onClose,
+}: {
+  booking: AdminBookingRequest | null;
+  onClose: () => void;
+}) {
+  if (!booking) return null;
+
+  const detailGroups = [
+    {
+      title: 'Guest',
+      rows: [
+        ['Name', booking.fullName],
+        ['Nationality', booking.nationality],
+        ['Language', booking.language.toUpperCase()],
+        ['Submitted', formatDate(booking.createdAt)],
+      ],
+    },
+    {
+      title: 'Trip',
+      rows: [
+        ['Activity', booking.activityName],
+        ['Activity slug', booking.selectedActivity],
+        ['Preferred date', booking.preferredDate],
+        ['Guests', `${booking.adults} adults, ${booking.children} children`],
+        ['Hotel', booking.hotelName],
+        ['Room', booking.roomNumber || 'Not provided'],
+      ],
+    },
+    {
+      title: 'Contact',
+      rows: [
+        ['Phone', booking.phone],
+        ['WhatsApp', booking.whatsapp],
+        ['Email', booking.email],
+      ],
+    },
+    {
+      title: 'Payment',
+      rows: [
+        ['Paid amount', formatPaidAmount(booking.paidAmount)],
+        ['Payment status', booking.payment?.status ?? 'No payment found'],
+        [
+          'Amount with fees',
+          booking.payment ? formatPaidAmount(booking.payment.amountWithFees) : '€0',
+        ],
+        ['Order ID', booking.payment?.orderId ?? 'Not available'],
+        ['Transaction ID', booking.payment?.transactionId ?? 'Not available'],
+      ],
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
+      <div className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]">
+        <div className="flex items-start justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+          <div>
+            <h2 className="text-xl font-bold text-[var(--navy)] dark:text-white">
+              Booking Details
+            </h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+              {booking.fullName} · {booking.activityName}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+            aria-label="Close booking details"
+            title="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="max-h-[calc(90vh-84px)] overflow-y-auto px-5 py-5">
+          <div className="grid gap-5 md:grid-cols-2">
+            {detailGroups.map((group) => (
+              <section key={group.title}>
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
+                  {group.title}
+                </h3>
+                <dl className="divide-y divide-gray-100 rounded-lg border border-gray-200 dark:divide-gray-700 dark:border-gray-700">
+                  {group.rows.map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="grid grid-cols-[130px_minmax(0,1fr)] gap-3 px-4 py-3"
+                    >
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                        {label}
+                      </dt>
+                      <dd className="break-words text-sm text-gray-900 dark:text-white">
+                        {value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ))}
+          </div>
+
+          <section className="mt-5">
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300">
+              Notes
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                  Special requests
+                </p>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-gray-900 dark:text-white">
+                  {booking.specialRequests || 'No special requests.'}
+                </p>
+              </div>
+              <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                  Admin notes
+                </p>
+                <p className="mt-2 whitespace-pre-wrap text-sm text-gray-900 dark:text-white">
+                  {booking.adminNotes || 'No admin notes.'}
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CategoryFormModal({
+  form,
+  isEditing,
+  isOpen,
+  isSaving,
+  onClose,
+  onSubmit,
+  setCategoryForm,
+}: {
+  form: CategoryFormState;
+  isEditing: boolean;
+  isOpen: boolean;
+  isSaving: boolean;
+  onClose: () => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  setCategoryForm: Dispatch<SetStateAction<CategoryFormState>>;
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
+      <form
+        onSubmit={onSubmit}
+        className="w-full max-w-lg rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]"
+      >
+        <div className="flex items-start justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+          <div>
+            <h2 className="text-xl font-bold text-[var(--navy)] dark:text-white">
+              {isEditing ? 'Edit Category' : 'Create Category'}
+            </h2>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+              Add the category names used across activities.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+            aria-label="Close category form"
+            title="Close"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="space-y-4 px-5 py-5">
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Category ID
+            </span>
+            <input
+              value={form.id}
+              onChange={(event) =>
+                setCategoryForm((current) => ({ ...current, id: event.target.value }))
+              }
+              required
+              placeholder="sea-adventures"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              English Name
+            </span>
+            <input
+              value={form.nameEn}
+              onChange={(event) =>
+                setCategoryForm((current) => ({ ...current, nameEn: event.target.value }))
+              }
+              required
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              French Name
+            </span>
+            <input
+              value={form.nameFr}
+              onChange={(event) =>
+                setCategoryForm((current) => ({ ...current, nameFr: event.target.value }))
+              }
+              required
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+            />
+          </label>
+
+          <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              checked={form.isActive}
+              onChange={(event) =>
+                setCategoryForm((current) => ({
+                  ...current,
+                  isActive: event.target.checked,
+                }))
+              }
+              className="h-4 w-4 rounded border-gray-300 text-[var(--teal)] focus:ring-[var(--teal)]"
+            />
+            Active
+          </label>
+        </div>
+
+        <div className="flex justify-end gap-3 border-t border-gray-200 px-5 py-4 dark:border-gray-700">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="inline-flex items-center justify-center rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)] disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {isEditing ? 'Save Category' : 'Create Category'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const requestedTab = searchParams.get('tab');
   const activeTab: AdminTab =
@@ -97,7 +366,15 @@ export default function AdminDashboard() {
   const [activityForm, setActivityForm] = useState<ActivityFormState>(emptyActivityForm);
   const [activitySearch, setActivitySearch] = useState('');
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categoryForm, setCategoryForm] = useState<CategoryFormState>(emptyCategoryForm);
+  const [selectedBooking, setSelectedBooking] = useState<AdminBookingRequest | null>(null);
+  const [bookingSearch, setBookingSearch] = useState('');
+  const [bookingTypeFilter, setBookingTypeFilter] = useState<AdminBookingRequest['status'] | 'all'>(
+    'all'
+  );
+  const [bookingDateFrom, setBookingDateFrom] = useState('');
+  const [bookingDateTo, setBookingDateTo] = useState('');
   const { data, isLoading, isError } = useAdminDashboard();
   const updateBooking = useUpdateBookingRequest();
   const updateContact = useUpdateContactRequest();
@@ -141,6 +418,34 @@ export default function AdminDashboard() {
         .filter(Boolean)
         .some((value) => value.toLowerCase().includes(query));
     }) ?? [];
+  const filteredBookings =
+    data?.bookings.filter((booking) => {
+      const query = bookingSearch.trim().toLowerCase();
+      const tripDate = booking.preferredDate;
+      const matchesSearch =
+        !query ||
+        [
+          booking.fullName,
+          booking.nationality,
+          booking.activityName,
+          booking.selectedActivity,
+          booking.hotelName,
+          booking.roomNumber,
+          booking.phone,
+          booking.whatsapp,
+          booking.email,
+          booking.status,
+          booking.payment?.status,
+        ]
+          .filter((value): value is string => Boolean(value))
+          .some((value) => value.toLowerCase().includes(query));
+      const matchesType = bookingTypeFilter === 'all' || booking.status === bookingTypeFilter;
+      const hasSuccessfulPayment = booking.payment?.status === 'success';
+      const matchesDateFrom = !bookingDateFrom || tripDate >= bookingDateFrom;
+      const matchesDateTo = !bookingDateTo || tripDate <= bookingDateTo;
+
+      return hasSuccessfulPayment && matchesSearch && matchesType && matchesDateFrom && matchesDateTo;
+    }) ?? [];
 
   const setFormValue = <Key extends keyof ActivityFormState>(
     key: Key,
@@ -164,6 +469,11 @@ export default function AdminDashboard() {
     setCategoryForm(emptyCategoryForm);
   };
 
+  const closeCategoryModal = () => {
+    resetCategoryForm();
+    setIsCategoryModalOpen(false);
+  };
+
   const handleCategorySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -185,6 +495,7 @@ export default function AdminDashboard() {
         toast.success('Category created');
       }
       resetCategoryForm();
+      setIsCategoryModalOpen(false);
     } catch {
       toast.error('Could not save category. Check that the ID is unique.');
     }
@@ -240,7 +551,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {[
             { label: 'Activities', value: stats.activities, icon: Tags },
             { label: 'Bookings', value: stats.bookings, icon: CheckCircle },
@@ -251,16 +562,16 @@ export default function AdminDashboard() {
           ].map((item) => (
             <div
               key={item.label}
-              className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]"
+              className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-300">{item.label}</p>
-                  <p className="mt-1 text-3xl font-bold text-[var(--navy)] dark:text-white">
+                  <p className="mt-1 text-2xl font-bold text-[var(--navy)] dark:text-white">
                     {item.value}
                   </p>
                 </div>
-                <item.icon className="h-7 w-7 text-[var(--teal)]" />
+                <item.icon className="h-6 w-6 text-[var(--teal)]" />
               </div>
             </div>
           ))}
@@ -270,11 +581,78 @@ export default function AdminDashboard() {
             {activeTab === 'bookings' && (
               <section>
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]">
+              <div className="grid gap-3 border-b border-gray-200 px-4 py-4 dark:border-gray-700 md:grid-cols-[minmax(220px,1fr)_160px_150px_150px_auto]">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="search"
+                    value={bookingSearch}
+                    onChange={(event) => setBookingSearch(event.target.value)}
+                    placeholder="Search bookings"
+                    className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+                  />
+                </div>
+                <select
+                  value={bookingTypeFilter}
+                  onChange={(event) =>
+                    setBookingTypeFilter(event.target.value as AdminBookingRequest['status'] | 'all')
+                  }
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+                  aria-label="Filter bookings by type"
+                >
+                  <option value="all">All types</option>
+                  {bookingStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+                <label className="block">
+                  <span className="sr-only">From date</span>
+                  <input
+                    type="date"
+                    value={bookingDateFrom}
+                    onChange={(event) => setBookingDateFrom(event.target.value)}
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+                    aria-label="Filter bookings from date"
+                  />
+                </label>
+                <label className="block">
+                  <span className="sr-only">To date</span>
+                  <input
+                    type="date"
+                    value={bookingDateTo}
+                    onChange={(event) => setBookingDateTo(event.target.value)}
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+                    aria-label="Filter bookings to date"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBookingSearch('');
+                    setBookingTypeFilter('all');
+                    setBookingDateFrom('');
+                    setBookingDateTo('');
+                  }}
+                  className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+                >
+                  Reset
+                </button>
+              </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-[var(--dark-muted)]">
                     <tr>
-                      {['Guest', 'Activity', 'Trip', 'Contact', 'Status'].map((heading) => (
+                      {[
+                        'Guest',
+                        'Activity',
+                        'Trip',
+                        'Contact',
+                        'Paid amount',
+                        'Booked at',
+                        'Status',
+                      ].map((heading) => (
                         <th
                           key={heading}
                           className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300"
@@ -287,13 +665,25 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                     {isLoading ? (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                           Loading bookings...
                         </td>
                       </tr>
-                    ) : data?.bookings.length ? (
-                      data.bookings.map((booking) => (
-                        <tr key={booking._id}>
+                    ) : filteredBookings.length ? (
+                      filteredBookings.map((booking) => (
+                        <tr
+                          key={booking._id}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => setSelectedBooking(booking)}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              setSelectedBooking(booking);
+                            }
+                          }}
+                          className="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--teal)] dark:hover:bg-[var(--dark-muted)]"
+                        >
                           <td className="px-4 py-4 align-top">
                             <p className="font-semibold text-gray-900 dark:text-white">
                               {booking.fullName}
@@ -301,7 +691,6 @@ export default function AdminDashboard() {
                             <p className="text-sm text-gray-500 dark:text-gray-300">
                               {booking.nationality}
                             </p>
-                            <p className="text-xs text-gray-400">{formatDate(booking.createdAt)}</p>
                           </td>
                           <td className="px-4 py-4 align-top">
                             <p className="font-medium text-gray-900 dark:text-white">
@@ -319,20 +708,36 @@ export default function AdminDashboard() {
                             <p>{booking.hotelName}</p>
                           </td>
                           <td className="px-4 py-4 align-top text-sm text-gray-600 dark:text-gray-300">
-                            <p>{booking.email}</p>
                             <p className="flex items-center gap-1">
                               <Phone className="h-3.5 w-3.5" />
-                              {booking.whatsapp}
+                              {booking.phone}
                             </p>
-                            {booking.specialRequests && (
-                              <p className="mt-2 max-w-xs text-gray-500">
-                                {booking.specialRequests}
+                            <p className="mt-1 flex items-center gap-1">
+                              <Mail className="h-3.5 w-3.5" />
+                              {booking.email}
+                            </p>
+                            {booking.whatsapp && booking.whatsapp !== booking.phone && (
+                              <p className="mt-1 text-xs text-gray-500">
+                                WhatsApp: {booking.whatsapp}
                               </p>
                             )}
                           </td>
                           <td className="px-4 py-4 align-top">
+                            <p className="font-semibold text-gray-900 dark:text-white">
+                              {formatPaidAmount(booking.paidAmount)}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-300">
+                              {booking.payment?.status ?? 'no payment'}
+                            </p>
+                          </td>
+                          <td className="px-4 py-4 align-top text-sm text-gray-600 dark:text-gray-300">
+                            {formatDate(booking.createdAt)}
+                          </td>
+                          <td className="px-4 py-4 align-top">
                             <select
                               value={booking.status}
+                              onClick={(event) => event.stopPropagation()}
+                              onKeyDown={(event) => event.stopPropagation()}
                               onChange={(event) =>
                                 updateBooking.mutate({
                                   id: booking._id,
@@ -355,8 +760,10 @@ export default function AdminDashboard() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                          No booking requests yet.
+                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                          {data?.bookings.length
+                            ? 'No successful paid bookings match your filters.'
+                            : 'No booking requests yet.'}
                         </td>
                       </tr>
                     )}
@@ -486,7 +893,19 @@ export default function AdminDashboard() {
                       </tr>
                     ) : filteredActivities.length ? (
                       filteredActivities.map((activity) => (
-                        <tr key={activity._id}>
+                        <tr
+                          key={activity._id}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => navigate(`/admin/activities/${activity._id}`)}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              navigate(`/admin/activities/${activity._id}`);
+                            }
+                          }}
+                          className="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--teal)] dark:hover:bg-[var(--dark-muted)]"
+                        >
                           <td className="px-4 py-4 align-top">
                             <Link
                               to={`/admin/activities/${activity._id}`}
@@ -515,11 +934,15 @@ export default function AdminDashboard() {
                               {activity.isActive ? 'active' : 'archived'}
                             </span>
                           </td>
-                          <td className="px-4 py-4 align-top">
+                          <td
+                            className="px-4 py-4 align-top"
+                            onClick={(event) => event.stopPropagation()}
+                            onKeyDown={(event) => event.stopPropagation()}
+                          >
                             <div className="flex gap-2">
                               <Link
                                 to={`/admin/activities/${activity._id}`}
-                                className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+                                className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
                                 aria-label="View activity"
                                 title="View"
                               >
@@ -532,7 +955,7 @@ export default function AdminDashboard() {
                                   setActivityForm(activityToForm(activity));
                                   setIsActivityModalOpen(true);
                                 }}
-                                className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+                                className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
                                 aria-label="Edit activity"
                                 title="Edit"
                               >
@@ -548,7 +971,7 @@ export default function AdminDashboard() {
                                     toast.error('Could not archive activity');
                                   }
                                 }}
-                                className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200"
+                                className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-200"
                                 aria-label="Archive activity"
                                 title="Archive"
                                 disabled={!activity.isActive}
@@ -574,12 +997,23 @@ export default function AdminDashboard() {
             )}
 
             {activeTab === 'categories' && (
-              <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+              <section>
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]">
-                  <div className="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+                  <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
                     <h2 className="font-semibold text-[var(--navy)] dark:text-white">
                       Activity Categories
                     </h2>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        resetCategoryForm();
+                        setIsCategoryModalOpen(true);
+                      }}
+                      className="inline-flex items-center gap-2 rounded-lg bg-[var(--teal)] px-3 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)]"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Create Category
+                    </button>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -637,8 +1071,9 @@ export default function AdminDashboard() {
                                         nameFr: category.name.fr,
                                         isActive: category.isActive,
                                       });
+                                      setIsCategoryModalOpen(true);
                                     }}
-                                    className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+                                    className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
                                     aria-label="Edit category"
                                     title="Edit"
                                   >
@@ -654,7 +1089,7 @@ export default function AdminDashboard() {
                                         toast.error('Could not archive category');
                                       }
                                     }}
-                                    className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200"
+                                    className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-200"
                                     aria-label="Archive category"
                                     title="Archive"
                                     disabled={!category.isActive}
@@ -677,93 +1112,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <form
-                  onSubmit={handleCategorySubmit}
-                  className="h-fit rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <h2 className="font-semibold text-[var(--navy)] dark:text-white">
-                      {editingCategoryId ? 'Edit Category' : 'Create Category'}
-                    </h2>
-                    {editingCategoryId && (
-                      <button
-                        type="button"
-                        onClick={resetCategoryForm}
-                        className="text-sm font-semibold text-[var(--teal)]"
-                      >
-                        New
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="block">
-                      <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Category ID
-                      </span>
-                      <input
-                        value={categoryForm.id}
-                        onChange={(event) =>
-                          setCategoryForm((current) => ({ ...current, id: event.target.value }))
-                        }
-                        required
-                        placeholder="sea-adventures"
-                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-                      />
-                    </label>
-
-                    <label className="block">
-                      <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        English Name
-                      </span>
-                      <input
-                        value={categoryForm.nameEn}
-                        onChange={(event) =>
-                          setCategoryForm((current) => ({ ...current, nameEn: event.target.value }))
-                        }
-                        required
-                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-                      />
-                    </label>
-
-                    <label className="block">
-                      <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        French Name
-                      </span>
-                      <input
-                        value={categoryForm.nameFr}
-                        onChange={(event) =>
-                          setCategoryForm((current) => ({ ...current, nameFr: event.target.value }))
-                        }
-                        required
-                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-                      />
-                    </label>
-
-                    <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                      <input
-                        type="checkbox"
-                        checked={categoryForm.isActive}
-                        onChange={(event) =>
-                          setCategoryForm((current) => ({
-                            ...current,
-                            isActive: event.target.checked,
-                          }))
-                        }
-                        className="h-4 w-4 rounded border-gray-300 text-[var(--teal)] focus:ring-[var(--teal)]"
-                      />
-                      Active
-                    </label>
-
-                    <button
-                      type="submit"
-                      disabled={createCategory.isPending || updateCategory.isPending}
-                      className="inline-flex w-full items-center justify-center rounded-lg bg-[var(--teal)] px-4 py-3 font-semibold text-white hover:bg-[var(--teal-dark)] disabled:cursor-not-allowed disabled:opacity-70"
-                    >
-                      {editingCategoryId ? 'Save Category' : 'Create Category'}
-                    </button>
-                  </div>
-                </form>
               </section>
             )}
         </div>
@@ -777,6 +1125,16 @@ export default function AdminDashboard() {
           onSubmit={handleActivitySubmit}
           setFormValue={setFormValue}
         />
+        <CategoryFormModal
+          form={categoryForm}
+          isEditing={Boolean(editingCategoryId)}
+          isOpen={isCategoryModalOpen}
+          isSaving={createCategory.isPending || updateCategory.isPending}
+          onClose={closeCategoryModal}
+          onSubmit={handleCategorySubmit}
+          setCategoryForm={setCategoryForm}
+        />
+        <BookingDetailModal booking={selectedBooking} onClose={() => setSelectedBooking(null)} />
     </AdminLayout>
   );
 }
