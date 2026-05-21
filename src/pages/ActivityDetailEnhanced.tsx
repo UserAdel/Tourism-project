@@ -1,15 +1,16 @@
+import { type FormEvent, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { activities as fallbackActivities } from '../data/activities';
-import { activityGalleries, activityVideos, activityTestimonials, activityVideoTestimonials } from '../data/activityMedia';
+import { activityGalleries, activityVideos } from '../data/activityMedia';
 import Button from '../components/Button';
 import ActivityCard from '../components/ActivityCard';
 import ImageGallery from '../components/ImageGallery';
 import VideoGallery from '../components/VideoGallery';
 import Testimonials from '../components/Testimonials';
-import VideoTestimonials from '../components/VideoTestimonials';
 import { motion } from 'motion/react';
-import { useActivities, useActivity } from '../hooks/queries';
+import { toast } from 'sonner';
+import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
 import {
@@ -23,8 +24,79 @@ import {
   ArrowLeft,
   Baby,
   Weight,
-  Shield
+  Shield,
+  Star
 } from 'lucide-react';
+
+const reviewCountries = [
+  '🇦🇪 United Arab Emirates',
+  '🇦🇷 Argentina',
+  '🇦🇺 Australia',
+  '🇦🇹 Austria',
+  '🇧🇪 Belgium',
+  '🇧🇷 Brazil',
+  '🇧🇬 Bulgaria',
+  '🇨🇦 Canada',
+  '🇨🇱 Chile',
+  '🇨🇳 China',
+  '🇨🇴 Colombia',
+  '🇭🇷 Croatia',
+  '🇨🇿 Czech Republic',
+  '🇩🇰 Denmark',
+  '🇪🇬 Egypt',
+  '🇫🇷 France',
+  '🇫🇮 Finland',
+  '🇩🇪 Germany',
+  '🇬🇷 Greece',
+  '🇭🇺 Hungary',
+  '🇮🇳 India',
+  '🇮🇩 Indonesia',
+  '🇮🇪 Ireland',
+  '🇮🇹 Italy',
+  '🇯🇵 Japan',
+  '🇯🇴 Jordan',
+  '🇰🇼 Kuwait',
+  '🇱🇧 Lebanon',
+  '🇱🇺 Luxembourg',
+  '🇲🇽 Mexico',
+  '🇲🇦 Morocco',
+  '🇳🇱 Netherlands',
+  '🇳🇿 New Zealand',
+  '🇳🇴 Norway',
+  '🇵🇱 Poland',
+  '🇵🇹 Portugal',
+  '🇶🇦 Qatar',
+  '🇷🇴 Romania',
+  '🇸🇦 Saudi Arabia',
+  '🇷🇸 Serbia',
+  '🇸🇬 Singapore',
+  '🇿🇦 South Africa',
+  '🇰🇷 South Korea',
+  '🇪🇸 Spain',
+  '🇸🇪 Sweden',
+  '🇨🇭 Switzerland',
+  '🇹🇳 Tunisia',
+  '🇹🇷 Turkey',
+  '🇬🇧 United Kingdom',
+  '🇺🇸 United States',
+  'Other',
+];
+const defaultReviewCountry = '';
+
+function extractYouTubeId(url: string) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([^&]+)/,
+    /(?:youtube\.com\/embed\/)([^?]+)/,
+    /(?:youtu\.be\/)([^?]+)/,
+    /(?:youtube\.com\/shorts\/)([^?]+)/,
+  ];
+
+  return patterns.map((pattern) => url.match(pattern)?.[1]).find(Boolean);
+}
+
+function youtubeThumbnailUrl(youtubeId: string | undefined) {
+  return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : '';
+}
 
 export default function ActivityDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -33,6 +105,12 @@ export default function ActivityDetail() {
   const fallbackActivityList = fallbackActivities.map(normalizeActivity);
   const { data: apiActivity } = useActivity(slug);
   const { data: apiActivities } = useActivities();
+  const createReview = useCreateActivityReview(slug);
+  const [reviewName, setReviewName] = useState('');
+  const [reviewCountry, setReviewCountry] = useState(defaultReviewCountry);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
 
   const activities = apiActivities ?? fallbackActivityList;
   const activity = apiActivity ?? fallbackActivityList.find((a) => a.slug === slug);
@@ -59,12 +137,60 @@ export default function ActivityDetail() {
   const gallery = activity.galleryImages?.length
     ? activity.galleryImages
     : activityGalleries[activity.slug] || [];
-  const videos = activityVideos[activity.slug] || [];
-  const testimonials = activityTestimonials[activity.slug] || [];
-  const videoTestimonials = activityVideoTestimonials[activity.slug] || [];
+  const videos = activity.videoHighlights?.length
+    ? activity.videoHighlights.map((video, index) => {
+        const youtubeId = video.youtubeId || extractYouTubeId(video.youtubeUrl);
+
+        return {
+          id: video.id || `${activity.slug}-video-${index + 1}`,
+          thumbnail: video.thumbnail || youtubeThumbnailUrl(youtubeId),
+          title: video.title,
+          youtubeId,
+        };
+      })
+    : activityVideos[activity.slug] || [];
   const pricingFields = getPricingFields(activity);
   const primaryPricing = getPrimaryPricingField(activity);
   const isPrivatePrice = primaryPricing?.id === 'private';
+  const reviews = activity.reviews ?? [];
+  const testimonials = reviews.map((review) => ({
+    id: review._id,
+    name: review.name,
+    nationality: review.country || (language === 'en' ? 'Unknown country' : 'Pays inconnu'),
+    rating: review.rating,
+    text: review.comment,
+    date: review.date || (review.createdAt
+      ? new Date(review.createdAt).toLocaleDateString(
+          language === 'en' ? 'en-US' : 'fr-FR',
+          { month: 'short', year: 'numeric' }
+        )
+      : ''),
+  }));
+  const countrySearch = reviewCountry.trim().toLowerCase();
+  const filteredReviewCountries = reviewCountries
+    .filter((country) => country.toLowerCase().includes(countrySearch))
+    .slice(0, 12);
+
+  const handleReviewSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      await createReview.mutateAsync({
+        name: reviewName,
+        country: reviewCountry,
+        rating: reviewRating,
+        comment: reviewComment,
+      });
+      setReviewName('');
+      setReviewCountry(defaultReviewCountry);
+      setIsCountryDropdownOpen(false);
+      setReviewRating(5);
+      setReviewComment('');
+      toast.success(language === 'en' ? 'Review added' : 'Avis ajouté');
+    } catch {
+      toast.error(language === 'en' ? 'Could not add review' : "Impossible d'ajouter l'avis");
+    }
+  };
 
   return (
     <div className="bg-gray-50 dark:bg-[var(--dark-page)] min-h-screen">
@@ -320,15 +446,124 @@ export default function ActivityDetail() {
               </motion.div>
             )}
 
-            {videoTestimonials.length > 0 && (
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.9 }}
-              >
-                <VideoTestimonials testimonials={videoTestimonials} />
-              </motion.div>
-            )}
+            {/* Video Reviews section hidden by request. */}
+
+            <motion.section
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+            >
+              <h2 className="mb-6 text-2xl font-bold text-[var(--navy)] dark:text-white">
+                {language === 'en' ? 'Add Your Review' : 'Ajouter votre avis'}
+              </h2>
+
+              <form onSubmit={handleReviewSubmit} className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                  <label className="grid gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    {language === 'en' ? 'Name' : 'Nom'}
+                    <input
+                      type="text"
+                      value={reviewName}
+                      onChange={(event) => setReviewName(event.target.value)}
+                      minLength={2}
+                      maxLength={120}
+                      required
+                      className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-section)] dark:text-white"
+                    />
+                  </label>
+                  <label className="relative grid gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    {language === 'en' ? 'Country' : 'Pays'}
+                    <input
+                      type="text"
+                      value={reviewCountry}
+                      onChange={(event) => {
+                        setReviewCountry(event.target.value);
+                        setIsCountryDropdownOpen(true);
+                      }}
+                      onFocus={() => setIsCountryDropdownOpen(true)}
+                      onBlur={() => setIsCountryDropdownOpen(false)}
+                      placeholder={language === 'en' ? 'Search country' : 'Rechercher un pays'}
+                      minLength={2}
+                      maxLength={120}
+                      required
+                      className="h-12 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-section)] dark:text-white"
+                    />
+                    {isCountryDropdownOpen && (
+                      <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-64 overflow-y-auto rounded-lg border border-gray-200 bg-white py-2 shadow-xl dark:border-gray-700 dark:bg-[var(--dark-section)]">
+                        {filteredReviewCountries.length > 0 ? (
+                          filteredReviewCountries.map((country) => (
+                            <button
+                              key={country}
+                              type="button"
+                              onMouseDown={(event) => {
+                                event.preventDefault();
+                                setReviewCountry(country);
+                                setIsCountryDropdownOpen(false);
+                              }}
+                              className="block w-full px-4 py-2 text-left text-sm font-medium text-gray-700 hover:bg-[var(--sand)] dark:text-gray-200 dark:hover:bg-[var(--dark-muted)]"
+                            >
+                              {country}
+                            </button>
+                          ))
+                        ) : (
+                          <div className="px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                            {language === 'en' ? 'No country found' : 'Aucun pays trouvé'}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </label>
+                  <fieldset className="grid gap-2">
+                    <legend className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                      {language === 'en' ? 'Rating' : 'Note'}
+                    </legend>
+                    <div className="flex h-12 items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewRating(star)}
+                          className="rounded-lg p-1 text-[var(--gold)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                          aria-label={`${star}/5`}
+                        >
+                          <Star
+                            className={`h-7 w-7 ${
+                              star <= reviewRating ? 'fill-[var(--gold)]' : 'text-gray-300'
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+                </div>
+
+                <label className="grid gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                  {language === 'en' ? 'Review' : 'Avis'}
+                  <textarea
+                    value={reviewComment}
+                    onChange={(event) => setReviewComment(event.target.value)}
+                    minLength={5}
+                    maxLength={2000}
+                    required
+                    rows={4}
+                    className="resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-section)] dark:text-white"
+                  />
+                </label>
+
+                <div>
+                  <Button type="submit" disabled={createReview.isPending}>
+                    {createReview.isPending
+                      ? language === 'en'
+                        ? 'Adding...'
+                        : 'Ajout...'
+                      : language === 'en'
+                        ? 'Add Review'
+                        : 'Ajouter un avis'}
+                  </Button>
+                </div>
+              </form>
+            </motion.section>
           </div>
 
           <div className="lg:col-span-1">

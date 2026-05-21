@@ -10,6 +10,25 @@ export interface PricingField {
   isMain?: boolean;
 }
 
+export interface ActivityReview {
+  _id: string;
+  name: string;
+  country: string;
+  rating: number;
+  comment: string;
+  date?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ActivityVideoHighlight {
+  id?: string;
+  title: string;
+  youtubeUrl: string;
+  youtubeId?: string;
+  thumbnail?: string;
+}
+
 export interface Activity {
   id: string;
   name: LocalizedString;
@@ -53,6 +72,8 @@ export interface Activity {
   freeCancellation?: boolean;
   privateAvailable: boolean;
   groupAvailable: boolean;
+  reviews?: ActivityReview[];
+  videoHighlights?: ActivityVideoHighlight[];
 }
 
 export interface BookingFormData {

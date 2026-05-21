@@ -238,6 +238,18 @@ p {
   font-family: var(--font-body);
 }
 
+input[type="time"] {
+  color-scheme: light;
+}
+
+.dark input[type="time"] {
+  color-scheme: dark;
+}
+
+.admin-time-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
 label,
 button {
   font-weight: var(--font-weight-medium);

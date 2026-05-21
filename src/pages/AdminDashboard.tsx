@@ -32,6 +32,7 @@ import ActivityFormModal, {
   defaultCategories,
   emptyActivityForm,
   formToActivity,
+  getVideoThumbnailFiles,
 } from '../components/admin/ActivityFormModal';
 import AdminLayout from '../components/admin/AdminLayout';
 import { getPrimaryPrice } from '../utils/pricing';
@@ -196,6 +197,7 @@ export default function AdminDashboard() {
       activity: formToActivity(activityForm),
       imageFile: activityForm.imageFile,
       galleryFiles: activityForm.galleryFiles,
+      videoThumbnailFiles: getVideoThumbnailFiles(activityForm),
     };
 
     try {

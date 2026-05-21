@@ -126,6 +126,28 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {t('booking.activity')} *
+              </label>
+              <select
+                name="selectedActivity"
+                value={formData.selectedActivity}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+              >
+                <option value="">
+                  {language === 'en' ? 'Select an activity' : 'Sélectionner une activité'}
+                </option>
+                {activities.map((activity) => (
+                  <option key={activity.id} value={activity.slug}>
+                    {activity.name[language]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -285,27 +307,6 @@ ${formData.specialRequests ? `*Special Requests:* ${formData.specialRequests}` :
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('booking.activity')} *
-                </label>
-                <select
-                  name="selectedActivity"
-                  value={formData.selectedActivity}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
-                >
-                  <option value="">
-                    {language === 'en' ? 'Select an activity' : 'Sélectionner une activité'}
-                  </option>
-                  {activities.map((activity) => (
-                    <option key={activity.id} value={activity.slug}>
-                      {activity.name[language]}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             <div>

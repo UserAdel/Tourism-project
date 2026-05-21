@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
-import type { Activity, BookingFormData } from '../../types';
+import type { Activity, ActivityReview, BookingFormData } from '../../types';
 import { normalizeActivity } from '../../utils/activityImages';
 
 export interface Category {
@@ -50,6 +50,8 @@ export interface AdminActivity extends Activity {
   updatedAt?: string;
 }
 
+export type ActivityReviewPayload = Pick<ActivityReview, 'name' | 'country' | 'rating' | 'comment'>;
+
 export interface AdminDashboardData {
   stats: {
     activities: number;
@@ -69,9 +71,15 @@ interface AdminActivityMutationPayload {
   activity: Activity & { isActive?: boolean };
   imageFile?: File | null;
   galleryFiles?: File[];
+  videoThumbnailFiles?: Array<{ index: number; file: File }>;
 }
 
-function buildActivityFormData({ activity, imageFile, galleryFiles }: AdminActivityMutationPayload) {
+function buildActivityFormData({
+  activity,
+  imageFile,
+  galleryFiles,
+  videoThumbnailFiles,
+}: AdminActivityMutationPayload) {
   const formData = new FormData();
   formData.append('payload', JSON.stringify(activity));
 
@@ -81,6 +89,10 @@ function buildActivityFormData({ activity, imageFile, galleryFiles }: AdminActiv
 
   galleryFiles?.forEach((file) => {
     formData.append('gallery', file);
+  });
+
+  videoThumbnailFiles?.forEach(({ index, file }) => {
+    formData.append(`videoThumbnail_${index}`, file);
   });
 
   return formData;
@@ -137,6 +149,21 @@ export function useCreateContactRequest() {
   });
 }
 
+export function useCreateActivityReview(slug?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: ActivityReviewPayload) => {
+      const response = await api.post(`/activities/${slug}/reviews`, payload);
+      return response.data.data.review as ActivityReview;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['activities', slug] });
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+    },
+  });
+}
+
 export function useAdminDashboard() {
   return useQuery({
     queryKey: ['admin-dashboard'],
@@ -154,6 +181,55 @@ export function useAdminActivity(id?: string) {
     queryFn: async () => {
       const response = await api.get(`/admin/activities/${id}`);
       return response.data.data.activity as AdminActivity;
+    },
+  });
+}
+
+export function useUpdateAdminActivityReview() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      activityId,
+      reviewId,
+      payload,
+    }: {
+      activityId: string;
+      reviewId: string;
+      payload: ActivityReviewPayload;
+    }) => {
+      const response = await api.patch(
+        `/admin/activities/${activityId}/reviews/${reviewId}`,
+        payload
+      );
+      return response.data.data.review as ActivityReview;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] });
+    },
+  });
+}
+
+export function useDeleteAdminActivityReview() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      activityId,
+      reviewId,
+    }: {
+      activityId: string;
+      reviewId: string;
+    }) => {
+      const response = await api.delete(`/admin/activities/${activityId}/reviews/${reviewId}`);
+      return response.data.data.activity as AdminActivity;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] });
     },
   });
 }

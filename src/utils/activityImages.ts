@@ -27,5 +27,9 @@ export function normalizeActivity(activity: Activity): Activity {
     ...activity,
     imageUrl: resolveActivityImageUrl(activity.imageUrl),
     galleryImages: activity.galleryImages?.map(resolveActivityImageUrl),
+    videoHighlights: activity.videoHighlights?.map((video) => ({
+      ...video,
+      thumbnail: video.thumbnail ? resolveActivityImageUrl(video.thumbnail) : video.thumbnail,
+    })),
   };
 }

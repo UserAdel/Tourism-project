@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useMemo } from 'react';
-import { Plus, Save, Trash2, X } from 'lucide-react';
-import type { Activity, PricingField } from '../../types';
+import { Clock, Plus, Save, Trash2, X } from 'lucide-react';
+import type { Activity, ActivityVideoHighlight, PricingField } from '../../types';
 import type { AdminActivity } from '../../hooks/queries';
 import { resolveActivityImageUrl } from '../../utils/activityImages';
 import { legacyPricingToFields } from '../../utils/pricing';
@@ -16,6 +16,14 @@ interface PricingFormItem {
   nameFr: string;
   price: string;
   isMain: boolean;
+}
+
+interface VideoHighlightFormItem {
+  id: string;
+  title: string;
+  youtubeUrl: string;
+  thumbnail: string;
+  thumbnailFile: File | null;
 }
 
 export interface ActivityFormState {
@@ -35,13 +43,13 @@ export interface ActivityFormState {
   duration: string;
   startTime: string;
   endTime: string;
-  times: string;
   maxCapacity: string;
   maxWeight: string;
   imageUrl: string;
   imageFile: File | null;
   galleryImages: string[];
   galleryFiles: File[];
+  videoHighlights: VideoHighlightFormItem[];
   featured: boolean;
   childFriendly: boolean;
   familyFriendly: boolean;
@@ -86,13 +94,13 @@ export const emptyActivityForm: ActivityFormState = {
   duration: '',
   startTime: '',
   endTime: '',
-  times: '',
   maxCapacity: '',
   maxWeight: '',
   imageUrl: '',
   imageFile: null,
   galleryImages: [],
   galleryFiles: [],
+  videoHighlights: [],
   featured: false,
   childFriendly: true,
   familyFriendly: true,
@@ -124,6 +132,16 @@ function numberOrUndefined(value: string) {
 
 function numberOrNull(value: string) {
   return value === '' ? null : Number(value);
+}
+
+function slugifyName(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function pricingFieldsToFormItems(fields: PricingField[]) {
@@ -171,6 +189,57 @@ function pricingFieldsToLegacyPricing(fields: PricingField[]): Activity['pricing
   }, {});
 }
 
+function extractYouTubeId(url: string) {
+  const trimmedUrl = url.trim();
+  if (!trimmedUrl) return undefined;
+
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([^&]+)/,
+    /(?:youtube\.com\/embed\/)([^?]+)/,
+    /(?:youtu\.be\/)([^?]+)/,
+    /(?:youtube\.com\/shorts\/)([^?]+)/,
+  ];
+
+  return patterns
+    .map((pattern) => trimmedUrl.match(pattern)?.[1])
+    .find(Boolean);
+}
+
+function youtubeThumbnailUrl(youtubeId: string | undefined) {
+  return youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : '';
+}
+
+function videosToFormItems(videos: ActivityVideoHighlight[] = []): VideoHighlightFormItem[] {
+  return videos.map((video, index) => ({
+    id: video.id ?? `video-${index + 1}`,
+    title: video.title,
+    youtubeUrl: video.youtubeUrl,
+    thumbnail: video.thumbnail ?? '',
+    thumbnailFile: null,
+  }));
+}
+
+function compactVideoHighlights(videos: VideoHighlightFormItem[]) {
+  return videos.reduce<ActivityVideoHighlight[]>((videoHighlights, video, index) => {
+    const title = video.title.trim();
+    const youtubeUrl = video.youtubeUrl.trim();
+    const youtubeId = extractYouTubeId(youtubeUrl);
+    const thumbnail = video.thumbnail.trim();
+
+    if (title && youtubeUrl) {
+      videoHighlights.push({
+        id: video.id.trim() || `video-${index + 1}`,
+        title,
+        youtubeUrl,
+        youtubeId,
+        thumbnail: thumbnail || undefined,
+      });
+    }
+
+    return videoHighlights;
+  }, []);
+}
+
 export function activityToForm(activity: AdminActivity): ActivityFormState {
   const pricingFields = activity.pricingFields?.length
     ? activity.pricingFields
@@ -194,13 +263,13 @@ export function activityToForm(activity: AdminActivity): ActivityFormState {
     duration: activity.duration,
     startTime: activity.startTime ?? '',
     endTime: activity.endTime ?? '',
-    times: activity.times?.join('\n') ?? '',
     maxCapacity: activity.maxCapacity?.toString() ?? '',
     maxWeight: activity.maxWeight?.toString() ?? '',
     imageUrl: activity.imageUrl,
     imageFile: null,
     galleryImages: activity.galleryImages ?? [],
     galleryFiles: [],
+    videoHighlights: videosToFormItems(activity.videoHighlights),
     featured: Boolean(activity.featured),
     childFriendly: activity.childFriendly,
     familyFriendly: Boolean(activity.familyFriendly),
@@ -218,10 +287,12 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
   const included = compactItems(form.included);
   const excluded = compactItems(form.excluded);
   const pricingFields = compactPricingFields(form.pricingFields);
+  const videoHighlights = compactVideoHighlights(form.videoHighlights);
+  const generatedIdentifier = slugifyName(form.nameEn);
 
   return {
-    id: form.id,
-    slug: form.slug,
+    id: generatedIdentifier,
+    slug: generatedIdentifier,
     name: { en: form.nameEn, fr: form.nameFr },
     category: form.category,
     description: { en: form.descriptionEn, fr: form.descriptionFr },
@@ -235,10 +306,6 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
     duration: form.duration,
     startTime: form.startTime,
     endTime: form.endTime,
-    times: form.times
-      .split(/\n|,/)
-      .map((time) => time.trim())
-      .filter(Boolean),
     maxCapacity: numberOrNull(form.maxCapacity) ?? undefined,
     maxWeight: numberOrNull(form.maxWeight) ?? undefined,
     included: {
@@ -261,8 +328,22 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
     freeCancellation: form.freeCancellation,
     privateAvailable: form.privateAvailable,
     groupAvailable: form.groupAvailable,
+    videoHighlights,
     isActive: form.isActive,
   };
+}
+
+export function getVideoThumbnailFiles(form: ActivityFormState) {
+  return form.videoHighlights.reduce<Array<{ index: number; file: File }>>(
+    (files, video, index) => {
+      if (video.thumbnailFile) {
+        files.push({ index, file: video.thumbnailFile });
+      }
+
+      return files;
+    },
+    []
+  );
 }
 
 function TextField({
@@ -283,13 +364,20 @@ function TextField({
       <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </span>
-      <input
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        required={required}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-      />
+      <div className="relative">
+        <input
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          required={required}
+          className={`w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white ${
+            type === 'time' ? 'admin-time-input pr-10' : ''
+          }`}
+        />
+        {type === 'time' && (
+          <Clock className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--teal)] dark:text-[var(--turquoise)]" />
+        )}
+      </div>
     </label>
   );
 }
@@ -445,6 +533,138 @@ function PricingFieldsEditor({
   );
 }
 
+function VideoHighlightsEditor({
+  videos,
+  thumbnailPreviews,
+  onChange,
+}: {
+  videos: VideoHighlightFormItem[];
+  thumbnailPreviews: string[];
+  onChange: (videos: VideoHighlightFormItem[]) => void;
+}) {
+  const updateVideo = (index: number, key: keyof VideoHighlightFormItem, value: string) => {
+    onChange(videos.map((video, videoIndex) => (
+      videoIndex === index ? { ...video, [key]: value } : video
+    )));
+  };
+
+  const addVideo = () => {
+    onChange([
+      ...videos,
+      {
+        id: `video-${videos.length + 1}`,
+        title: '',
+        youtubeUrl: '',
+        thumbnail: '',
+        thumbnailFile: null,
+      },
+    ]);
+  };
+
+  return (
+    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="font-semibold text-[var(--navy)] dark:text-white">Video Highlights</h3>
+        <button
+          type="button"
+          onClick={addVideo}
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+        >
+          <Plus className="h-4 w-4" />
+          Add
+        </button>
+      </div>
+
+      {videos.length === 0 ? (
+        <p className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500 dark:bg-[var(--dark-muted)] dark:text-gray-300">
+          No video highlights yet.
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {videos.map((video, index) => {
+            const youtubeId = extractYouTubeId(video.youtubeUrl);
+            const filePreviewUrl = thumbnailPreviews[index] ?? '';
+            const manualThumbnail = video.thumbnail.trim();
+            const previewUrl = filePreviewUrl || (manualThumbnail
+              ? resolveActivityImageUrl(manualThumbnail)
+              : youtubeThumbnailUrl(youtubeId));
+
+            return (
+              <div
+                key={`${video.id}-${index}`}
+                className="grid gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[var(--dark-muted)] md:grid-cols-[160px_minmax(0,1fr)_auto]"
+              >
+                <div className="aspect-video overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt={video.title || 'Video thumbnail'}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : null}
+                </div>
+
+                <div className="grid gap-3">
+                  <TextField
+                    label="Title"
+                    value={video.title}
+                    onChange={(value) => updateVideo(index, 'title', value)}
+                    required
+                  />
+                  <TextField
+                    label="YouTube link"
+                    value={video.youtubeUrl}
+                    onChange={(value) => updateVideo(index, 'youtubeUrl', value)}
+                    required
+                  />
+                  <label className="block">
+                    <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Thumbnail image (optional)
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      onChange={(event) =>
+                        onChange(videos.map((currentVideo, videoIndex) => (
+                          videoIndex === index
+                            ? {
+                                ...currentVideo,
+                                thumbnailFile: event.target.files?.[0] ?? null,
+                              }
+                            : currentVideo
+                        )))
+                      }
+                      className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--teal)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-[var(--teal-dark)] dark:text-gray-300"
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Optional. If empty, the YouTube thumbnail will be used.
+                    </p>
+                  </label>
+                  {video.thumbnailFile && (
+                    <p className="text-sm font-medium text-[var(--teal)]">
+                      Selected: {video.thumbnailFile.name}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => onChange(videos.filter((_, videoIndex) => videoIndex !== index))}
+                  className="h-10 rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200"
+                  aria-label={`Remove ${video.title || 'video highlight'}`}
+                  title="Remove"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
 interface ActivityFormModalProps {
   categories: string[];
   form: ActivityFormState;
@@ -481,6 +701,13 @@ export default function ActivityFormModal({
       })),
     [form.galleryFiles]
   );
+  const videoThumbnailPreviews = useMemo(
+    () =>
+      form.videoHighlights.map((video) =>
+        video.thumbnailFile ? URL.createObjectURL(video.thumbnailFile) : ''
+      ),
+    [form.videoHighlights]
+  );
 
   useEffect(() => {
     return () => {
@@ -493,6 +720,14 @@ export default function ActivityFormModal({
       galleryFilePreviews.forEach((preview) => URL.revokeObjectURL(preview.url));
     };
   }, [galleryFilePreviews]);
+
+  useEffect(() => {
+    return () => {
+      videoThumbnailPreviews.forEach((previewUrl) => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+      });
+    };
+  }, [videoThumbnailPreviews]);
 
   if (!isOpen) return null;
 
@@ -517,11 +752,6 @@ export default function ActivityFormModal({
 
         <div className="max-h-[calc(100vh-12rem)] overflow-y-auto p-5">
           <div className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <TextField label="ID" value={form.id} onChange={(value) => setFormValue('id', value)} required />
-              <TextField label="Slug" value={form.slug} onChange={(value) => setFormValue('slug', value)} required />
-            </div>
-
             <div className="grid gap-3 sm:grid-cols-2">
               <TextField label="Name EN" value={form.nameEn} onChange={(value) => setFormValue('nameEn', value)} required />
               <TextField label="Name FR" value={form.nameFr} onChange={(value) => setFormValue('nameFr', value)} required />
@@ -655,6 +885,12 @@ export default function ActivityFormModal({
               )}
             </section>
 
+            <VideoHighlightsEditor
+              videos={form.videoHighlights}
+              thumbnailPreviews={videoThumbnailPreviews}
+              onChange={(videos) => setFormValue('videoHighlights', videos)}
+            />
+
             <BilingualItemsEditor
               label="Highlights"
               items={form.highlights}
@@ -678,10 +914,9 @@ export default function ActivityFormModal({
               <TextField label="Age FR" value={form.ageRestrictionsFr} onChange={(value) => setFormValue('ageRestrictionsFr', value)} required />
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <TextField label="Start time" type="time" value={form.startTime} onChange={(value) => setFormValue('startTime', value)} />
               <TextField label="End time" type="time" value={form.endTime} onChange={(value) => setFormValue('endTime', value)} />
-              <TextField label="Times" value={form.times} onChange={(value) => setFormValue('times', value)} />
             </div>
 
             <PricingFieldsEditor

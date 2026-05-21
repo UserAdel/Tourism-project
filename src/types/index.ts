@@ -1,1 +1,8 @@
-export type { Activity, BookingFormData, Language, PricingField } from './tourism'
+export type {
+  Activity,
+  ActivityReview,
+  ActivityVideoHighlight,
+  BookingFormData,
+  Language,
+  PricingField,
+} from './tourism'
