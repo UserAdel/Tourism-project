@@ -114,6 +114,7 @@ export default function ActivityDetail() {
 
   const activities = apiActivities ?? fallbackActivityList;
   const activity = apiActivity ?? fallbackActivityList.find((a) => a.slug === slug);
+  const isApiActivity = Boolean(apiActivity);
 
   if (!activity) {
     return (
@@ -134,9 +135,11 @@ export default function ActivityDetail() {
     .filter((a) => a.category === activity.category && a.id !== activity.id)
     .slice(0, 3);
 
-  const gallery = activity.galleryImages?.length
-    ? activity.galleryImages
-    : activityGalleries[activity.slug] || [];
+  const gallery = isApiActivity
+    ? activity.galleryImages ?? []
+    : activity.galleryImages?.length
+      ? activity.galleryImages
+      : activityGalleries[activity.slug] || [];
   const videos = activity.videoHighlights?.length
     ? activity.videoHighlights.map((video, index) => {
         const youtubeId = video.youtubeId || extractYouTubeId(video.youtubeUrl);
@@ -148,11 +151,18 @@ export default function ActivityDetail() {
           youtubeId,
         };
       })
-    : activityVideos[activity.slug] || [];
+    : isApiActivity
+      ? []
+      : activityVideos[activity.slug] || [];
   const pricingFields = getPricingFields(activity);
   const primaryPricing = getPrimaryPricingField(activity);
   const isPrivatePrice = primaryPricing?.id === 'private';
   const reviews = activity.reviews ?? [];
+  const highlights = (activity.highlights?.[language] ?? []).filter(Boolean);
+  const includedItems = (activity.included?.[language] ?? []).filter(Boolean);
+  const excludedItems = (activity.excluded?.[language] ?? []).filter(Boolean);
+  const ageRestriction = activity.ageRestrictions?.[language]?.trim() ?? '';
+  const hasRequirements = Boolean(ageRestriction || activity.maxWeight || activity.maxCapacity);
   const testimonials = reviews.map((review) => ({
     id: review._id,
     name: review.name,
@@ -264,54 +274,59 @@ export default function ActivityDetail() {
               </p>
             </motion.div>
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
-            >
-              <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
-                {t('activity.highlights')}
-              </h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {activity.highlights[language].map((highlight, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 + index * 0.05 }}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckCircle className="w-5 h-5 text-[var(--teal)] mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 dark:text-gray-300">{highlight}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
+            {highlights.length > 0 && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+              >
+                <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
+                  {t('activity.highlights')}
+                </h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {highlights.map((highlight, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 + index * 0.05 }}
+                      className="flex items-start gap-3"
+                    >
+                      <CheckCircle className="w-5 h-5 text-[var(--teal)] mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700 dark:text-gray-300">{highlight}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
-            >
-              <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
-                {t('activity.ageRestrictions')}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl">
-                  <div className="w-10 h-10 bg-[var(--teal)] rounded-full flex items-center justify-center flex-shrink-0">
-                    <Baby className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-[var(--navy)] dark:text-white mb-1">
-                      {language === 'en' ? 'Age Requirements' : 'Exigences d\'Âge'}
-                    </h3>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm">
-                      {activity.ageRestrictions[language]}
-                    </p>
-                  </div>
-                </div>
+            {hasRequirements && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+              >
+                <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
+                  {t('activity.ageRestrictions')}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {ageRestriction && (
+                    <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl">
+                      <div className="w-10 h-10 bg-[var(--teal)] rounded-full flex items-center justify-center flex-shrink-0">
+                        <Baby className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-[var(--navy)] dark:text-white mb-1">
+                          {language === 'en' ? 'Age Requirements' : 'Exigences d\'Âge'}
+                        </h3>
+                        <p className="text-gray-700 dark:text-gray-300 text-sm">
+                          {ageRestriction}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 {activity.maxWeight && (
                   <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl">
                     <div className="w-10 h-10 bg-[var(--gold)] rounded-full flex items-center justify-center flex-shrink-0">
@@ -344,6 +359,7 @@ export default function ActivityDetail() {
                 )}
               </div>
             </motion.div>
+            )}
 
             <motion.div
               initial={{ y: 20, opacity: 0 }}
@@ -364,32 +380,34 @@ export default function ActivityDetail() {
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
-            >
-              <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
-                {t('activity.included')}
-              </h2>
-              <ul className="space-y-2">
-                {activity.included[language].map((item, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 + index * 0.05 }}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 dark:text-gray-300">{item}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
+            {includedItems.length > 0 && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+              >
+                <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
+                  {t('activity.included')}
+                </h2>
+                <ul className="space-y-2">
+                  {includedItems.map((item, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.5 + index * 0.05 }}
+                      className="flex items-start gap-3"
+                    >
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700 dark:text-gray-300">{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
 
-            {activity.excluded && (
+            {excludedItems.length > 0 && (
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -400,7 +418,7 @@ export default function ActivityDetail() {
                   {t('activity.excluded')}
                 </h2>
                 <ul className="space-y-2">
-                  {activity.excluded[language].map((item, index) => (
+                  {excludedItems.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <XCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                       <span className="text-gray-700 dark:text-gray-300">{item}</span>

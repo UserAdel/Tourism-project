@@ -35,7 +35,7 @@ export interface Activity {
   slug: string;
   category: string;
   description: LocalizedString;
-  highlights: {
+  highlights?: {
     en: string[];
     fr: string[];
   };
@@ -47,14 +47,14 @@ export interface Activity {
     visitor?: number;
   };
   pricingFields?: PricingField[];
-  ageRestrictions: LocalizedString;
+  ageRestrictions?: LocalizedString;
   duration: string;
   startTime?: string;
   endTime?: string;
   times?: string[];
   maxCapacity?: number;
   maxWeight?: number;
-  included: {
+  included?: {
     en: string[];
     fr: string[];
   };

@@ -1,9 +1,37 @@
 import { useState } from 'react';
+import { isAxiosError } from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import Button from '../components/Button';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCreateContactRequest } from '../hooks/queries';
+
+function getContactErrorMessage(error: unknown, language: 'en' | 'fr') {
+  const fallback =
+    language === 'en'
+      ? 'Could not save your message. Please try again.'
+      : 'Impossible d enregistrer votre message. Veuillez réessayer.';
+
+  if (!isAxiosError(error)) {
+    return fallback;
+  }
+
+  if (!error.response) {
+    return language === 'en'
+      ? 'Could not reach the server. Please make sure the API is running.'
+      : 'Impossible de joindre le serveur. Veuillez verifier que l API fonctionne.';
+  }
+
+  const responseData = error.response.data as {
+    message?: string;
+    errors?: Record<string, string[]>;
+  };
+  const firstFieldError = responseData.errors
+    ? Object.values(responseData.errors).flat()[0]
+    : undefined;
+
+  return firstFieldError || responseData.message || fallback;
+}
 
 export default function Contact() {
   const { language, t } = useLanguage();
@@ -24,27 +52,29 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const whatsappMessage = `
-*Contact Form Message*
-
-*Name:* ${formData.name}
-*Email:* ${formData.email}
-*Message:* ${formData.message}
-    `.trim();
+    // const whatsappMessage = `
+    // *Contact Form Message*
+    //
+    // *Name:* ${formData.name}
+    // *Email:* ${formData.email}
+    // *Message:* ${formData.message}
+    // `.trim();
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    };
 
     try {
-      await createContactRequest.mutateAsync(formData);
+      await createContactRequest.mutateAsync(payload);
+      setFormData(payload);
       setSubmitted(true);
-      window.open(
-        `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
-        '_blank'
-      );
+      // window.open(
+      //   `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
+      //   '_blank'
+      // );
     } catch (error) {
-      toast.error(
-        language === 'en'
-          ? 'Could not save your message. Please try again.'
-          : 'Impossible d enregistrer votre message. Veuillez réessayer.'
-      );
+      toast.error(getContactErrorMessage(error, language));
     } finally {
       setIsSubmitting(false);
     }
@@ -176,10 +206,20 @@ export default function Contact() {
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
                   {language === 'en'
-                    ? 'Your message was saved and WhatsApp has opened for quick follow-up.'
-                    : 'Votre message a été enregistré et WhatsApp est ouvert pour un suivi rapide.'}
+                    ? 'Your message was saved. We will get back to you soon.'
+                    : 'Votre message a été enregistré. Nous vous répondrons bientôt.'}
                 </p>
-                <Button onClick={() => setSubmitted(false)} variant="outline">
+                <Button
+                  onClick={() => {
+                    setFormData({
+                      name: '',
+                      email: '',
+                      message: '',
+                    });
+                    setSubmitted(false);
+                  }}
+                  variant="outline"
+                >
                   {language === 'en' ? 'Send Another Message' : 'Envoyer Un Autre Message'}
                 </Button>
               </div>
@@ -195,6 +235,8 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
+                    minLength={2}
+                    maxLength={120}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                   />
                 </div>
@@ -209,6 +251,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    maxLength={254}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                   />
                 </div>
@@ -222,6 +265,8 @@ export default function Contact() {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    minLength={5}
+                    maxLength={3000}
                     rows={6}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                   />

@@ -38,7 +38,7 @@ export interface AdminBookingRequest extends BookingFormData {
     transactionId?: string;
     updatedAt?: string;
   } | null;
-  status: 'new' | 'contacted' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'new' | 'contacted' | 'confirmed' | 'cancelled';
   adminNotes?: string;
   createdAt: string;
   updatedAt: string;
@@ -296,6 +296,20 @@ export function useUpdateContactRequest() {
       adminNotes?: string;
     }) => {
       const response = await api.patch(`/admin/contacts/${id}`, { status, adminNotes });
+      return response.data.data.contact as AdminContactRequest;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+    },
+  });
+}
+
+export function useDeleteContactRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete(`/admin/contacts/${id}`);
       return response.data.data.contact as AdminContactRequest;
     },
     onSuccess: () => {

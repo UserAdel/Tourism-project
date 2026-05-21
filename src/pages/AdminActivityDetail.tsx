@@ -30,6 +30,7 @@ import ActivityFormModal, {
   formToActivity,
   getVideoThumbnailFiles,
 } from '../components/admin/ActivityFormModal';
+import ConfirmActionModal from '../components/admin/ConfirmActionModal';
 import type { ActivityReview } from '../types';
 import { resolveActivityImageUrl } from '../utils/activityImages';
 import { getPrimaryPrice, getPricingFields } from '../utils/pricing';
@@ -65,6 +66,8 @@ export default function AdminActivityDetail() {
     rating: 5,
     comment: '',
   });
+  const [reviewToDelete, setReviewToDelete] = useState<ActivityReview | null>(null);
+  const [isDeletingReview, setIsDeletingReview] = useState(false);
 
   const categories = Array.from(
     new Set([
@@ -189,14 +192,18 @@ export default function AdminActivityDetail() {
     }
   };
 
-  const handleReviewDelete = async (reviewId: string) => {
-    if (!id || !window.confirm('Delete this review?')) return;
+  const handleReviewDelete = async () => {
+    if (!id || !reviewToDelete) return;
 
+    setIsDeletingReview(true);
     try {
-      await deleteReview.mutateAsync({ activityId: id, reviewId });
+      await deleteReview.mutateAsync({ activityId: id, reviewId: reviewToDelete._id });
       toast.success('Review deleted');
+      setReviewToDelete(null);
     } catch {
       toast.error('Could not delete review');
+    } finally {
+      setIsDeletingReview(false);
     }
   };
 
@@ -221,6 +228,16 @@ export default function AdminActivityDetail() {
   const price = getPrimaryPrice(activity);
   const pricingFields = getPricingFields(activity);
   const reviews = activity.reviews ?? [];
+  const highlightsEn = activity.highlights?.en ?? [];
+  const highlightsFr = activity.highlights?.fr ?? [];
+  const includedEn = activity.included?.en ?? [];
+  const includedFr = activity.included?.fr ?? [];
+  const detailLists = [
+    { title: 'Highlights EN', items: highlightsEn },
+    { title: 'Highlights FR', items: highlightsFr },
+    { title: 'Included EN', items: includedEn },
+    { title: 'Included FR', items: includedFr },
+  ].filter((list) => list.items.length > 0);
 
   return (
     <AdminLayout counts={counts}>
@@ -379,12 +396,13 @@ export default function AdminActivityDetail() {
           </div>
         </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <DetailList title="Highlights EN" items={activity.highlights.en} />
-          <DetailList title="Highlights FR" items={activity.highlights.fr} />
-          <DetailList title="Included EN" items={activity.included.en} />
-          <DetailList title="Included FR" items={activity.included.fr} />
-        </div>
+        {detailLists.length > 0 && (
+          <div className="mt-6 grid gap-6 lg:grid-cols-2">
+            {detailLists.map((list) => (
+              <DetailList key={list.title} title={list.title} items={list.items} />
+            ))}
+          </div>
+        )}
 
         <section className="mt-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -551,7 +569,7 @@ export default function AdminActivityDetail() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleReviewDelete(review._id)}
+                            onClick={() => setReviewToDelete(review)}
                             disabled={deleteReview.isPending}
                             className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60 dark:border-red-900/60 dark:text-red-300 dark:hover:bg-red-950/30"
                           >
@@ -577,6 +595,15 @@ export default function AdminActivityDetail() {
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleActivitySubmit}
           setFormValue={setFormValue}
+        />
+        <ConfirmActionModal
+          isOpen={Boolean(reviewToDelete)}
+          title="Delete review?"
+          description={`This will permanently delete the review from ${reviewToDelete?.name ?? 'this guest'}.`}
+          confirmLabel="Delete review"
+          isConfirming={isDeletingReview}
+          onClose={() => setReviewToDelete(null)}
+          onConfirm={handleReviewDelete}
         />
     </AdminLayout>
   );

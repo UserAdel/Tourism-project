@@ -85,8 +85,8 @@ export const emptyActivityForm: ActivityFormState = {
   category: 'island-trips',
   descriptionEn: '',
   descriptionFr: '',
-  highlights: [{ ...emptyItem }],
-  included: [{ ...emptyItem }],
+  highlights: [],
+  included: [],
   excluded: [],
   pricingFields: defaultPricingFields.map((field) => ({ ...field })),
   ageRestrictionsEn: '',
@@ -113,7 +113,7 @@ export const emptyActivityForm: ActivityFormState = {
 };
 
 function toItems(en: string[] = [], fr: string[] = []) {
-  const length = Math.max(en.length, fr.length, 1);
+  const length = Math.max(en.length, fr.length);
   return Array.from({ length }, (_, index) => ({
     en: en[index] ?? '',
     fr: fr[index] ?? '',
@@ -254,12 +254,12 @@ export function activityToForm(activity: AdminActivity): ActivityFormState {
     category: activity.category,
     descriptionEn: activity.description.en,
     descriptionFr: activity.description.fr,
-    highlights: toItems(activity.highlights.en, activity.highlights.fr),
-    included: toItems(activity.included.en, activity.included.fr),
+    highlights: toItems(activity.highlights?.en, activity.highlights?.fr),
+    included: toItems(activity.included?.en, activity.included?.fr),
     excluded: activity.excluded ? toItems(activity.excluded.en, activity.excluded.fr) : [],
     pricingFields: pricingFieldsToFormItems(pricingFields),
-    ageRestrictionsEn: activity.ageRestrictions.en,
-    ageRestrictionsFr: activity.ageRestrictions.fr,
+    ageRestrictionsEn: activity.ageRestrictions?.en ?? '',
+    ageRestrictionsFr: activity.ageRestrictions?.fr ?? '',
     duration: activity.duration,
     startTime: activity.startTime ?? '',
     endTime: activity.endTime ?? '',
@@ -302,7 +302,10 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
     },
     pricing: pricingFieldsToLegacyPricing(pricingFields),
     pricingFields,
-    ageRestrictions: { en: form.ageRestrictionsEn, fr: form.ageRestrictionsFr },
+    ageRestrictions: {
+      en: form.ageRestrictionsEn.trim(),
+      fr: form.ageRestrictionsFr.trim(),
+    },
     duration: form.duration,
     startTime: form.startTime,
     endTime: form.endTime,
@@ -346,6 +349,16 @@ export function getVideoThumbnailFiles(form: ActivityFormState) {
   );
 }
 
+function openNativePicker(input: HTMLInputElement) {
+  const pickerInput = input as HTMLInputElement & { showPicker?: () => void };
+
+  try {
+    pickerInput.showPicker?.();
+  } catch {
+    // Some browsers only allow showPicker during direct user activation.
+  }
+}
+
 function TextField({
   label,
   value,
@@ -369,6 +382,22 @@ function TextField({
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onClick={(event) => {
+            if (type === 'time') {
+              openNativePicker(event.currentTarget);
+            }
+          }}
+          onFocus={(event) => {
+            if (type === 'time') {
+              openNativePicker(event.currentTarget);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (type === 'time' && (event.key === 'Enter' || event.key === ' ')) {
+              event.preventDefault();
+              openNativePicker(event.currentTarget);
+            }
+          }}
           required={required}
           className={`w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white ${
             type === 'time' ? 'admin-time-input pr-10' : ''
@@ -737,8 +766,32 @@ export default function ActivityFormModal({
         onSubmit={onSubmit}
         className="w-full max-w-5xl rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-[var(--dark-card)]"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)]">
-          <h2 className="font-semibold text-[var(--navy)] dark:text-white">{title}</h2>
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)]">
+          <div className="flex flex-wrap items-center gap-4">
+            <h2 className="font-semibold text-[var(--navy)] dark:text-white">{title}</h2>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={form.isActive}
+              onClick={() => setFormValue('isActive', !form.isActive)}
+              className="flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 text-left hover:border-[var(--teal)] dark:border-gray-700"
+            >
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                Active
+              </span>
+              <span
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  form.isActive ? 'bg-[var(--teal)]' : 'bg-gray-300 dark:bg-gray-600'
+                }`}
+              >
+                <span
+                  className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                    form.isActive ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </span>
+            </button>
+          </div>
           <button
             type="button"
             onClick={onClose}
@@ -894,13 +947,11 @@ export default function ActivityFormModal({
             <BilingualItemsEditor
               label="Highlights"
               items={form.highlights}
-              minItems={1}
               onChange={(items) => setFormValue('highlights', items)}
             />
             <BilingualItemsEditor
               label="Included"
               items={form.included}
-              minItems={1}
               onChange={(items) => setFormValue('included', items)}
             />
             <BilingualItemsEditor
@@ -910,8 +961,8 @@ export default function ActivityFormModal({
             />
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <TextField label="Age EN" value={form.ageRestrictionsEn} onChange={(value) => setFormValue('ageRestrictionsEn', value)} required />
-              <TextField label="Age FR" value={form.ageRestrictionsFr} onChange={(value) => setFormValue('ageRestrictionsFr', value)} required />
+              <TextField label="Age EN" value={form.ageRestrictionsEn} onChange={(value) => setFormValue('ageRestrictionsEn', value)} />
+              <TextField label="Age FR" value={form.ageRestrictionsFr} onChange={(value) => setFormValue('ageRestrictionsFr', value)} />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">

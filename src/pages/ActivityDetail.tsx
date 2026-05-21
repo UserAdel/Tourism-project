@@ -44,6 +44,11 @@ export default function ActivityDetail() {
   const pricingFields = getPricingFields(activity);
   const primaryPricing = getPrimaryPricingField(activity);
   const isPrivatePrice = primaryPricing?.id === 'private';
+  const highlights = (activity.highlights?.[language] ?? []).filter(Boolean);
+  const includedItems = (activity.included?.[language] ?? []).filter(Boolean);
+  const excludedItems = (activity.excluded?.[language] ?? []).filter(Boolean);
+  const ageRestriction = activity.ageRestrictions?.[language]?.trim() ?? '';
+  const hasRestrictions = Boolean(ageRestriction || activity.maxWeight);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -100,19 +105,21 @@ export default function ActivityDetail() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
-                {t('activity.highlights')}
-              </h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {activity.highlights[language].map((highlight, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-[var(--teal)] mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {highlights.length > 0 && (
+              <div className="bg-white rounded-2xl p-8 shadow-lg">
+                <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
+                  {t('activity.highlights')}
+                </h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {highlights.map((highlight, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-[var(--teal)] mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="bg-white rounded-2xl p-8 shadow-lg">
               <h2 className="text-2xl font-bold text-[var(--navy)] mb-6">
@@ -128,27 +135,29 @@ export default function ActivityDetail() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
-                {t('activity.included')}
-              </h2>
-              <ul className="space-y-2">
-                {activity.included[language].map((item, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {includedItems.length > 0 && (
+              <div className="bg-white rounded-2xl p-8 shadow-lg">
+                <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
+                  {t('activity.included')}
+                </h2>
+                <ul className="space-y-2">
+                  {includedItems.map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-            {activity.excluded && (
+            {excludedItems.length > 0 && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
                 <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
                   {t('activity.excluded')}
                 </h2>
                 <ul className="space-y-2">
-                  {activity.excluded[language].map((item, index) => (
+                  {excludedItems.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <XCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
                       <span className="text-gray-700">{item}</span>
@@ -158,18 +167,20 @@ export default function ActivityDetail() {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
-                {t('activity.ageRestrictions')}
-              </h2>
-              <p className="text-gray-700">{activity.ageRestrictions[language]}</p>
-              {activity.maxWeight && (
-                <p className="text-gray-700 mt-2">
-                  {language === 'en' ? 'Maximum weight: ' : 'Poids maximum: '}
-                  {activity.maxWeight}kg
-                </p>
-              )}
-            </div>
+            {hasRestrictions && (
+              <div className="bg-white rounded-2xl p-8 shadow-lg">
+                <h2 className="text-2xl font-bold text-[var(--navy)] mb-4">
+                  {t('activity.ageRestrictions')}
+                </h2>
+                {ageRestriction && <p className="text-gray-700">{ageRestriction}</p>}
+                {activity.maxWeight && (
+                  <p className="text-gray-700 mt-2">
+                    {language === 'en' ? 'Maximum weight: ' : 'Poids maximum: '}
+                    {activity.maxWeight}kg
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-1">

@@ -20,8 +20,7 @@ import {
   useAdminDashboard,
   useCreateAdminActivity,
   useCreateAdminCategory,
-  useDeleteAdminActivity,
-  useDeleteAdminCategory,
+  useDeleteContactRequest,
   useUpdateAdminActivity,
   useUpdateAdminCategory,
   useUpdateBookingRequest,
@@ -36,25 +35,42 @@ import ActivityFormModal, {
   getVideoThumbnailFiles,
 } from '../components/admin/ActivityFormModal';
 import AdminLayout from '../components/admin/AdminLayout';
+import ConfirmActionModal from '../components/admin/ConfirmActionModal';
 import { getPrimaryPrice } from '../utils/pricing';
 
 type AdminTab = 'bookings' | 'contacts' | 'activities' | 'categories';
 
+interface ConfirmAction {
+  title: string;
+  description: string;
+  confirmLabel: string;
+  onConfirm: () => Promise<void>;
+}
+
 interface CategoryFormState {
-  id: string;
   nameEn: string;
   nameFr: string;
   isActive: boolean;
 }
 
 const emptyCategoryForm: CategoryFormState = {
-  id: '',
   nameEn: '',
   nameFr: '',
   isActive: true,
 };
 
+function slugifyCategoryName(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 const bookingStatuses: AdminBookingRequest['status'][] = [
+  'pending',
   'new',
   'contacted',
   'confirmed',
@@ -87,6 +103,7 @@ function formatPaidAmount(amount?: number) {
 
 function statusClass(status: string) {
   if (status === 'new') return 'bg-blue-50 text-blue-800 border-blue-200';
+  if (status === 'pending') return 'bg-yellow-50 text-yellow-800 border-yellow-200';
   if (status === 'confirmed' || status === 'replied') {
     return 'bg-green-50 text-green-800 border-green-200';
   }
@@ -252,14 +269,45 @@ function CategoryFormModal({
         onSubmit={onSubmit}
         className="w-full max-w-lg rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]"
       >
-        <div className="flex items-start justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700">
-          <div>
-            <h2 className="text-xl font-bold text-[var(--navy)] dark:text-white">
-              {isEditing ? 'Edit Category' : 'Create Category'}
-            </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
-              Add the category names used across activities.
-            </p>
+        <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-bold text-[var(--navy)] dark:text-white">
+                  {isEditing ? 'Edit Category' : 'Create Category'}
+                </h2>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+                  Add the category names used across activities.
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={form.isActive}
+                onClick={() =>
+                  setCategoryForm((current) => ({
+                    ...current,
+                    isActive: !current.isActive,
+                  }))
+                }
+                className="flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 text-left hover:border-[var(--teal)] dark:border-gray-700"
+              >
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                  Active
+                </span>
+                <span
+                  className={`relative h-6 w-11 rounded-full transition-colors ${
+                    form.isActive ? 'bg-[var(--teal)]' : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                      form.isActive ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </span>
+              </button>
+            </div>
           </div>
           <button
             type="button"
@@ -273,21 +321,6 @@ function CategoryFormModal({
         </div>
 
         <div className="space-y-4 px-5 py-5">
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Category ID
-            </span>
-            <input
-              value={form.id}
-              onChange={(event) =>
-                setCategoryForm((current) => ({ ...current, id: event.target.value }))
-              }
-              required
-              placeholder="sea-adventures"
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-            />
-          </label>
-
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               English Name
@@ -316,20 +349,6 @@ function CategoryFormModal({
             />
           </label>
 
-          <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-            <input
-              type="checkbox"
-              checked={form.isActive}
-              onChange={(event) =>
-                setCategoryForm((current) => ({
-                  ...current,
-                  isActive: event.target.checked,
-                }))
-              }
-              className="h-4 w-4 rounded border-gray-300 text-[var(--teal)] focus:ring-[var(--teal)]"
-            />
-            Active
-          </label>
         </div>
 
         <div className="flex justify-end gap-3 border-t border-gray-200 px-5 py-4 dark:border-gray-700">
@@ -375,15 +394,28 @@ export default function AdminDashboard() {
   );
   const [bookingDateFrom, setBookingDateFrom] = useState('');
   const [bookingDateTo, setBookingDateTo] = useState('');
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [isConfirmingAction, setIsConfirmingAction] = useState(false);
   const { data, isLoading, isError } = useAdminDashboard();
   const updateBooking = useUpdateBookingRequest();
   const updateContact = useUpdateContactRequest();
+  const deleteContact = useDeleteContactRequest();
   const createActivity = useCreateAdminActivity();
   const updateActivity = useUpdateAdminActivity();
-  const deleteActivity = useDeleteAdminActivity();
   const createCategory = useCreateAdminCategory();
   const updateCategory = useUpdateAdminCategory();
-  const deleteCategory = useDeleteAdminCategory();
+
+  const handleConfirmAction = async () => {
+    if (!confirmAction) return;
+
+    setIsConfirmingAction(true);
+    try {
+      await confirmAction.onConfirm();
+      setConfirmAction(null);
+    } finally {
+      setIsConfirmingAction(false);
+    }
+  };
 
   const stats = data?.stats ?? {
     activities: 0,
@@ -440,11 +472,10 @@ export default function AdminDashboard() {
           .filter((value): value is string => Boolean(value))
           .some((value) => value.toLowerCase().includes(query));
       const matchesType = bookingTypeFilter === 'all' || booking.status === bookingTypeFilter;
-      const hasSuccessfulPayment = booking.payment?.status === 'success';
       const matchesDateFrom = !bookingDateFrom || tripDate >= bookingDateFrom;
       const matchesDateTo = !bookingDateTo || tripDate <= bookingDateTo;
 
-      return hasSuccessfulPayment && matchesSearch && matchesType && matchesDateFrom && matchesDateTo;
+      return matchesSearch && matchesType && matchesDateFrom && matchesDateTo;
     }) ?? [];
 
   const setFormValue = <Key extends keyof ActivityFormState>(
@@ -478,7 +509,7 @@ export default function AdminDashboard() {
     event.preventDefault();
 
     const payload = {
-      id: categoryForm.id,
+      id: slugifyCategoryName(categoryForm.nameEn),
       name: {
         en: categoryForm.nameEn,
         fr: categoryForm.nameFr,
@@ -497,7 +528,7 @@ export default function AdminDashboard() {
       resetCategoryForm();
       setIsCategoryModalOpen(false);
     } catch {
-      toast.error('Could not save category. Check that the ID is unique.');
+      toast.error('Could not save category. Check that the English name is unique.');
     }
   };
 
@@ -762,7 +793,7 @@ export default function AdminDashboard() {
                       <tr>
                         <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                           {data?.bookings.length
-                            ? 'No successful paid bookings match your filters.'
+                            ? 'No bookings match your filters.'
                             : 'No booking requests yet.'}
                         </td>
                       </tr>
@@ -795,25 +826,51 @@ export default function AdminDashboard() {
                         <p className="text-sm text-gray-500 dark:text-gray-300">{contact.email}</p>
                         <p className="text-xs text-gray-400">{formatDate(contact.createdAt)}</p>
                       </div>
-                      <select
-                        value={contact.status}
-                        onChange={(event) =>
-                          updateContact.mutate({
-                            id: contact._id,
-                            status: event.target.value as AdminContactRequest['status'],
-                            adminNotes: contact.adminNotes,
-                          })
-                        }
-                        className={`rounded-full border px-3 py-1 text-sm font-medium ${statusClass(
-                          contact.status
-                        )}`}
-                      >
-                        {contactStatuses.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={contact.status}
+                          onChange={(event) =>
+                            updateContact.mutate({
+                              id: contact._id,
+                              status: event.target.value as AdminContactRequest['status'],
+                              adminNotes: contact.adminNotes,
+                            })
+                          }
+                          className={`rounded-full border px-3 py-1 text-sm font-medium ${statusClass(
+                            contact.status
+                          )}`}
+                        >
+                          {contactStatuses.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setConfirmAction({
+                              title: 'Delete contact request?',
+                              description: `This will permanently delete the message from ${contact.name}.`,
+                              confirmLabel: 'Delete contact',
+                              onConfirm: async () => {
+                                try {
+                                  await deleteContact.mutateAsync(contact._id);
+                                  toast.success('Contact request deleted');
+                                } catch {
+                                  toast.error('Could not delete contact request');
+                                }
+                              },
+                            });
+                          }}
+                          className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-200"
+                          aria-label="Delete contact request"
+                          title="Delete"
+                          disabled={deleteContact.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                     <p className="mt-4 whitespace-pre-wrap text-gray-700 dark:text-gray-300">
                       {contact.message}
@@ -961,23 +1018,6 @@ export default function AdminDashboard() {
                               >
                                 <Edit3 className="h-4 w-4" />
                               </button>
-                              <button
-                                type="button"
-                                onClick={async () => {
-                                  try {
-                                    await deleteActivity.mutateAsync(activity._id);
-                                    toast.success('Activity archived');
-                                  } catch {
-                                    toast.error('Could not archive activity');
-                                  }
-                                }}
-                                className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-200"
-                                aria-label="Archive activity"
-                                title="Archive"
-                                disabled={!activity.isActive}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
                             </div>
                           </td>
                         </tr>
@@ -1066,7 +1106,6 @@ export default function AdminDashboard() {
                                     onClick={() => {
                                       setEditingCategoryId(category._id);
                                       setCategoryForm({
-                                        id: category.id,
                                         nameEn: category.name.en,
                                         nameFr: category.name.fr,
                                         isActive: category.isActive,
@@ -1078,23 +1117,6 @@ export default function AdminDashboard() {
                                     title="Edit"
                                   >
                                     <Edit3 className="h-4 w-4" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={async () => {
-                                      try {
-                                        await deleteCategory.mutateAsync(category._id);
-                                        toast.success('Category archived');
-                                      } catch {
-                                        toast.error('Could not archive category');
-                                      }
-                                    }}
-                                    className="cursor-pointer rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 disabled:cursor-not-allowed dark:border-gray-600 dark:text-gray-200"
-                                    aria-label="Archive category"
-                                    title="Archive"
-                                    disabled={!category.isActive}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
                                   </button>
                                 </div>
                               </td>
@@ -1135,6 +1157,15 @@ export default function AdminDashboard() {
           setCategoryForm={setCategoryForm}
         />
         <BookingDetailModal booking={selectedBooking} onClose={() => setSelectedBooking(null)} />
+        <ConfirmActionModal
+          isOpen={Boolean(confirmAction)}
+          title={confirmAction?.title ?? ''}
+          description={confirmAction?.description ?? ''}
+          confirmLabel={confirmAction?.confirmLabel}
+          isConfirming={isConfirmingAction}
+          onClose={() => setConfirmAction(null)}
+          onConfirm={handleConfirmAction}
+        />
     </AdminLayout>
   );
 }
