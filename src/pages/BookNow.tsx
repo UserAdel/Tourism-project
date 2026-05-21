@@ -9,6 +9,9 @@ import { toast } from 'sonner';
 import { useActivities, useCreateBookingRequest, useInitiatePayment } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 
+type GuestCountField = 'adults' | 'children';
+type BookingFormState = Omit<BookingFormData, GuestCountField> & Record<GuestCountField, number | ''>;
+
 export default function BookNow() {
   const { language, t } = useLanguage();
   const [searchParams] = useSearchParams();
@@ -18,7 +21,7 @@ export default function BookNow() {
   const initiatePayment = useInitiatePayment();
   const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
 
-  const [formData, setFormData] = useState<BookingFormData>({
+  const [formData, setFormData] = useState<BookingFormState>({
     fullName: '',
     email: '',
     phone: '',
@@ -41,25 +44,53 @@ export default function BookNow() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    const nextValue = name === 'adults' || name === 'children' ? Number(value) : value;
+
+    if (name === 'adults' || name === 'children') {
+      if (value === '') {
+        setFormData((prev) => ({ ...prev, [name]: '' }));
+        return;
+      }
+
+      if (!/^\d+$/.test(value)) return;
+
+      setFormData((prev) => ({ ...prev, [name]: Number(value) }));
+      return;
+    }
+
+    const nextValue = value;
     setFormData((prev) => ({ ...prev, [name]: nextValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.adults === '' || formData.adults < 1 || formData.children === '') {
+      toast.error(
+        language === 'en'
+          ? 'Please enter at least 1 adult and 0 or more children.'
+          : 'Veuillez entrer au moins 1 adulte et 0 enfant ou plus.'
+      );
+      return;
+    }
+
     setIsSubmitting(true);
 
     const selectedActivityData = activities.find((a) => a.slug === formData.selectedActivity);
+    const bookingPayload: BookingFormData = {
+      ...formData,
+      adults: formData.adults,
+      children: formData.children,
+    };
 
     try {
       // 1. Create booking request
-      const booking = await createBookingRequest.mutateAsync(formData);
+      const booking = await createBookingRequest.mutateAsync(bookingPayload);
 
       // 2. Calculate total amount from activity pricing
       const pricing = selectedActivityData?.pricing;
       const adultPrice = pricing?.adult || 0;
       const childPrice = pricing?.child || 0;
-      const totalAmount = adultPrice * formData.adults + childPrice * formData.children;
+      const totalAmount = adultPrice * bookingPayload.adults + childPrice * bookingPayload.children;
 
       if (totalAmount <= 0) {
         setIsSubmitting(false);
@@ -281,6 +312,8 @@ export default function BookNow() {
                   name="adults"
                   value={formData.adults}
                   onChange={handleChange}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   required
                   placeholder={language === 'en' ? 'e.g. 2' : 'ex. 2'}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
@@ -296,6 +329,8 @@ export default function BookNow() {
                   name="children"
                   value={formData.children}
                   onChange={handleChange}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   required
                   placeholder={language === 'en' ? 'e.g. 0' : 'ex. 0'}
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
