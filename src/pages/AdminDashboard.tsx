@@ -70,7 +70,6 @@ function slugifyCategoryName(value: string) {
 }
 
 const bookingStatuses: AdminBookingRequest['status'][] = [
-  'pending',
   'new',
   'contacted',
   'confirmed',
@@ -572,7 +571,7 @@ export default function AdminDashboard() {
             Admin Dashboard
           </h2>
           <p className="mt-2 text-gray-500 dark:text-gray-300">
-            Manage activities, booking requests, and contact messages.
+            Manage activities, paid bookings, and contact messages.
           </p>
         </div>
 
@@ -585,8 +584,8 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {[
             { label: 'Activities', value: stats.activities, icon: Tags },
-            { label: 'Bookings', value: stats.bookings, icon: CheckCircle },
-            { label: 'New bookings', value: stats.newBookings, icon: CheckCircle },
+            { label: 'Paid bookings', value: stats.bookings, icon: CheckCircle },
+            { label: 'New paid bookings', value: stats.newBookings, icon: CheckCircle },
             { label: 'Contacts', value: stats.contacts, icon: Mail },
             { label: 'New contacts', value: stats.newContacts, icon: MessageSquare },
             { label: 'Categories', value: stats.categories, icon: Tags },
@@ -631,7 +630,7 @@ export default function AdminDashboard() {
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                   aria-label="Filter bookings by type"
                 >
-                  <option value="all">All types</option>
+                  <option value="all">All statuses</option>
                   {bookingStatuses.map((status) => (
                     <option key={status} value={status}>
                       {status}
@@ -794,7 +793,7 @@ export default function AdminDashboard() {
                         <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                           {data?.bookings.length
                             ? 'No bookings match your filters.'
-                            : 'No booking requests yet.'}
+                            : 'No successful paid bookings yet.'}
                         </td>
                       </tr>
                     )}
