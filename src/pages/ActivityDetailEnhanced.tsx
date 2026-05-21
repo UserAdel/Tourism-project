@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { activities as fallbackActivities } from '../data/activities';
@@ -111,6 +111,11 @@ export default function ActivityDetail() {
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsCountryDropdownOpen(false);
+  }, [slug]);
 
   const activities = apiActivities ?? fallbackActivityList;
   const activity = apiActivity ?? fallbackActivityList.find((a) => a.slug === slug);
