@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
-import { CalendarCheck, Inbox, Mail, Tags } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { CalendarCheck, Inbox, LogOut, Mail, Tags } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store/useAuthStore';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -27,7 +28,14 @@ function getActiveId(pathname: string) {
 
 export default function AdminLayout({ children, activeTab, counts }: AdminLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
   const routeActiveId = getActiveId(location.pathname);
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/admin/login', { replace: true });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[var(--dark-page)] lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
@@ -71,6 +79,15 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
             );
           })}
         </nav>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="mt-5 flex w-full items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50 hover:text-red-600 dark:text-gray-300 dark:hover:bg-[var(--dark-muted)]"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
       </aside>
 
       <main className="min-w-0 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
