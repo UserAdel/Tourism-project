@@ -119,7 +119,7 @@ export default function BookNow() {
       } else {
         throw new Error('No session URL returned');
       }
-    } catch (error) {
+    } catch () {
       setIsSubmitting(false);
       toast.error(
         language === 'en'
