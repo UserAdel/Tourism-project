@@ -998,11 +998,6 @@ export default function ActivityFormModal({
               </div>
             </section>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <TextField label="Max capacity" type="number" value={form.maxCapacity} onChange={(value) => setFormValue('maxCapacity', value)} />
-              <TextField label="Max weight" type="number" value={form.maxWeight} onChange={(value) => setFormValue('maxWeight', value)} />
-            </div>
-
             <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
               <h3 className="mb-3 font-semibold text-[var(--navy)] dark:text-white">Activity options</h3>
               <div className="grid gap-4 sm:grid-cols-3">
