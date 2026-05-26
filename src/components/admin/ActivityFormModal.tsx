@@ -462,7 +462,7 @@ function BilingualItemsEditor({
 
   return (
     <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h3 className="font-semibold text-[var(--navy)] dark:text-white">{label}</h3>
         <button
           type="button"
@@ -528,7 +528,7 @@ function PricingFieldsEditor({
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="mb-1 flex flex-wrap items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             Adult EUR
             <span className="rounded-full bg-[var(--teal)] px-2 py-0.5 text-xs font-semibold text-white">
               Main price
@@ -592,7 +592,7 @@ function VideoHighlightsEditor({
 
   return (
     <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h3 className="font-semibold text-[var(--navy)] dark:text-white">Video Highlights</h3>
         <button
           type="button"
@@ -679,7 +679,7 @@ function VideoHighlightsEditor({
                 <button
                   type="button"
                   onClick={() => onChange(videos.filter((_, videoIndex) => videoIndex !== index))}
-                  className="h-10 rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200"
+                  className="h-10 w-full rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200 md:w-auto"
                   aria-label={`Remove ${video.title || 'video highlight'}`}
                   title="Remove"
                 >
@@ -761,20 +761,22 @@ export default function ActivityFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/50 px-4 py-8 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/50 px-3 py-4 backdrop-blur-sm sm:px-4 sm:py-8">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-5xl rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-[var(--dark-card)]"
+        className="flex max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col rounded-lg border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-[var(--dark-card)] sm:max-h-[calc(100dvh-4rem)]"
       >
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)]">
-          <div className="flex flex-wrap items-center gap-4">
-            <h2 className="font-semibold text-[var(--navy)] dark:text-white">{title}</h2>
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-gray-200 bg-white px-4 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)] sm:px-5">
+          <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
+            <h2 className="min-w-0 break-words font-semibold text-[var(--navy)] dark:text-white">
+              {title}
+            </h2>
             <button
               type="button"
               role="switch"
               aria-checked={form.isActive}
               onClick={() => setFormValue('isActive', !form.isActive)}
-              className="flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 text-left hover:border-[var(--teal)] dark:border-gray-700"
+              className="flex shrink-0 items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 text-left hover:border-[var(--teal)] dark:border-gray-700"
             >
               <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
                 Active
@@ -795,7 +797,7 @@ export default function ActivityFormModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200"
+            className="shrink-0 rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200"
             aria-label="Close activity editor"
             title="Close"
           >
@@ -803,7 +805,7 @@ export default function ActivityFormModal({
           </button>
         </div>
 
-        <div className="max-h-[calc(100vh-12rem)] overflow-y-auto p-5">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <TextField label="Name EN" value={form.nameEn} onChange={(value) => setFormValue('nameEn', value)} required />
@@ -1069,7 +1071,7 @@ export default function ActivityFormModal({
           </div>
         </div>
 
-        <div className="sticky bottom-0 flex justify-end gap-3 border-t border-gray-200 bg-white px-5 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)]">
+        <div className="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-gray-200 bg-white px-4 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)] sm:flex-row sm:justify-end sm:px-5">
           <button
             type="button"
             onClick={onClose}

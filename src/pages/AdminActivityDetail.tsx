@@ -41,7 +41,10 @@ function DetailList({ title, items }: { title: string; items: string[] }) {
       <h2 className="mb-3 font-semibold text-[var(--navy)] dark:text-white">{title}</h2>
       <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
         {items.map((item) => (
-          <li key={item} className="rounded-lg bg-gray-50 px-3 py-2 dark:bg-[var(--dark-muted)]">
+          <li
+            key={item}
+            className="break-words rounded-lg bg-gray-50 px-3 py-2 dark:bg-[var(--dark-muted)]"
+          >
             {item}
           </li>
         ))}
@@ -251,7 +254,7 @@ export default function AdminActivityDetail() {
         </Link>
       </div>
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span
                 className={`rounded-full border px-3 py-1 text-xs font-semibold ${
@@ -268,18 +271,18 @@ export default function AdminActivityDetail() {
                 </span>
               )}
             </div>
-            <h2 className="text-3xl font-bold text-[var(--navy)] dark:text-white">
+            <h2 className="break-words text-2xl font-bold text-[var(--navy)] dark:text-white sm:text-3xl">
               {activity.name.en}
             </h2>
-            <p className="mt-1 text-gray-500 dark:text-gray-300">{activity.name.fr}</p>
+            <p className="mt-1 break-words text-gray-500 dark:text-gray-300">{activity.name.fr}</p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto">
             <a
               href={`/activities/${activity.slug}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:flex-none"
             >
               <ExternalLink className="h-4 w-4" />
               Public page
@@ -290,12 +293,12 @@ export default function AdminActivityDetail() {
                 setActivityForm(activityToForm(activity));
                 setIsModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)]"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)] sm:flex-none"
             >
               <Edit3 className="h-4 w-4" />
               Edit
             </button>
-            <label className="inline-flex cursor-pointer items-center gap-3 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 dark:border-gray-600 dark:text-gray-200">
+            <label className="inline-flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 dark:border-gray-600 dark:text-gray-200 sm:flex-none">
               <input
                 type="checkbox"
                 checked={activity.isActive}
@@ -321,7 +324,7 @@ export default function AdminActivityDetail() {
 
         <section className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]">
           <div className="grid xl:grid-cols-[380px_minmax(0,1fr)]">
-            <div className="relative min-h-72 bg-gray-100 dark:bg-[var(--dark-muted)]">
+            <div className="relative min-h-60 bg-gray-100 dark:bg-[var(--dark-muted)] sm:min-h-72">
               <img
                 src={resolveActivityImageUrl(activity.imageUrl)}
                 alt={activity.name.en}
@@ -367,12 +370,12 @@ export default function AdminActivityDetail() {
                     {pricingFields.map((field, index) => (
                       <div
                         key={`${field.id ?? field.name.en}-${index}`}
-                        className="flex items-center justify-between gap-3 rounded-lg bg-gray-50 px-4 py-3 text-sm dark:bg-[var(--dark-muted)]"
+                        className="flex items-start justify-between gap-3 rounded-lg bg-gray-50 px-4 py-3 text-sm dark:bg-[var(--dark-muted)]"
                       >
-                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                        <span className="min-w-0 break-words font-medium text-gray-700 dark:text-gray-300">
                           {field.name.en} / {field.name.fr}
                         </span>
-                        <span className="font-bold text-[var(--teal)]">EUR {field.price}</span>
+                        <span className="shrink-0 font-bold text-[var(--teal)]">EUR {field.price}</span>
                       </div>
                     ))}
                   </div>

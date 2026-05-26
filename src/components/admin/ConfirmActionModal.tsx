@@ -24,16 +24,18 @@ export default function ConfirmActionModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/50 px-4 py-6 sm:items-center">
       <div className="w-full max-w-md rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]">
         <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700">
-          <div className="flex items-start gap-3">
+          <div className="flex min-w-0 items-start gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-300">
               <AlertTriangle className="h-5 w-5" />
             </span>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600 dark:text-gray-300">
+            <div className="min-w-0">
+              <h2 className="break-words text-lg font-semibold text-gray-900 dark:text-white">
+                {title}
+              </h2>
+              <p className="mt-1 break-words text-sm leading-6 text-gray-600 dark:text-gray-300">
                 {description}
               </p>
             </div>

@@ -166,14 +166,14 @@ function BookingDetailModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
-      <div className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]">
-        <div className="flex items-start justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-700">
-          <div>
-            <h2 className="text-xl font-bold text-[var(--navy)] dark:text-white">
+    <div className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/50 px-4 py-6 sm:items-center">
+      <div className="max-h-[calc(100dvh-2rem)] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]">
+        <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700">
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-[var(--navy)] dark:text-white sm:text-xl">
               Booking Details
             </h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+            <p className="mt-1 break-words text-sm text-gray-500 dark:text-gray-300">
               {booking.fullName} · {booking.activityName}
             </p>
           </div>
@@ -197,10 +197,7 @@ function BookingDetailModal({
                 </h3>
                 <dl className="divide-y divide-gray-100 rounded-lg border border-gray-200 dark:divide-gray-700 dark:border-gray-700">
                   {group.rows.map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="grid grid-cols-[130px_minmax(0,1fr)] gap-3 px-4 py-3"
-                    >
+                    <div key={label} className="grid gap-1 px-4 py-3 sm:grid-cols-[130px_minmax(0,1fr)] sm:gap-3">
                       <dt className="text-sm font-medium text-gray-500 dark:text-gray-300">
                         {label}
                       </dt>
@@ -263,55 +260,24 @@ function CategoryFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:px-4 sm:py-6">
       <form
         onSubmit={onSubmit}
-        className="w-full max-w-lg rounded-lg bg-white shadow-xl dark:bg-[var(--dark-card)]"
+        className="flex max-h-[calc(100dvh-1rem)] w-full max-w-lg flex-col overflow-hidden rounded-t-lg bg-white shadow-xl dark:bg-[var(--dark-card)] sm:max-h-[calc(100dvh-2rem)] sm:rounded-lg"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 dark:border-gray-700">
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-bold text-[var(--navy)] dark:text-white">
-                  {isEditing ? 'Edit Category' : 'Create Category'}
-                </h2>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                  Add the category names used across activities.
-                </p>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={form.isActive}
-                onClick={() =>
-                  setCategoryForm((current) => ({
-                    ...current,
-                    isActive: !current.isActive,
-                  }))
-                }
-                className="flex items-center gap-3 rounded-lg border border-gray-200 px-3 py-2 text-left hover:border-[var(--teal)] dark:border-gray-700"
-              >
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                  Active
-                </span>
-                <span
-                  className={`relative h-6 w-11 rounded-full transition-colors ${
-                    form.isActive ? 'bg-[var(--teal)]' : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
-                >
-                  <span
-                    className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                      form.isActive ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </span>
-              </button>
-            </div>
+        <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-4 py-4 dark:border-gray-700 sm:px-5">
+          <div className="min-w-0">
+            <h2 className="break-words text-lg font-bold text-[var(--navy)] dark:text-white sm:text-xl">
+              {isEditing ? 'Edit Category' : 'Create Category'}
+            </h2>
+            <p className="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
+              Add the category names used across activities.
+            </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+            className="shrink-0 rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
             aria-label="Close category form"
             title="Close"
           >
@@ -319,7 +285,35 @@ function CategoryFormModal({
           </button>
         </div>
 
-        <div className="space-y-4 px-5 py-5">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.isActive}
+            onClick={() =>
+              setCategoryForm((current) => ({
+                ...current,
+                isActive: !current.isActive,
+              }))
+            }
+            className="flex w-full items-center justify-between gap-3 rounded-lg border border-gray-200 px-3 py-3 text-left hover:border-[var(--teal)] dark:border-gray-700"
+          >
+            <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+              Active
+            </span>
+            <span
+              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                form.isActive ? 'bg-[var(--teal)]' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <span
+                className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                  form.isActive ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </span>
+          </button>
+
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
               English Name
@@ -347,21 +341,20 @@ function CategoryFormModal({
               className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
             />
           </label>
-
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-gray-200 px-5 py-4 dark:border-gray-700">
+        <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-gray-200 px-4 py-4 dark:border-gray-700 sm:flex-row sm:justify-end sm:px-5">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSaving}
-            className="inline-flex items-center justify-center rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)] disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
           >
             {isEditing ? 'Save Category' : 'Create Category'}
           </button>
@@ -567,7 +560,7 @@ export default function AdminDashboard() {
       }}
     >
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-[var(--navy)] dark:text-white">
+          <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white sm:text-3xl">
             Admin Dashboard
           </h2>
           <p className="mt-2 text-gray-500 dark:text-gray-300">
@@ -581,7 +574,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
           {[
             { label: 'Activities', value: stats.activities, icon: Tags },
             { label: 'Paid bookings', value: stats.bookings, icon: CheckCircle },
@@ -592,16 +585,18 @@ export default function AdminDashboard() {
           ].map((item) => (
             <div
               key={item.label}
-              className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]"
+              className="min-w-0 rounded-lg border border-gray-200 bg-white p-3 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)] sm:p-4"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-300">{item.label}</p>
-                  <p className="mt-1 text-2xl font-bold text-[var(--navy)] dark:text-white">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="break-words text-xs leading-tight text-gray-500 dark:text-gray-300 sm:text-sm">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-xl font-bold leading-none text-[var(--navy)] dark:text-white sm:text-2xl">
                     {item.value}
                   </p>
                 </div>
-                <item.icon className="h-6 w-6 text-[var(--teal)]" />
+                <item.icon className="h-4 w-4 shrink-0 text-[var(--teal)] sm:h-6 sm:w-6" />
               </div>
             </div>
           ))}
@@ -670,8 +665,70 @@ export default function AdminDashboard() {
                   Reset
                 </button>
               </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              {/* Mobile card layout */}
+              <div className="divide-y divide-gray-200 dark:divide-gray-700 md:hidden">
+                {isLoading ? (
+                  <div className="px-4 py-8 text-center text-gray-500">Loading bookings...</div>
+                ) : filteredBookings.length ? (
+                  filteredBookings.map((booking) => (
+                    <button
+                      key={booking._id}
+                      type="button"
+                      onClick={() => setSelectedBooking(booking)}
+                      className="w-full px-4 py-4 text-left transition-colors hover:bg-gray-50 dark:hover:bg-[var(--dark-muted)]"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="break-words font-semibold text-gray-900 dark:text-white">
+                            {booking.fullName}
+                          </p>
+                          <p className="break-words text-sm text-gray-500 dark:text-gray-300">
+                            {booking.activityName}
+                          </p>
+                        </div>
+                        <select
+                          value={booking.status}
+                          onClick={(event) => event.stopPropagation()}
+                          onChange={(event) =>
+                            updateBooking.mutate({
+                              id: booking._id,
+                              status: event.target.value as AdminBookingRequest['status'],
+                              adminNotes: booking.adminNotes,
+                            })
+                          }
+                          className={`shrink-0 rounded-full border px-3 py-1 text-sm font-medium ${statusClass(
+                            booking.status
+                          )}`}
+                        >
+                          {bookingStatuses.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-300">
+                        <span>{booking.preferredDate}</span>
+                        <span>{booking.adults}A / {booking.children}C</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {formatPaidAmount(booking.paidAmount)}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-400">{formatDate(booking.createdAt)}</p>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-8 text-center text-gray-500">
+                    {data?.bookings.length
+                      ? 'No bookings match your filters.'
+                      : 'No successful paid bookings yet.'}
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop table layout */}
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[980px] divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-[var(--dark-muted)]">
                     <tr>
                       {[
@@ -818,14 +875,16 @@ export default function AdminDashboard() {
                     className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
+                      <div className="min-w-0">
                         <h3 className="font-semibold text-gray-900 dark:text-white">
                           {contact.name}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-300">{contact.email}</p>
+                        <p className="break-all text-sm text-gray-500 dark:text-gray-300">
+                          {contact.email}
+                        </p>
                         <p className="text-xs text-gray-400">{formatDate(contact.createdAt)}</p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         <select
                           value={contact.status}
                           onChange={(event) =>
@@ -888,7 +947,7 @@ export default function AdminDashboard() {
             {activeTab === 'activities' && (
               <section>
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]">
-              <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+              <div className="flex flex-col items-stretch gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="font-semibold text-[var(--navy)] dark:text-white">Activities</h2>
                 <div className="flex items-center gap-3">
                   <div className="relative hidden sm:block">
@@ -907,7 +966,7 @@ export default function AdminDashboard() {
                       resetActivityForm();
                       setIsActivityModalOpen(true);
                     }}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[var(--teal)] px-3 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)]"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--teal)] px-3 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)]"
                   >
                     <Plus className="h-4 w-4" />
                     New
@@ -926,8 +985,86 @@ export default function AdminDashboard() {
                   />
                 </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="divide-y divide-gray-200 dark:divide-gray-700 md:hidden">
+                {isLoading ? (
+                  <div className="px-4 py-8 text-center text-gray-500">Loading activities...</div>
+                ) : filteredActivities.length ? (
+                  filteredActivities.map((activity) => (
+                    <article key={activity._id} className="px-4 py-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <Link
+                            to={`/admin/activities/${activity._id}`}
+                            className="break-words font-semibold text-gray-900 hover:text-[var(--teal)] dark:text-white"
+                          >
+                            {activity.name.en}
+                          </Link>
+                          <p className="mt-1 break-all text-xs text-gray-500 dark:text-gray-300">
+                            /activities/{activity.slug}
+                          </p>
+                        </div>
+                        <span
+                          className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${
+                            activity.isActive
+                              ? 'border-green-200 bg-green-50 text-green-800'
+                              : 'border-red-200 bg-red-50 text-red-800'
+                          }`}
+                        >
+                          {activity.isActive ? 'active' : 'archived'}
+                        </span>
+                      </div>
+
+                      <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+                        <div className="rounded-lg bg-gray-50 px-3 py-2 dark:bg-[var(--dark-muted)]">
+                          <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                            Category
+                          </dt>
+                          <dd className="mt-1 break-words text-gray-700 dark:text-gray-200">
+                            {activity.category}
+                          </dd>
+                        </div>
+                        <div className="rounded-lg bg-gray-50 px-3 py-2 dark:bg-[var(--dark-muted)]">
+                          <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                            Price
+                          </dt>
+                          <dd className="mt-1 font-semibold text-gray-900 dark:text-white">
+                            €{getPrimaryPrice(activity)}
+                          </dd>
+                        </div>
+                      </dl>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <Link
+                          to={`/admin/activities/${activity._id}`}
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:flex-none"
+                        >
+                          <Eye className="h-4 w-4" />
+                          View
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingActivityId(activity._id);
+                            setActivityForm(activityToForm(activity));
+                            setIsActivityModalOpen(true);
+                          }}
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:flex-none"
+                        >
+                          <Edit3 className="h-4 w-4" />
+                          Edit
+                        </button>
+                      </div>
+                    </article>
+                  ))
+                ) : (
+                  <div className="px-4 py-8 text-center text-gray-500">
+                    {activitySearch ? 'No activities match your search.' : 'No activities yet.'}
+                  </div>
+                )}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[760px] divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-[var(--dark-muted)]">
                     <tr>
                       {['Name', 'Category', 'Price', 'Status', 'Actions'].map((heading) => (
@@ -1038,7 +1175,7 @@ export default function AdminDashboard() {
             {activeTab === 'categories' && (
               <section>
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]">
-                  <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+                  <div className="flex flex-col items-stretch gap-3 border-b border-gray-200 px-4 py-3 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
                     <h2 className="font-semibold text-[var(--navy)] dark:text-white">
                       Activity Categories
                     </h2>
@@ -1048,14 +1185,71 @@ export default function AdminDashboard() {
                         resetCategoryForm();
                         setIsCategoryModalOpen(true);
                       }}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[var(--teal)] px-3 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)]"
+                      className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--teal)] px-3 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)]"
                     >
                       <Plus className="h-4 w-4" />
                       Create Category
                     </button>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <div className="divide-y divide-gray-200 dark:divide-gray-700 md:hidden">
+                    {isLoading ? (
+                      <div className="px-4 py-8 text-center text-gray-500">
+                        Loading categories...
+                      </div>
+                    ) : data?.categories.length ? (
+                      data.categories.map((category) => (
+                        <article key={category._id} className="px-4 py-4">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <h3 className="break-words font-semibold text-gray-900 dark:text-white">
+                                {category.name.en}
+                              </h3>
+                              <p className="mt-1 break-words text-sm text-gray-600 dark:text-gray-300">
+                                {category.name.fr}
+                              </p>
+                              <p className="mt-2 break-all font-mono text-xs text-gray-500 dark:text-gray-400">
+                                {category.id}
+                              </p>
+                            </div>
+                            <span
+                              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${
+                                category.isActive
+                                  ? 'border-green-200 bg-green-50 text-green-800'
+                                  : 'border-red-200 bg-red-50 text-red-800'
+                              }`}
+                            >
+                              {category.isActive ? 'active' : 'archived'}
+                            </span>
+                          </div>
+                          <div className="mt-4 flex">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingCategoryId(category._id);
+                                setCategoryForm({
+                                  nameEn: category.name.en,
+                                  nameFr: category.name.fr,
+                                  isActive: category.isActive,
+                                });
+                                setIsCategoryModalOpen(true);
+                              }}
+                              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:flex-none"
+                            >
+                              <Edit3 className="h-4 w-4" />
+                              Edit
+                            </button>
+                          </div>
+                        </article>
+                      ))
+                    ) : (
+                      <div className="px-4 py-8 text-center text-gray-500">
+                        No categories yet.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="hidden overflow-x-auto md:block">
+                    <table className="w-full min-w-[760px] divide-y divide-gray-200 dark:divide-gray-700">
                       <thead className="bg-gray-50 dark:bg-[var(--dark-muted)]">
                         <tr>
                           {['ID', 'English', 'French', 'Status', 'Actions'].map((heading) => (
