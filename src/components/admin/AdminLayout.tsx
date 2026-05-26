@@ -1,7 +1,19 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { CalendarCheck, Inbox, LogOut, Mail, Menu, Tags, X } from 'lucide-react';
+import {
+  CalendarCheck,
+  Home,
+  Inbox,
+  LogOut,
+  Mail,
+  Menu,
+  Moon,
+  Sun,
+  Tags,
+  X,
+} from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -30,6 +42,7 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
   const location = useLocation();
   const navigate = useNavigate();
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const { theme, toggleTheme } = useTheme();
   const routeActiveId = getActiveId(location.pathname);
   const currentActiveId = activeTab ?? routeActiveId;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -61,6 +74,27 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
     clearAuth();
     navigate('/admin/login', { replace: true });
   };
+
+  const renderUtilityActions = () => (
+    <div className="grid grid-cols-2 gap-2">
+      <Link
+        to="/"
+        className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-600 transition-colors hover:border-[var(--teal)] hover:bg-gray-50 hover:text-[var(--teal)] dark:border-gray-700 dark:text-gray-300 dark:hover:bg-[var(--dark-muted)]"
+      >
+        <Home className="h-4 w-4" />
+        Home
+      </Link>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-600 transition-colors hover:border-[var(--teal)] hover:bg-gray-50 hover:text-[var(--teal)] dark:border-gray-700 dark:text-gray-300 dark:hover:bg-[var(--dark-muted)]"
+        aria-label="Toggle theme"
+      >
+        {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+        {theme === 'light' ? 'Dark' : 'Light'}
+      </button>
+    </div>
+  );
 
   const renderNavItems = () =>
     navItems.map((item) => {
@@ -130,7 +164,7 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
       </div>
 
       {isDrawerOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-36 z-[45] lg:hidden">
+        <div className="fixed inset-0 z-[45] lg:hidden">
           <button
             type="button"
             onClick={() => setIsDrawerOpen(false)}
@@ -155,6 +189,8 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
               </button>
             </div>
 
+            {renderUtilityActions()}
+
             <nav className="grid gap-2">{renderNavItems()}</nav>
 
             <button
@@ -169,7 +205,7 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
         </div>
       )}
 
-      <aside className="hidden flex-col gap-4 border-b border-gray-200 bg-white px-4 py-4 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)] sm:px-6 lg:sticky lg:top-20 lg:flex lg:h-[calc(100vh-5rem)] lg:border-b-0 lg:border-r lg:px-4 lg:py-5">
+      <aside className="hidden flex-col gap-4 border-b border-gray-200 bg-white px-4 py-4 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)] sm:px-6 lg:sticky lg:top-0 lg:flex lg:h-screen lg:border-b-0 lg:border-r lg:px-4 lg:py-5">
         <div className="min-w-0">
           <div className="mb-4">
             <div className="min-w-0">
@@ -179,6 +215,8 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
               </p>
             </div>
           </div>
+
+          <div className="mb-4">{renderUtilityActions()}</div>
 
           <nav className="grid gap-2">{renderNavItems()}</nav>
         </div>
