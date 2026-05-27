@@ -1,6 +1,7 @@
 import { Star, Quote } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getCountryWithFlag } from '../data/countries';
 
 interface Testimonial {
   id: string;
@@ -58,7 +59,7 @@ export default function Testimonials({ testimonials, title }: TestimonialsProps)
                   {testimonial.name}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {testimonial.nationality}
+                  {getCountryWithFlag(testimonial.nationality)}
                 </p>
               </div>
             </div>

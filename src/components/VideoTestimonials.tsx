@@ -3,6 +3,7 @@ import type { MouseEvent } from 'react';
 import { Play, X, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getCountryWithFlag } from '../data/countries';
 
 interface VideoTestimonial {
   id: string;
@@ -71,7 +72,7 @@ export default function VideoTestimonials({ testimonials, title }: VideoTestimon
               <h3 className="text-white font-semibold text-sm mb-1">
                 {testimonial.name}
               </h3>
-              <p className="text-white/80 text-xs mb-2">{testimonial.nationality}</p>
+              <p className="text-white/80 text-xs mb-2">{getCountryWithFlag(testimonial.nationality)}</p>
               <p className="text-white/90 text-xs line-clamp-2 italic">
                 "{testimonial.quote}"
               </p>
@@ -86,7 +87,7 @@ export default function VideoTestimonials({ testimonials, title }: VideoTestimon
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center overflow-y-auto p-4"
             onClick={() => setSelectedVideo(null)}
           >
             <button
@@ -100,7 +101,7 @@ export default function VideoTestimonials({ testimonials, title }: VideoTestimon
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-4xl"
+              className="w-full max-w-4xl my-auto"
               onClick={(event: MouseEvent<HTMLDivElement>) => event.stopPropagation()}
             >
               <div className="aspect-video bg-black rounded-lg overflow-hidden mb-4">
@@ -140,7 +141,7 @@ export default function VideoTestimonials({ testimonials, title }: VideoTestimon
                 <h3 className="text-white font-semibold text-lg mb-1">
                   {selectedVideo.name}
                 </h3>
-                <p className="text-white/80 text-sm mb-2">{selectedVideo.nationality}</p>
+                <p className="text-white/80 text-sm mb-2">{getCountryWithFlag(selectedVideo.nationality)}</p>
                 <p className="text-white/90 italic">"{selectedVideo.quote}"</p>
               </div>
             </motion.div>

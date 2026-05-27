@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
+import { countries } from '../data/countries';
 import {
   Clock,
   Users,
@@ -29,59 +30,7 @@ import {
   Star
 } from 'lucide-react';
 
-const reviewCountries = [
-  '🇦🇪 United Arab Emirates',
-  '🇦🇷 Argentina',
-  '🇦🇺 Australia',
-  '🇦🇹 Austria',
-  '🇧🇪 Belgium',
-  '🇧🇷 Brazil',
-  '🇧🇬 Bulgaria',
-  '🇨🇦 Canada',
-  '🇨🇱 Chile',
-  '🇨🇳 China',
-  '🇨🇴 Colombia',
-  '🇭🇷 Croatia',
-  '🇨🇿 Czech Republic',
-  '🇩🇰 Denmark',
-  '🇪🇬 Egypt',
-  '🇫🇷 France',
-  '🇫🇮 Finland',
-  '🇩🇪 Germany',
-  '🇬🇷 Greece',
-  '🇭🇺 Hungary',
-  '🇮🇳 India',
-  '🇮🇩 Indonesia',
-  '🇮🇪 Ireland',
-  '🇮🇹 Italy',
-  '🇯🇵 Japan',
-  '🇯🇴 Jordan',
-  '🇰🇼 Kuwait',
-  '🇱🇧 Lebanon',
-  '🇱🇺 Luxembourg',
-  '🇲🇽 Mexico',
-  '🇲🇦 Morocco',
-  '🇳🇱 Netherlands',
-  '🇳🇿 New Zealand',
-  '🇳🇴 Norway',
-  '🇵🇱 Poland',
-  '🇵🇹 Portugal',
-  '🇶🇦 Qatar',
-  '🇷🇴 Romania',
-  '🇸🇦 Saudi Arabia',
-  '🇷🇸 Serbia',
-  '🇸🇬 Singapore',
-  '🇿🇦 South Africa',
-  '🇰🇷 South Korea',
-  '🇪🇸 Spain',
-  '🇸🇪 Sweden',
-  '🇨🇭 Switzerland',
-  '🇹🇳 Tunisia',
-  '🇹🇷 Turkey',
-  '🇬🇧 United Kingdom',
-  '🇺🇸 United States',
-  'Other',
-];
+const reviewCountries = [...countries.map((c) => `${c.flag} ${c.name}`), 'Other'];
 const defaultReviewCountry = '';
 
 function extractYouTubeId(url: string) {

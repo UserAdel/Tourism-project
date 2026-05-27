@@ -4,6 +4,7 @@ import type { Activity, ActivityVideoHighlight, ActivityVideoReview, PricingFiel
 import type { AdminActivity } from '../../hooks/queries';
 import { resolveActivityImageUrl } from '../../utils/activityImages';
 import { legacyPricingToFields } from '../../utils/pricing';
+import { countries } from '../../data/countries';
 
 interface BilingualItem {
   en: string;
@@ -845,12 +846,24 @@ function VideoReviewsEditor({
                       onChange={(value) => updateVideoReview(index, 'name', value)}
                       required
                     />
-                    <TextField
-                      label="Nationality"
-                      value={videoReview.nationality}
-                      onChange={(value) => updateVideoReview(index, 'nationality', value)}
-                      required
-                    />
+                    <label className="block">
+                      <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nationality <span className="text-red-500">*</span>
+                      </span>
+                      <select
+                        value={videoReview.nationality}
+                        onChange={(e) => updateVideoReview(index, 'nationality', e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+                      >
+                        <option value="">Select country</option>
+                        {countries.map((c) => (
+                          <option key={c.name} value={c.name}>
+                            {c.flag} {c.name}
+                          </option>
+                        ))}
+                        <option value="Other">Other</option>
+                      </select>
+                    </label>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-[120px_minmax(0,1fr)]">
                     <label className="block">
