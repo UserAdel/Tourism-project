@@ -2,12 +2,13 @@ import { type FormEvent, useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { activities as fallbackActivities } from '../data/activities';
-import { activityGalleries, activityVideos } from '../data/activityMedia';
+import { activityGalleries, activityVideos, activityVideoTestimonials } from '../data/activityMedia';
 import Button from '../components/Button';
 import ActivityCard from '../components/ActivityCard';
 import ImageGallery from '../components/ImageGallery';
 import VideoGallery from '../components/VideoGallery';
 import Testimonials from '../components/Testimonials';
+import VideoTestimonials from '../components/VideoTestimonials';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';
@@ -181,6 +182,23 @@ export default function ActivityDetail() {
         )
       : ''),
   }));
+  const videoReviews = activity.videoReviews?.length
+    ? activity.videoReviews.map((videoReview, index) => {
+        const youtubeId = videoReview.youtubeId || extractYouTubeId(videoReview.youtubeUrl);
+
+        return {
+          id: videoReview.id || `${activity.slug}-video-review-${index + 1}`,
+          name: videoReview.name,
+          nationality: videoReview.nationality,
+          rating: videoReview.rating,
+          thumbnail: videoReview.thumbnail || youtubeThumbnailUrl(youtubeId),
+          quote: videoReview.quote,
+          youtubeId,
+        };
+      })
+    : isApiActivity
+      ? []
+      : activityVideoTestimonials[activity.slug] || [];
   const countrySearch = reviewCountry.trim().toLowerCase();
   const filteredReviewCountries = reviewCountries
     .filter((country) => country.toLowerCase().includes(countrySearch))
@@ -469,7 +487,15 @@ export default function ActivityDetail() {
               </motion.div>
             )}
 
-            {/* Video Reviews section hidden by request. */}
+            {videoReviews.length > 0 && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.9 }}
+              >
+                <VideoTestimonials testimonials={videoReviews} />
+              </motion.div>
+            )}
 
             <motion.section
               initial={{ y: 20, opacity: 0 }}

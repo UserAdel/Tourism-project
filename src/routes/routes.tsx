@@ -11,7 +11,6 @@ import AdminDashboard from '../pages/AdminDashboard'
 import AdminActivityDetail from '../pages/AdminActivityDetail'
 import AdminLogin from '../pages/AdminLogin'
 import NotFound from '../pages/NotFound'
-import PaymentStatus from '../pages/PaymentStatus'
 import { ProtectedRoute } from '../components/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
@@ -26,7 +25,6 @@ export const router = createBrowserRouter([
       { path: 'faq', element: <FAQ /> },
       { path: 'contact', element: <Contact /> },
       { path: 'book', element: <BookNow /> },
-      { path: 'payment-status', element: <PaymentStatus /> },
       { path: 'admin/login', element: <AdminLogin /> },
       {
         element: <ProtectedRoute />,

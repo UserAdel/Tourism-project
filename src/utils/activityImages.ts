@@ -31,5 +31,11 @@ export function normalizeActivity(activity: Activity): Activity {
       ...video,
       thumbnail: video.thumbnail ? resolveActivityImageUrl(video.thumbnail) : video.thumbnail,
     })),
+    videoReviews: activity.videoReviews?.map((videoReview) => ({
+      ...videoReview,
+      thumbnail: videoReview.thumbnail
+        ? resolveActivityImageUrl(videoReview.thumbnail)
+        : videoReview.thumbnail,
+    })),
   };
 }

@@ -29,6 +29,17 @@ export interface ActivityVideoHighlight {
   thumbnail?: string;
 }
 
+export interface ActivityVideoReview {
+  id?: string;
+  name: string;
+  nationality: string;
+  rating: number;
+  quote: string;
+  youtubeUrl: string;
+  youtubeId?: string;
+  thumbnail?: string;
+}
+
 export interface Activity {
   id: string;
   name: LocalizedString;
@@ -74,6 +85,7 @@ export interface Activity {
   groupAvailable: boolean;
   reviews?: ActivityReview[];
   videoHighlights?: ActivityVideoHighlight[];
+  videoReviews?: ActivityVideoReview[];
 }
 
 export interface BookingFormData {

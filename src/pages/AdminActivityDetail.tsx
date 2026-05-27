@@ -28,6 +28,7 @@ import ActivityFormModal, {
   defaultCategories,
   emptyActivityForm,
   formToActivity,
+  getVideoReviewThumbnailFiles,
   getVideoThumbnailFiles,
 } from '../components/admin/ActivityFormModal';
 import ConfirmActionModal from '../components/admin/ConfirmActionModal';
@@ -108,6 +109,7 @@ export default function AdminActivityDetail() {
           imageFile: activityForm.imageFile,
           galleryFiles: activityForm.galleryFiles,
           videoThumbnailFiles: getVideoThumbnailFiles(activityForm),
+          videoReviewThumbnailFiles: getVideoReviewThumbnailFiles(activityForm),
         },
       });
       toast.success('Activity updated');
@@ -141,6 +143,7 @@ export default function AdminActivityDetail() {
       imageUrl: activity.imageUrl,
       galleryImages: activity.galleryImages,
       videoHighlights: activity.videoHighlights,
+      videoReviews: activity.videoReviews,
       featured: activity.featured,
       childFriendly: activity.childFriendly,
       familyFriendly: activity.familyFriendly,

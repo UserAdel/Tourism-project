@@ -32,6 +32,7 @@ import ActivityFormModal, {
   defaultCategories,
   emptyActivityForm,
   formToActivity,
+  getVideoReviewThumbnailFiles,
   getVideoThumbnailFiles,
 } from '../components/admin/ActivityFormModal';
 import AdminLayout from '../components/admin/AdminLayout';
@@ -90,16 +91,6 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-function formatPaidAmount(amount?: number) {
-  if (!amount) return '€0';
-
-  return new Intl.NumberFormat('en', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 2,
-  }).format(amount);
-}
-
 function statusClass(status: string) {
   if (status === 'new') return 'bg-blue-50 text-blue-800 border-blue-200';
   if (status === 'pending') return 'bg-yellow-50 text-yellow-800 border-yellow-200';
@@ -148,19 +139,6 @@ function BookingDetailModal({
         ['Phone', booking.phone],
         ['WhatsApp', booking.whatsapp],
         ['Email', booking.email],
-      ],
-    },
-    {
-      title: 'Payment',
-      rows: [
-        ['Paid amount', formatPaidAmount(booking.paidAmount)],
-        ['Payment status', booking.payment?.status ?? 'No payment found'],
-        [
-          'Amount with fees',
-          booking.payment ? formatPaidAmount(booking.payment.amountWithFees) : '€0',
-        ],
-        ['Order ID', booking.payment?.orderId ?? 'Not available'],
-        ['Transaction ID', booking.payment?.transactionId ?? 'Not available'],
       ],
     },
   ];
@@ -459,7 +437,6 @@ export default function AdminDashboard() {
           booking.whatsapp,
           booking.email,
           booking.status,
-          booking.payment?.status,
         ]
           .filter((value): value is string => Boolean(value))
           .some((value) => value.toLowerCase().includes(query));
@@ -532,6 +509,7 @@ export default function AdminDashboard() {
       imageFile: activityForm.imageFile,
       galleryFiles: activityForm.galleryFiles,
       videoThumbnailFiles: getVideoThumbnailFiles(activityForm),
+      videoReviewThumbnailFiles: getVideoReviewThumbnailFiles(activityForm),
     };
 
     try {
@@ -544,8 +522,16 @@ export default function AdminDashboard() {
       }
       resetActivityForm();
       setIsActivityModalOpen(false);
-    } catch {
-      toast.error('Could not save activity. Check required fields and slug uniqueness.');
+    } catch (err) {
+      const data =
+        typeof err === 'object' && err !== null && 'response' in err
+          ? (err as { response?: { data?: { message?: string; errors?: string[] } } }).response?.data
+          : undefined;
+      if (data?.errors?.length) {
+        data.errors.forEach((msg) => toast.error(msg, { duration: 8000 }));
+      } else {
+        toast.error(data?.message || 'Could not save activity. Check required fields and slug uniqueness.');
+      }
     }
   };
 
@@ -564,7 +550,7 @@ export default function AdminDashboard() {
             Admin Dashboard
           </h2>
           <p className="mt-2 text-gray-500 dark:text-gray-300">
-            Manage activities, paid bookings, and contact messages.
+            Manage activities, booking requests, and contact messages.
           </p>
         </div>
 
@@ -577,8 +563,8 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
           {[
             { label: 'Activities', value: stats.activities, icon: Tags },
-            { label: 'Paid bookings', value: stats.bookings, icon: CheckCircle },
-            { label: 'New paid bookings', value: stats.newBookings, icon: CheckCircle },
+            { label: 'Booking requests', value: stats.bookings, icon: CheckCircle },
+            { label: 'New bookings', value: stats.newBookings, icon: CheckCircle },
             { label: 'Contacts', value: stats.contacts, icon: Mail },
             { label: 'New contacts', value: stats.newContacts, icon: MessageSquare },
             { label: 'Categories', value: stats.categories, icon: Tags },
@@ -710,9 +696,6 @@ export default function AdminDashboard() {
                       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 dark:text-gray-300">
                         <span>{booking.preferredDate}</span>
                         <span>{booking.adults}A / {booking.children}C</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {formatPaidAmount(booking.paidAmount)}
-                        </span>
                       </div>
                       <p className="mt-1 text-xs text-gray-400">{formatDate(booking.createdAt)}</p>
                     </button>
@@ -721,7 +704,7 @@ export default function AdminDashboard() {
                   <div className="px-4 py-8 text-center text-gray-500">
                     {data?.bookings.length
                       ? 'No bookings match your filters.'
-                      : 'No successful paid bookings yet.'}
+                      : 'No booking requests yet.'}
                   </div>
                 )}
               </div>
@@ -736,7 +719,6 @@ export default function AdminDashboard() {
                         'Activity',
                         'Trip',
                         'Contact',
-                        'Paid amount',
                         'Booked at',
                         'Status',
                       ].map((heading) => (
@@ -752,7 +734,7 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                     {isLoading ? (
                       <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                           Loading bookings...
                         </td>
                       </tr>
@@ -809,14 +791,6 @@ export default function AdminDashboard() {
                               </p>
                             )}
                           </td>
-                          <td className="px-4 py-4 align-top">
-                            <p className="font-semibold text-gray-900 dark:text-white">
-                              {formatPaidAmount(booking.paidAmount)}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-300">
-                              {booking.payment?.status ?? 'no payment'}
-                            </p>
-                          </td>
                           <td className="px-4 py-4 align-top text-sm text-gray-600 dark:text-gray-300">
                             {formatDate(booking.createdAt)}
                           </td>
@@ -847,10 +821,10 @@ export default function AdminDashboard() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                           {data?.bookings.length
                             ? 'No bookings match your filters.'
-                            : 'No successful paid bookings yet.'}
+                            : 'No booking requests yet.'}
                         </td>
                       </tr>
                     )}

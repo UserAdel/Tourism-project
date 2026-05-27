@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useMemo } from 'react';
 import { Clock, Plus, Save, Trash2, X } from 'lucide-react';
-import type { Activity, ActivityVideoHighlight, PricingField } from '../../types';
+import type { Activity, ActivityVideoHighlight, ActivityVideoReview, PricingField } from '../../types';
 import type { AdminActivity } from '../../hooks/queries';
 import { resolveActivityImageUrl } from '../../utils/activityImages';
 import { legacyPricingToFields } from '../../utils/pricing';
@@ -21,6 +21,17 @@ interface PricingFormItem {
 interface VideoHighlightFormItem {
   id: string;
   title: string;
+  youtubeUrl: string;
+  thumbnail: string;
+  thumbnailFile: File | null;
+}
+
+interface VideoReviewFormItem {
+  id: string;
+  name: string;
+  nationality: string;
+  rating: string;
+  quote: string;
   youtubeUrl: string;
   thumbnail: string;
   thumbnailFile: File | null;
@@ -50,6 +61,7 @@ export interface ActivityFormState {
   galleryImages: string[];
   galleryFiles: File[];
   videoHighlights: VideoHighlightFormItem[];
+  videoReviews: VideoReviewFormItem[];
   featured: boolean;
   childFriendly: boolean;
   familyFriendly: boolean;
@@ -101,6 +113,7 @@ export const emptyActivityForm: ActivityFormState = {
   galleryImages: [],
   galleryFiles: [],
   videoHighlights: [],
+  videoReviews: [],
   featured: false,
   childFriendly: true,
   familyFriendly: true,
@@ -240,6 +253,46 @@ function compactVideoHighlights(videos: VideoHighlightFormItem[]) {
   }, []);
 }
 
+function videoReviewsToFormItems(videoReviews: ActivityVideoReview[] = []): VideoReviewFormItem[] {
+  return videoReviews.map((videoReview, index) => ({
+    id: videoReview.id ?? `video-review-${index + 1}`,
+    name: videoReview.name,
+    nationality: videoReview.nationality,
+    rating: videoReview.rating.toString(),
+    quote: videoReview.quote,
+    youtubeUrl: videoReview.youtubeUrl,
+    thumbnail: videoReview.thumbnail ?? '',
+    thumbnailFile: null,
+  }));
+}
+
+function compactVideoReviews(videoReviews: VideoReviewFormItem[]) {
+  return videoReviews.reduce<ActivityVideoReview[]>((compactReviews, videoReview, index) => {
+    const name = videoReview.name.trim();
+    const nationality = videoReview.nationality.trim();
+    const quote = videoReview.quote.trim();
+    const youtubeUrl = videoReview.youtubeUrl.trim();
+    const youtubeId = extractYouTubeId(youtubeUrl);
+    const thumbnail = videoReview.thumbnail.trim();
+    const rating = Number(videoReview.rating);
+
+    if (name && nationality && quote && youtubeUrl && rating >= 1 && rating <= 5) {
+      compactReviews.push({
+        id: videoReview.id.trim() || `video-review-${index + 1}`,
+        name,
+        nationality,
+        rating,
+        quote,
+        youtubeUrl,
+        youtubeId,
+        thumbnail: thumbnail || undefined,
+      });
+    }
+
+    return compactReviews;
+  }, []);
+}
+
 export function activityToForm(activity: AdminActivity): ActivityFormState {
   const pricingFields = activity.pricingFields?.length
     ? activity.pricingFields
@@ -270,6 +323,7 @@ export function activityToForm(activity: AdminActivity): ActivityFormState {
     galleryImages: activity.galleryImages ?? [],
     galleryFiles: [],
     videoHighlights: videosToFormItems(activity.videoHighlights),
+    videoReviews: videoReviewsToFormItems(activity.videoReviews),
     featured: Boolean(activity.featured),
     childFriendly: activity.childFriendly,
     familyFriendly: Boolean(activity.familyFriendly),
@@ -288,6 +342,7 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
   const excluded = compactItems(form.excluded);
   const pricingFields = compactPricingFields(form.pricingFields);
   const videoHighlights = compactVideoHighlights(form.videoHighlights);
+  const videoReviews = compactVideoReviews(form.videoReviews);
   const generatedIdentifier = slugifyName(form.nameEn);
 
   return {
@@ -332,6 +387,7 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
     privateAvailable: form.privateAvailable,
     groupAvailable: form.groupAvailable,
     videoHighlights,
+    videoReviews,
     isActive: form.isActive,
   };
 }
@@ -341,6 +397,19 @@ export function getVideoThumbnailFiles(form: ActivityFormState) {
     (files, video, index) => {
       if (video.thumbnailFile) {
         files.push({ index, file: video.thumbnailFile });
+      }
+
+      return files;
+    },
+    []
+  );
+}
+
+export function getVideoReviewThumbnailFiles(form: ActivityFormState) {
+  return form.videoReviews.reduce<Array<{ index: number; file: File }>>(
+    (files, videoReview, index) => {
+      if (videoReview.thumbnailFile) {
+        files.push({ index, file: videoReview.thumbnailFile });
       }
 
       return files;
@@ -694,6 +763,175 @@ function VideoHighlightsEditor({
   );
 }
 
+function VideoReviewsEditor({
+  videoReviews,
+  thumbnailPreviews,
+  onChange,
+}: {
+  videoReviews: VideoReviewFormItem[];
+  thumbnailPreviews: string[];
+  onChange: (videoReviews: VideoReviewFormItem[]) => void;
+}) {
+  const updateVideoReview = (index: number, key: keyof VideoReviewFormItem, value: string) => {
+    onChange(videoReviews.map((videoReview, videoReviewIndex) => (
+      videoReviewIndex === index ? { ...videoReview, [key]: value } : videoReview
+    )));
+  };
+
+  const addVideoReview = () => {
+    onChange([
+      ...videoReviews,
+      {
+        id: `video-review-${videoReviews.length + 1}`,
+        name: '',
+        nationality: '',
+        rating: '5',
+        quote: '',
+        youtubeUrl: '',
+        thumbnail: '',
+        thumbnailFile: null,
+      },
+    ]);
+  };
+
+  return (
+    <section className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <h3 className="font-semibold text-[var(--navy)] dark:text-white">Video Reviews</h3>
+        <button
+          type="button"
+          onClick={addVideoReview}
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+        >
+          <Plus className="h-4 w-4" />
+          Add
+        </button>
+      </div>
+
+      {videoReviews.length === 0 ? (
+        <p className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-500 dark:bg-[var(--dark-muted)] dark:text-gray-300">
+          No video reviews yet.
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {videoReviews.map((videoReview, index) => {
+            const youtubeId = extractYouTubeId(videoReview.youtubeUrl);
+            const filePreviewUrl = thumbnailPreviews[index] ?? '';
+            const manualThumbnail = videoReview.thumbnail.trim();
+            const previewUrl = filePreviewUrl || (manualThumbnail
+              ? resolveActivityImageUrl(manualThumbnail)
+              : youtubeThumbnailUrl(youtubeId));
+
+            return (
+              <div
+                key={`${videoReview.id}-${index}`}
+                className="grid gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[var(--dark-muted)] md:grid-cols-[160px_minmax(0,1fr)_auto]"
+              >
+                <div className="aspect-video overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-800">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt={videoReview.name || 'Video review thumbnail'}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : null}
+                </div>
+
+                <div className="grid gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <TextField
+                      label="Guest name"
+                      value={videoReview.name}
+                      onChange={(value) => updateVideoReview(index, 'name', value)}
+                      required
+                    />
+                    <TextField
+                      label="Nationality"
+                      value={videoReview.nationality}
+                      onChange={(value) => updateVideoReview(index, 'nationality', value)}
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-[120px_minmax(0,1fr)]">
+                    <label className="block">
+                      <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Rating
+                      </span>
+                      <select
+                        value={videoReview.rating}
+                        onChange={(event) => updateVideoReview(index, 'rating', event.target.value)}
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+                      >
+                        {[5, 4, 3, 2, 1].map((rating) => (
+                          <option key={rating} value={rating}>
+                            {rating}/5
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <TextField
+                      label="YouTube link"
+                      value={videoReview.youtubeUrl}
+                      onChange={(value) => updateVideoReview(index, 'youtubeUrl', value)}
+                      required
+                    />
+                  </div>
+                  <TextAreaField
+                    label="Quote"
+                    value={videoReview.quote}
+                    onChange={(value) => updateVideoReview(index, 'quote', value)}
+                    required
+                  />
+                  <label className="block">
+                    <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Thumbnail image (optional)
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif"
+                      onChange={(event) =>
+                        onChange(videoReviews.map((currentVideoReview, videoReviewIndex) => (
+                          videoReviewIndex === index
+                            ? {
+                                ...currentVideoReview,
+                                thumbnailFile: event.target.files?.[0] ?? null,
+                              }
+                            : currentVideoReview
+                        )))
+                      }
+                      className="block w-full text-sm text-gray-600 file:mr-4 file:rounded-lg file:border-0 file:bg-[var(--teal)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-[var(--teal-dark)] dark:text-gray-300"
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Optional. If empty, the YouTube thumbnail will be used.
+                    </p>
+                  </label>
+                  {videoReview.thumbnailFile && (
+                    <p className="text-sm font-medium text-[var(--teal)]">
+                      Selected: {videoReview.thumbnailFile.name}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    onChange(videoReviews.filter((_, videoReviewIndex) => videoReviewIndex !== index))
+                  }
+                  className="h-10 w-full rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-red-600 dark:border-gray-600 dark:text-gray-200 md:w-auto"
+                  aria-label={`Remove ${videoReview.name || 'video review'}`}
+                  title="Remove"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
 interface ActivityFormModalProps {
   categories: string[];
   form: ActivityFormState;
@@ -737,6 +975,13 @@ export default function ActivityFormModal({
       ),
     [form.videoHighlights]
   );
+  const videoReviewThumbnailPreviews = useMemo(
+    () =>
+      form.videoReviews.map((videoReview) =>
+        videoReview.thumbnailFile ? URL.createObjectURL(videoReview.thumbnailFile) : ''
+      ),
+    [form.videoReviews]
+  );
 
   useEffect(() => {
     return () => {
@@ -757,6 +1002,14 @@ export default function ActivityFormModal({
       });
     };
   }, [videoThumbnailPreviews]);
+
+  useEffect(() => {
+    return () => {
+      videoReviewThumbnailPreviews.forEach((previewUrl) => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+      });
+    };
+  }, [videoReviewThumbnailPreviews]);
 
   if (!isOpen) return null;
 
@@ -944,6 +1197,12 @@ export default function ActivityFormModal({
               videos={form.videoHighlights}
               thumbnailPreviews={videoThumbnailPreviews}
               onChange={(videos) => setFormValue('videoHighlights', videos)}
+            />
+
+            <VideoReviewsEditor
+              videoReviews={form.videoReviews}
+              thumbnailPreviews={videoReviewThumbnailPreviews}
+              onChange={(videoReviews) => setFormValue('videoReviews', videoReviews)}
             />
 
             <BilingualItemsEditor

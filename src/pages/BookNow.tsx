@@ -4,9 +4,9 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { activities as fallbackActivities } from '../data/activities';
 import Button from '../components/Button';
 import type { BookingFormData } from '../types';
-import { CheckCircle, CreditCard } from 'lucide-react';
+import { CheckCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
-import { useActivities, useCreateBookingRequest, useInitiatePayment } from '../hooks/queries';
+import { useActivities, useCreateBookingRequest } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 
 type GuestCountField = 'adults' | 'children';
@@ -18,7 +18,6 @@ export default function BookNow() {
   const preselectedActivity = searchParams.get('activity') || '';
   const { data: apiActivities } = useActivities();
   const createBookingRequest = useCreateBookingRequest();
-  const initiatePayment = useInitiatePayment();
   const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
 
   const [formData, setFormData] = useState<BookingFormState>({
@@ -75,7 +74,6 @@ export default function BookNow() {
 
     setIsSubmitting(true);
 
-    const selectedActivityData = activities.find((a) => a.slug === formData.selectedActivity);
     const bookingPayload: BookingFormData = {
       ...formData,
       adults: formData.adults,
@@ -83,49 +81,16 @@ export default function BookNow() {
     };
 
     try {
-      // 1. Create booking request
-      const booking = await createBookingRequest.mutateAsync(bookingPayload);
-
-      // 2. Calculate total amount from activity pricing
-      const pricing = selectedActivityData?.pricing;
-      const adultPrice = pricing?.adult || 0;
-      const childPrice = pricing?.child || 0;
-      const totalAmount = adultPrice * bookingPayload.adults + childPrice * bookingPayload.children;
-
-      if (totalAmount <= 0) {
-        setIsSubmitting(false);
-        toast.error(
-          language === 'en'
-            ? 'Could not determine the price for this activity.'
-            : 'Impossible de déterminer le prix de cette activité.'
-        );
-        return;
-      }
-
-      // 3. Initiate Kashier payment
-      const paymentResponse = await initiatePayment.mutateAsync({
-        bookingRequestId: booking._id,
-        amount: totalAmount,
-        customer: {
-          name: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-        },
-      });
-
-      // 4. Redirect to Kashier payment page
-      if (paymentResponse.sessionUrl) {
-        window.location.href = paymentResponse.sessionUrl;
-      } else {
-        throw new Error('No session URL returned');
-      }
+      await createBookingRequest.mutateAsync(bookingPayload);
+      setSubmitted(true);
     } catch {
-      setIsSubmitting(false);
       toast.error(
         language === 'en'
           ? 'Could not process your booking. Please try again.'
           : 'Impossible de traiter votre réservation. Veuillez réessayer.'
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -141,8 +106,8 @@ export default function BookNow() {
           </h2>
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             {language === 'en'
-              ? 'Your booking request has been saved. You will be redirected to the payment page shortly.'
-              : 'Votre demande de réservation a été enregistrée. Vous serez redirigé vers la page de paiement.'}
+              ? 'Your booking request has been saved. We will contact you via WhatsApp to confirm the details.'
+              : 'Votre demande de réservation a été enregistrée. Nous vous contacterons via WhatsApp pour confirmer les détails.'}
           </p>
           <Button onClick={() => setSubmitted(false)} className="w-full">
             {language === 'en' ? 'Make Another Booking' : 'Faire une Autre Réservation'}
@@ -371,8 +336,8 @@ export default function BookNow() {
             <div className="bg-[var(--sand)] dark:bg-[var(--dark-muted)] p-4 rounded-lg">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 {language === 'en'
-                  ? 'By submitting this form, you will be redirected to a secure payment page to complete your booking.'
-                  : 'En soumettant ce formulaire, vous serez redirigé vers une page de paiement sécurisée pour finaliser votre réservation.'}
+                  ? 'No online payment is required. Submit your request and we will confirm availability via WhatsApp.'
+                  : 'Aucun paiement en ligne n’est requis. Envoyez votre demande et nous confirmerons la disponibilité via WhatsApp.'}
               </p>
             </div>
 
@@ -381,8 +346,8 @@ export default function BookNow() {
                 t('booking.submitting')
               ) : (
                 <>
-                  <CreditCard className="w-5 h-5 mr-2" />
-                  {language === 'en' ? 'Book & Pay Now' : 'Réserver & Payer'}
+                  <Send className="w-5 h-5 mr-2" />
+                  {language === 'en' ? 'Submit Booking Request' : 'Envoyer la Demande'}
                 </>
               )}
             </Button>
