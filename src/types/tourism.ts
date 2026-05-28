@@ -93,9 +93,8 @@ export interface BookingFormData {
   email: string;
   phone: string;
   whatsapp: string;
-  hotelName: string;
-  roomNumber?: string;
   nationality: string;
+  arrivalDate?: string;
   preferredDate: string;
   adults: number;
   children: number;
