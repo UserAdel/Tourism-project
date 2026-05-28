@@ -3,11 +3,17 @@ import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { activities as fallbackActivities } from '../data/activities';
 import Button from '../components/Button';
+import CountryPhoneInput from '../components/CountryPhoneInput';
 import type { BookingFormData } from '../types';
 import { CheckCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useActivities, useCreateBookingRequest } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
+import {
+  buildInternationalPhoneNumber,
+  getDefaultPhoneCountry,
+  getPhoneCountry,
+} from '../utils/phoneNumbers';
 
 type GuestCountField = 'adults' | 'children';
 type BookingFormState = Omit<BookingFormData, GuestCountField> & Record<GuestCountField, number | ''>;
@@ -19,6 +25,7 @@ export default function BookNow() {
   const { data: apiActivities } = useActivities();
   const createBookingRequest = useCreateBookingRequest();
   const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
+  const defaultPhoneCountryName = getDefaultPhoneCountry().name;
 
   const [formData, setFormData] = useState<BookingFormState>({
     fullName: '',
@@ -34,6 +41,8 @@ export default function BookNow() {
     specialRequests: '',
     selectedActivity: preselectedActivity
   });
+  const [phoneCountryName, setPhoneCountryName] = useState(defaultPhoneCountryName);
+  const [whatsappCountryName, setWhatsappCountryName] = useState(defaultPhoneCountryName);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -73,8 +82,15 @@ export default function BookNow() {
 
     setIsSubmitting(true);
 
+    const phoneCountry = getPhoneCountry(phoneCountryName);
+    const whatsappCountry = getPhoneCountry(whatsappCountryName);
+    const phone = buildInternationalPhoneNumber(phoneCountry.dialCode, formData.phone);
+    const whatsapp = buildInternationalPhoneNumber(whatsappCountry.dialCode, formData.whatsapp);
+
     const bookingPayload: BookingFormData = {
       ...formData,
+      phone,
+      whatsapp,
       adults: formData.adults,
       children: formData.children,
     };
@@ -183,31 +199,29 @@ export default function BookNow() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('booking.phone')} *
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
+              <div className="md:col-span-2">
+                <CountryPhoneInput
+                  id="phone"
+                  label={t('booking.phone')}
                   value={formData.phone}
-                  onChange={handleChange}
+                  countryName={phoneCountryName}
+                  language={language}
+                  onCountryNameChange={setPhoneCountryName}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, phone: value }))}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('booking.whatsapp')} *
-                </label>
-                <input
-                  type="tel"
-                  name="whatsapp"
+              <div className="md:col-span-2">
+                <CountryPhoneInput
+                  id="whatsapp"
+                  label={t('booking.whatsapp')}
                   value={formData.whatsapp}
-                  onChange={handleChange}
+                  countryName={whatsappCountryName}
+                  language={language}
+                  onCountryNameChange={setWhatsappCountryName}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, whatsapp: value }))}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
