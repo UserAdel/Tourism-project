@@ -94,7 +94,7 @@ export interface BookingFormData {
   phone: string;
   whatsapp: string;
   nationality: string;
-  arrivalDate?: string;
+  arrivalDate: string;
   preferredDate: string;
   adults: number;
   children: number;
