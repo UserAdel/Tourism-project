@@ -48,8 +48,8 @@ export default function About() {
   ];
 
   return (
-    <div className="bg-white dark:bg-[var(--dark-page)]">
-      <div className="bg-gradient-to-r from-[var(--teal)] to-[var(--turquoise)] text-white py-20">
+    <div className="bg-[#F9F5EE] dark:bg-[#040E26]">
+      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             {language === 'en' ? 'About Hurghada French Guide' : 'À Propos d\'Hurghada French Guide'}

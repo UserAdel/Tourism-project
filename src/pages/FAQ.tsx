@@ -115,8 +115,8 @@ export default function FAQ() {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-[var(--dark-page)] min-h-screen">
-      <div className="bg-gradient-to-r from-[var(--teal)] to-[var(--turquoise)] text-white py-16">
+    <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">
+      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {language === 'en' ? 'Frequently Asked Questions' : 'Questions Fréquemment Posées'}
@@ -134,11 +134,11 @@ export default function FAQ() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700"
+              className="bg-[#F9F5EE] dark:bg-[#071530] rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700"
             >
               <button
                 onClick={() => toggleFaq(index)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-[var(--dark-muted)] transition-colors"
+                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-[#F0EAD8]/70 dark:hover:bg-[#0B1E42] transition-colors"
               >
                 <span className="font-semibold text-[var(--navy)] dark:text-white pr-4">
                   {faq.question[language]}
@@ -172,7 +172,7 @@ export default function FAQ() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button className="!bg-white !text-[var(--teal)] hover:!bg-gray-100">
+            <Button className="!bg-[var(--gold)] !text-[#041B4A] hover:!bg-[#B8963F]">
               <MessageCircle className="w-5 h-5 mr-2" />
               {language === 'en' ? 'Contact Us on WhatsApp' : 'Contactez-Nous sur WhatsApp'}
             </Button>

@@ -23,7 +23,7 @@ export default function NotFound() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/">
-            <Button size="lg" className="w-full sm:w-auto bg-white text-[var(--teal)] hover:bg-gray-100">
+            <Button size="lg" className="w-full sm:w-auto !bg-[var(--gold)] !text-[#041B4A] hover:!bg-[#B8963F]">
               <Home className="w-5 h-5 mr-2" />
               {language === 'en' ? 'Back to Home' : 'Retour à l\'Accueil'}
             </Button>

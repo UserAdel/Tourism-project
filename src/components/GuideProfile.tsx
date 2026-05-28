@@ -36,7 +36,7 @@ export default function GuideProfile({
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-gradient-to-br from-[var(--sand)] to-white dark:from-[var(--dark-muted)] dark:to-[var(--dark-section)] rounded-2xl p-8 shadow-lg border border-[var(--gold)]/20 dark:border-[var(--teal)]/20"
+      className="bg-gradient-to-br from-[var(--sand)] to-white dark:from-[#0B1E42] dark:to-[#071530] rounded-2xl p-8 shadow-lg border border-[var(--gold)]/20 dark:border-[var(--teal)]/20"
     >
       <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
         {language === 'en' ? 'Meet Your Guide' : 'Rencontrez Votre Guide'}

@@ -16,10 +16,10 @@ export default function Button({
   const baseStyles = 'inline-flex items-center justify-center rounded-xl transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
-    primary: 'bg-[var(--teal)] dark:bg-[var(--turquoise)] text-white hover:bg-[var(--teal-dark)] dark:hover:bg-[var(--turquoise-dark)] active:scale-95 shadow-lg hover:shadow-xl',
-    secondary: 'bg-[var(--turquoise)] dark:bg-[var(--teal)] text-white hover:bg-[var(--turquoise-dark)] dark:hover:bg-[var(--teal-dark)] active:scale-95 shadow-lg hover:shadow-xl',
-    outline: 'border-2 border-[var(--teal)] dark:border-[var(--turquoise)] text-[var(--teal)] dark:text-[var(--turquoise)] hover:!bg-[var(--teal)] hover:!text-white dark:hover:!bg-[var(--turquoise)] dark:hover:!text-[var(--dark-page)]',
-    ghost: 'text-[var(--teal)] dark:text-[var(--turquoise)] hover:bg-[var(--sand)] dark:hover:bg-[var(--dark-muted)]'
+    primary: 'bg-[var(--navy)] dark:bg-[var(--gold)] text-[var(--ivory)] dark:text-[#041B4A] hover:bg-[#031035] dark:hover:bg-[#B8963F] active:scale-95 shadow-lg hover:shadow-xl',
+    secondary: 'bg-[var(--turquoise)] dark:bg-[var(--turquoise)] text-white hover:opacity-90 dark:hover:opacity-90 active:scale-95 shadow-lg hover:shadow-xl',
+    outline: 'border-2 border-[var(--navy)] dark:border-[var(--gold)] text-[var(--navy)] dark:text-[var(--gold)] hover:bg-[var(--navy)] dark:hover:bg-[var(--gold)] hover:text-[var(--ivory)] dark:hover:text-[#041B4A]',
+    ghost: 'text-[var(--navy)] dark:text-[var(--gold)] hover:bg-[var(--sand)] dark:hover:bg-[#0B1E42]'
   };
 
   const sizes = {

@@ -75,8 +75,8 @@ export default function Activities() {
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== '').length;
 
   return (
-    <div className="bg-gray-50 dark:bg-[var(--dark-page)] min-h-screen">
-      <div className="bg-gradient-to-r from-[var(--teal)] to-[var(--turquoise)] dark:from-[var(--turquoise)] dark:to-[var(--teal)] text-white py-16">
+    <div className="bg-[#F9F5EE] dark:bg-[#040E26] min-h-screen">
+      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {t('nav.activities')}
@@ -108,7 +108,7 @@ export default function Activities() {
           </p>
           <button
             onClick={() => setFiltersOpen(!filtersOpen)}
-            className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white dark:bg-[var(--dark-card)] rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white"
+            className="lg:hidden flex items-center gap-2 px-4 py-2 bg-[#F9F5EE] dark:bg-[#071530] rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-white"
           >
             <Filter className="w-4 h-4" />
             {t('filters.title')}
@@ -124,7 +124,7 @@ export default function Activities() {
           <aside
             className={`${
               filtersOpen ? 'block' : 'hidden'
-            } lg:block w-full lg:w-64 bg-white dark:bg-[var(--dark-card)] rounded-2xl p-6 shadow-lg h-fit sticky top-24`}
+            } lg:block w-full lg:w-64 bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-6 shadow-lg h-fit sticky top-24`}
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-semibold text-lg text-[var(--navy)] dark:text-white">{t('filters.title')}</h2>
@@ -146,7 +146,7 @@ export default function Activities() {
                 <select
                   value={filters.category}
                   onChange={(e) => handleFilterChange('category', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 >
                   <option value="">{t('filters.all')}</option>
                   {categories.map((cat) => (
@@ -167,14 +167,14 @@ export default function Activities() {
                     placeholder="Min"
                     value={filters.priceMin}
                     onChange={(e) => handleFilterChange('priceMin', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                   />
                   <input
                     type="number"
                     placeholder="Max"
                     value={filters.priceMax}
                     onChange={(e) => handleFilterChange('priceMax', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                   />
                 </div>
               </div>
@@ -252,7 +252,7 @@ export default function Activities() {
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
                   placeholder={language === 'en' ? 'Search activities by name' : 'Rechercher les activités par nom'}
-                  className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-700 dark:bg-[var(--dark-card)] dark:text-white"
+                  className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-700 dark:bg-[#071530] dark:text-white"
                 />
               </div>
             </div>
@@ -264,7 +264,7 @@ export default function Activities() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-12 text-center">
+              <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-12 text-center">
                 <p className="text-gray-500 dark:text-gray-400 text-lg">
                   {language === 'en'
                     ? 'No activities found matching your filters'

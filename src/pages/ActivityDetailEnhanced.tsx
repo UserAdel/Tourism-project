@@ -73,7 +73,7 @@ export default function ActivityDetail() {
 
   if (!activity) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[var(--dark-page)]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F0EAD8]/30 dark:bg-[#040E26]">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
             {t('common.notFound')}
@@ -175,7 +175,7 @@ export default function ActivityDetail() {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-[var(--dark-page)] min-h-screen">
+    <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">
       <div className="relative h-96 overflow-hidden">
         <motion.img
           initial={{ scale: 1.1 }}
@@ -236,7 +236,7 @@ export default function ActivityDetail() {
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+              className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
             >
               <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
                 {t('activity.overview')}
@@ -251,7 +251,7 @@ export default function ActivityDetail() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+                className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
               >
                 <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
                   {t('activity.highlights')}
@@ -278,14 +278,14 @@ export default function ActivityDetail() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+                className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
               >
                 <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
                   {t('activity.ageRestrictions')}
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {ageRestriction && (
-                    <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl">
+                    <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-xl">
                       <div className="w-10 h-10 bg-[var(--teal)] rounded-full flex items-center justify-center flex-shrink-0">
                         <Baby className="w-5 h-5 text-white" />
                       </div>
@@ -300,7 +300,7 @@ export default function ActivityDetail() {
                     </div>
                   )}
                 {activity.maxWeight && (
-                  <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl">
+                  <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-xl">
                     <div className="w-10 h-10 bg-[var(--gold)] rounded-full flex items-center justify-center flex-shrink-0">
                       <Weight className="w-5 h-5 text-white" />
                     </div>
@@ -315,7 +315,7 @@ export default function ActivityDetail() {
                   </div>
                 )}
                 {activity.maxCapacity && (
-                  <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl">
+                  <div className="flex items-start gap-3 p-4 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-xl">
                     <div className="w-10 h-10 bg-[var(--turquoise)] rounded-full flex items-center justify-center flex-shrink-0">
                       <Users className="w-5 h-5 text-white" />
                     </div>
@@ -337,14 +337,14 @@ export default function ActivityDetail() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+              className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
             >
               <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
                 {t('activity.pricing')}
               </h2>
               <div className="space-y-4">
                 {pricingFields.map((field, index) => (
-                  <div key={`${field.id ?? field.name.en}-${index}`} className="flex items-center justify-between p-4 bg-gradient-to-r from-[var(--sand)] to-white dark:from-[var(--dark-muted)] dark:to-[var(--dark-section)] rounded-xl border border-[var(--gold)]/20">
+                  <div key={`${field.id ?? field.name.en}-${index}`} className="flex items-center justify-between p-4 bg-gradient-to-r from-[var(--sand)] to-white dark:from-[#0B1E42] dark:to-[#071530] rounded-xl border border-[var(--gold)]/20">
                     <span className="font-medium text-[var(--navy)] dark:text-white">{formatPricingLabel(field, language)}</span>
                     <span className="text-2xl font-bold text-[var(--teal)]">€{field.price}</span>
                   </div>
@@ -357,7 +357,7 @@ export default function ActivityDetail() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+                className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
               >
                 <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
                   {t('activity.included')}
@@ -384,7 +384,7 @@ export default function ActivityDetail() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+                className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
               >
                 <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-4">
                   {t('activity.excluded')}
@@ -450,7 +450,7 @@ export default function ActivityDetail() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1 }}
-              className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg"
+              className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg"
             >
               <h2 className="mb-6 text-2xl font-bold text-[var(--navy)] dark:text-white">
                 {language === 'en' ? 'Add Your Review' : 'Ajouter votre avis'}
@@ -467,7 +467,7 @@ export default function ActivityDetail() {
                       minLength={2}
                       maxLength={120}
                       required
-                      className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-section)] dark:text-white"
+                      className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[#071530] dark:text-white"
                     />
                   </label>
                   <label className="relative grid gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
@@ -485,10 +485,10 @@ export default function ActivityDetail() {
                       minLength={2}
                       maxLength={120}
                       required
-                      className="h-12 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-section)] dark:text-white"
+                      className="h-12 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[#071530] dark:text-white"
                     />
                     {isCountryDropdownOpen && (
-                      <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-64 overflow-y-auto rounded-lg border border-gray-200 bg-white py-2 shadow-xl dark:border-gray-700 dark:bg-[var(--dark-section)]">
+                      <div className="absolute left-0 right-0 top-full z-20 mt-2 max-h-64 overflow-y-auto rounded-lg border border-gray-200 bg-[#F9F5EE] py-2 shadow-xl dark:border-gray-700 dark:bg-[#071530]">
                         {filteredReviewCountries.length > 0 ? (
                           filteredReviewCountries.map((country) => (
                             <button
@@ -499,7 +499,7 @@ export default function ActivityDetail() {
                                 setReviewCountry(country);
                                 setIsCountryDropdownOpen(false);
                               }}
-                              className="block w-full px-4 py-2 text-left text-sm font-medium text-gray-700 hover:bg-[var(--sand)] dark:text-gray-200 dark:hover:bg-[var(--dark-muted)]"
+                              className="block w-full px-4 py-2 text-left text-sm font-medium text-gray-700 hover:bg-[var(--sand)] dark:text-gray-200 dark:hover:bg-[#0B1E42]"
                             >
                               {country}
                             </button>
@@ -545,7 +545,7 @@ export default function ActivityDetail() {
                     maxLength={2000}
                     required
                     rows={4}
-                    className="resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-section)] dark:text-white"
+                    className="resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-[var(--teal)] dark:border-gray-600 dark:bg-[#071530] dark:text-white"
                   />
                 </label>
 
@@ -569,7 +569,7 @@ export default function ActivityDetail() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="sticky top-24 bg-white dark:bg-[var(--dark-card)] rounded-2xl p-6 shadow-xl border-2 border-[var(--gold)] dark:border-[var(--teal)]"
+              className="sticky top-24 bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-6 shadow-xl border-2 border-[var(--gold)] dark:border-[var(--teal)]"
             >
               <div className="text-center mb-6">
                 <div className="text-[var(--teal)] dark:text-[var(--turquoise)] text-4xl font-bold mb-2 animate-glow-pulse">

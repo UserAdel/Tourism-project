@@ -16,7 +16,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   return (
     <Link
       to={`/activities/${activity.slug}`}
-      className="group bg-white dark:bg-[var(--dark-card)] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl dark:hover:shadow-[var(--shadow-cyan-large)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
+      className="group bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
     >
       <div className="relative h-64 overflow-hidden">
         <img
@@ -53,12 +53,12 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           </div>
           <div className="flex gap-2">
             {activity.pickupIncluded && (
-              <div className="p-2 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-lg transition-colors" title="Pickup Included">
+              <div className="p-2 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-lg transition-colors" title="Pickup Included">
                 <MapPin className="w-4 h-4 text-[var(--teal)]" />
               </div>
             )}
             {activity.childFriendly && (
-              <div className="p-2 bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-lg transition-colors" title="Child Friendly">
+              <div className="p-2 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-lg transition-colors" title="Child Friendly">
                 <Users className="w-4 h-4 text-[var(--teal)]" />
               </div>
             )}

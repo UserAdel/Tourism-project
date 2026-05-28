@@ -10,11 +10,11 @@ export default function FloatingWhatsApp() {
     <div className="fixed bottom-6 right-6 z-50">
       <div className="relative">
         {showTooltip && (
-          <div className="absolute bottom-full right-0 mb-2 px-4 py-2 bg-white dark:bg-[var(--dark-card)] rounded-lg shadow-xl whitespace-nowrap animate-in slide-in-from-bottom-2 fade-in duration-200">
+          <div className="absolute bottom-full right-0 mb-2 px-4 py-2 bg-[#F9F5EE] dark:bg-[#071530] rounded-lg shadow-xl whitespace-nowrap animate-in slide-in-from-bottom-2 fade-in duration-200">
             <p className="text-sm font-medium text-gray-800 dark:text-white">
               {language === 'en' ? 'Chat with us!' : 'Discutez avec nous!'}
             </p>
-            <div className="absolute bottom-0 right-4 w-3 h-3 bg-white dark:bg-[var(--dark-card)] transform rotate-45 translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-4 w-3 h-3 bg-[#F9F5EE] dark:bg-[#071530] transform rotate-45 translate-y-1/2"></div>
           </div>
         )}
 

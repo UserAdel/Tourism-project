@@ -25,7 +25,7 @@ export default function DetailedItinerary({ steps, title }: DetailedItineraryPro
   const defaultTitle = language === 'en' ? 'Detailed Itinerary' : 'Itinéraire Détaillé';
 
   return (
-    <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg">
+    <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg">
       <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
         {title || defaultTitle}
       </h2>
@@ -53,7 +53,7 @@ export default function DetailedItinerary({ steps, title }: DetailedItineraryPro
 
               {/* Content */}
               <div className="flex-1 pb-6">
-                <div className="bg-[var(--sand)] dark:bg-[var(--dark-muted)] rounded-xl p-4 hover:shadow-md transition-shadow">
+                <div className="bg-[var(--sand)] dark:bg-[#0B1E42] rounded-xl p-4 hover:shadow-md transition-shadow">
                   <div className="flex items-baseline gap-3 mb-2">
                     <span className="text-sm font-semibold text-[var(--teal)] dark:text-[var(--turquoise)]">
                       {step.time}

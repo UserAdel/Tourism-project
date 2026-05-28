@@ -111,8 +111,8 @@ export default function BookNow() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-[var(--dark-page)] flex items-center justify-center px-4">
-        <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
+      <div className="min-h-screen bg-[#F0EAD8]/30 dark:bg-[#040E26] flex items-center justify-center px-4">
+        <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400" />
           </div>
@@ -133,8 +133,8 @@ export default function BookNow() {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-[var(--dark-page)] min-h-screen">
-      <div className="bg-gradient-to-r from-[var(--teal)] to-[var(--turquoise)] text-white py-16">
+    <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">
+      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('booking.title')}</h1>
           <p className="text-xl text-white/90">
@@ -146,7 +146,7 @@ export default function BookNow() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl shadow-xl p-8">
+        <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -157,7 +157,7 @@ export default function BookNow() {
                 value={formData.selectedActivity}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
               >
                 <option value="">
                   {language === 'en' ? 'Select an activity' : 'Sélectionner une activité'}
@@ -181,7 +181,7 @@ export default function BookNow() {
                   value={formData.fullName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
@@ -195,7 +195,7 @@ export default function BookNow() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
@@ -235,7 +235,7 @@ export default function BookNow() {
                   value={formData.nationality}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
@@ -250,7 +250,7 @@ export default function BookNow() {
                   onChange={handleChange}
                   required
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
@@ -265,7 +265,7 @@ export default function BookNow() {
                   onChange={handleChange}
                   required
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
@@ -282,7 +282,7 @@ export default function BookNow() {
                   pattern="[0-9]*"
                   required
                   placeholder={language === 'en' ? 'e.g. 2' : 'ex. 2'}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
               <div>
@@ -298,7 +298,7 @@ export default function BookNow() {
                   pattern="[0-9]*"
                   required
                   placeholder={language === 'en' ? 'e.g. 0' : 'ex. 0'}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 />
               </div>
 
@@ -311,7 +311,7 @@ export default function BookNow() {
                   value={formData.language}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
                 >
                   <option value="en">English</option>
                   <option value="fr">Français</option>
@@ -329,11 +329,11 @@ export default function BookNow() {
                 value={formData.specialRequests}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[var(--dark-muted)] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
               />
             </div>
 
-            <div className="bg-[var(--sand)] dark:bg-[var(--dark-muted)] p-4 rounded-lg">
+            <div className="bg-[var(--sand)] dark:bg-[#0B1E42] p-4 rounded-lg">
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 {language === 'en'
                   ? 'No online payment is required. Submit your request and we will confirm availability via WhatsApp.'

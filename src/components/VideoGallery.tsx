@@ -28,7 +28,7 @@ export default function VideoGallery({ videos, title }: VideoGalleryProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg">
+    <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg">
       <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
         {title}
       </h2>

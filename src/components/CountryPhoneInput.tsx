@@ -90,7 +90,7 @@ export default function CountryPhoneInput({
             aria-expanded={isOpen}
             aria-controls={listboxId}
             onClick={() => setIsOpen((current) => !current)}
-            className="flex h-full min-h-12 w-36 sm:w-44 items-center gap-2 rounded-l-lg border border-r-0 border-gray-300 bg-white px-3 text-left text-gray-900 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white dark:hover:bg-white/5"
+            className="flex h-full min-h-12 w-36 sm:w-44 items-center gap-2 rounded-l-lg border border-r-0 border-gray-300 bg-white px-3 text-left text-gray-900 transition hover:bg-[#F0EAD8]/60 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[#0B1E42] dark:text-white dark:hover:bg-white/5"
           >
             <span className="text-lg leading-none">{selectedCountry.flag}</span>
             <span className="min-w-0 flex-1 truncate text-sm">{selectedCountry.name}</span>
@@ -101,7 +101,7 @@ export default function CountryPhoneInput({
           </button>
 
           {isOpen && (
-            <div className="absolute left-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-[var(--dark-card)]">
+            <div className="absolute left-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-gray-200 bg-[#F9F5EE] shadow-xl dark:border-gray-700 dark:bg-[#071530]">
               <div className="flex items-center gap-2 border-b border-gray-200 px-3 py-2 dark:border-gray-700">
                 <Search className="h-4 w-4 shrink-0 text-gray-400" />
                 <input
@@ -154,7 +154,7 @@ export default function CountryPhoneInput({
           onChange={handleInputChange}
           required={required}
           inputMode="tel"
-          className="min-h-12 min-w-0 flex-1 rounded-r-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+          className="min-h-12 min-w-0 flex-1 rounded-r-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[#0B1E42] dark:text-white"
         />
       </div>
     </div>

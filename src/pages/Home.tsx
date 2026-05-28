@@ -104,7 +104,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-white dark:bg-[var(--dark-page)]">
+    <div className="bg-[#F9F5EE] dark:bg-[#040E26]">
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <motion.img
@@ -145,7 +145,7 @@ export default function Home() {
               href="https://wa.me/201234567890"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white bg-white/10 px-8 py-4 text-lg font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white hover:text-[var(--teal-dark)] focus:outline-none focus:ring-2 focus:ring-white/70 sm:w-auto dark:border-[var(--turquoise)] dark:hover:bg-[var(--turquoise)] dark:hover:text-[var(--dark-page)]"
+              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white bg-white/10 px-8 py-4 text-lg font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white hover:text-[var(--navy)] focus:outline-none focus:ring-2 focus:ring-white/70 sm:w-auto dark:border-[var(--gold)] dark:hover:bg-[var(--gold)] dark:hover:text-[#041B4A]"
             >
               <MessageCircle className="mr-2 h-5 w-5" />
               {t('hero.whatsapp')}
@@ -154,7 +154,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50 dark:bg-[var(--dark-section)]">
+      <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#071530]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -191,7 +191,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-white dark:bg-[var(--dark-page)]">
+      <section className="py-16 bg-[#F9F5EE] dark:bg-[#040E26]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -218,9 +218,9 @@ export default function Home() {
                 >
                   <Link
                     to={`/activities?category=${category.id}`}
-                    className="group bg-gradient-to-br from-[var(--sand)] to-white dark:from-[var(--dark-muted)] dark:to-[var(--dark-section)] p-6 rounded-2xl text-center hover:shadow-xl dark:hover:shadow-[var(--shadow-cyan-large)] transition-all duration-300 hover:-translate-y-1 border border-[var(--gold)]/20 dark:border-[var(--teal)]/20 block"
+                    className="group bg-gradient-to-br from-[var(--sand)] to-white dark:from-[#0B1E42] dark:to-[#071530] p-6 rounded-2xl text-center hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all duration-300 hover:-translate-y-1 border border-[var(--gold)]/20 dark:border-[var(--teal)]/20 block"
                   >
-                    <div className="w-16 h-16 mx-auto mb-4 bg-white dark:bg-[var(--dark-card)] rounded-full flex items-center justify-center group-hover:bg-[var(--teal)] transition-all duration-300 shadow-md group-hover:shadow-lg group-hover:scale-110">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-[#F9F5EE] dark:bg-[#071530] rounded-full flex items-center justify-center group-hover:bg-[var(--teal)] transition-all duration-300 shadow-md group-hover:shadow-lg group-hover:scale-110">
                       <Icon className="w-8 h-8 text-[var(--teal)] group-hover:text-white transition-colors" />
                     </div>
                     <h3 className="font-semibold text-[var(--navy)] dark:text-white">
@@ -234,7 +234,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-[var(--navy)] dark:bg-[var(--dark-card)] text-white">
+      <section className="py-16 bg-[var(--navy)] dark:bg-[#071530] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -256,7 +256,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/20 hover:bg-white/15 dark:hover:bg-white/10 transition-all hover:shadow-[var(--shadow-cyan-glow)]"
+                className="bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/20 hover:bg-white/15 dark:hover:bg-white/10 transition-all hover:shadow-[0_0_30px_rgba(201,168,92,0.3)]"
               >
                 <div className="w-14 h-14 bg-[var(--gold)] dark:bg-[var(--turquoise)] rounded-full flex items-center justify-center mb-4 animate-float">
                   <item.icon className="w-7 h-7 text-[var(--navy)]" />
@@ -269,7 +269,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50 dark:bg-[var(--dark-section)]">
+      <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#071530]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -291,7 +291,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="bg-white dark:bg-[var(--dark-card)] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[var(--shadow-cyan-large)] transition-all"
+                className="bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(review.rating)].map((_, i) => (
@@ -309,7 +309,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-r from-[var(--teal)] to-[var(--turquoise)] text-white">
+      <section className="py-20 bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             {language === 'en' ? 'Ready for Your Red Sea Adventure?' : 'Prêt pour Votre Aventure en Mer Rouge?'}
@@ -323,7 +323,7 @@ export default function Home() {
             <Link to="/book">
               <Button
                 size="lg"
-                className="w-full sm:w-auto border-2 border-white !bg-white !text-[var(--teal)] hover:!bg-gray-100 hover:!text-[var(--teal-dark)] dark:border-[var(--turquoise)] dark:!bg-[var(--dark-page)] dark:!text-white dark:hover:!bg-[var(--dark-section)] dark:hover:!text-[var(--turquoise)]"
+                className="w-full sm:w-auto !bg-[var(--gold)] !text-[#041B4A] hover:!bg-[#B8963F] !border-0"
               >
                 {t('hero.bookNow')}
               </Button>
@@ -332,7 +332,7 @@ export default function Home() {
               href="https://wa.me/201234567890"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-200 hover:bg-white hover:text-[var(--teal-dark)] focus:outline-none focus:ring-2 focus:ring-white/70 sm:w-auto dark:border-[var(--turquoise)] dark:ring-1 dark:ring-[var(--turquoise)]/80 dark:hover:bg-[var(--turquoise)] dark:hover:text-[var(--dark-page)]"
+              className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white/70 bg-transparent px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-200 hover:bg-white hover:text-[#041B4A] focus:outline-none focus:ring-2 focus:ring-white/70 sm:w-auto"
             >
               <MessageCircle className="mr-2 h-5 w-5" />
               {t('hero.whatsapp')}

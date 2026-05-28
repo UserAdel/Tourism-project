@@ -24,7 +24,7 @@ export default function Testimonials({ testimonials, title }: TestimonialsProps)
   const defaultTitle = language === 'en' ? 'Guest Reviews' : 'Avis des Clients';
 
   return (
-    <div className="bg-white dark:bg-[var(--dark-card)] rounded-2xl p-8 shadow-lg">
+    <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 shadow-lg">
       <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
         {title || defaultTitle}
       </h2>
@@ -36,7 +36,7 @@ export default function Testimonials({ testimonials, title }: TestimonialsProps)
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-gradient-to-br from-[var(--sand)] to-white dark:from-[var(--dark-muted)] dark:to-[var(--dark-section)] p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[var(--gold)]/20 dark:border-[var(--teal)]/20 relative overflow-hidden"
+            className="bg-gradient-to-br from-[var(--sand)] to-white dark:from-[#0B1E42] dark:to-[#071530] p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[var(--gold)]/20 dark:border-[var(--teal)]/20 relative overflow-hidden"
           >
             <div className="absolute top-4 right-4 opacity-10">
               <Quote className="w-12 h-12 text-[var(--teal)]" />

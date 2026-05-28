@@ -34,7 +34,7 @@ export default function SocialProofCounters({
   ];
 
   return (
-    <div className="bg-gradient-to-r from-[var(--teal)] to-[var(--turquoise)] dark:from-[var(--turquoise)] dark:to-[var(--teal)] rounded-2xl p-6 text-white">
+    <div className="bg-gradient-to-r from-[#041B4A] to-[#1A8FA8] dark:from-[#0B1E42] dark:to-[#071530] rounded-2xl p-6 text-white border border-[var(--gold)]/20">
       <div className="grid grid-cols-3 gap-4">
         {counters.map((counter, index) => (
           <motion.div
