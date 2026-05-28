@@ -129,8 +129,7 @@ function BookingDetailModal({
         ['Activity slug', booking.selectedActivity],
         ['Preferred date', booking.preferredDate],
         ['Guests', `${booking.adults} adults, ${booking.children} children`],
-        ['Hotel', booking.hotelName],
-        ['Room', booking.roomNumber || 'Not provided'],
+        ['Arrival date', booking.arrivalDate],
       ],
     },
     {
@@ -431,8 +430,7 @@ export default function AdminDashboard() {
           booking.nationality,
           booking.activityName,
           booking.selectedActivity,
-          booking.hotelName,
-          booking.roomNumber,
+          booking.arrivalDate,
           booking.phone,
           booking.whatsapp,
           booking.email,
@@ -774,7 +772,7 @@ export default function AdminDashboard() {
                             <p>
                               {booking.adults} adults, {booking.children} children
                             </p>
-                            <p>{booking.hotelName}</p>
+                            <p>Arrival: {booking.arrivalDate}</p>
                           </td>
                           <td className="px-4 py-4 align-top text-sm text-gray-600 dark:text-gray-300">
                             <p className="flex items-center gap-1">
