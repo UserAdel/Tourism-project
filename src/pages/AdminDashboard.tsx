@@ -2,6 +2,8 @@ import { type Dispatch, type FormEvent, type SetStateAction, useState } from 're
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CheckCircle,
+  ChevronLeft,
+  ChevronRight,
   Edit3,
   Eye,
   Mail,
@@ -83,6 +85,7 @@ const contactStatuses: AdminContactRequest['status'][] = [
   'replied',
   'archived',
 ];
+const PAGE_SIZE = 10;
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('en', {
@@ -101,6 +104,69 @@ function statusClass(status: string) {
     return 'bg-red-50 text-red-800 border-red-200';
   }
   return 'bg-orange-50 text-orange-800 border-orange-200';
+}
+
+function paginateItems<T>(items: T[], page: number) {
+  const totalItems = items.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+  const currentPage = Math.min(Math.max(page, 1), totalPages);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+
+  return {
+    currentPage,
+    endItem: Math.min(startIndex + PAGE_SIZE, totalItems),
+    items: items.slice(startIndex, startIndex + PAGE_SIZE),
+    startItem: totalItems ? startIndex + 1 : 0,
+    totalItems,
+    totalPages,
+  };
+}
+
+function PaginationControls({
+  pagination,
+  onPageChange,
+  standalone = false,
+}: {
+  pagination: ReturnType<typeof paginateItems>;
+  onPageChange: (page: number) => void;
+  standalone?: boolean;
+}) {
+  if (pagination.totalItems <= PAGE_SIZE) return null;
+
+  const containerClass = standalone
+    ? 'mt-4 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-600 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)] dark:text-gray-300'
+    : 'border-t border-gray-200 px-4 py-3 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300';
+
+  return (
+    <div className={`${containerClass} flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}>
+      <p>
+        Showing {pagination.startItem}-{pagination.endItem} of {pagination.totalItems}
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(pagination.currentPage - 1)}
+          disabled={pagination.currentPage === 1}
+          className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 font-semibold text-gray-700 hover:text-[var(--teal)] disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Previous
+        </button>
+        <span className="min-w-20 text-center font-medium text-gray-700 dark:text-gray-200">
+          {pagination.currentPage} / {pagination.totalPages}
+        </span>
+        <button
+          type="button"
+          onClick={() => onPageChange(pagination.currentPage + 1)}
+          disabled={pagination.currentPage === pagination.totalPages}
+          className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 font-semibold text-gray-700 hover:text-[var(--teal)] disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200"
+        >
+          Next
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
 }
 
 function BookingDetailModal({
@@ -353,16 +419,20 @@ export default function AdminDashboard() {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
   const [activityForm, setActivityForm] = useState<ActivityFormState>(emptyActivityForm);
   const [activitySearch, setActivitySearch] = useState('');
+  const [activityPage, setActivityPage] = useState(1);
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categoryForm, setCategoryForm] = useState<CategoryFormState>(emptyCategoryForm);
+  const [categoryPage, setCategoryPage] = useState(1);
   const [selectedBooking, setSelectedBooking] = useState<AdminBookingRequest | null>(null);
   const [bookingSearch, setBookingSearch] = useState('');
+  const [bookingPage, setBookingPage] = useState(1);
   const [bookingTypeFilter, setBookingTypeFilter] = useState<AdminBookingRequest['status'] | 'all'>(
     'all'
   );
   const [bookingDateFrom, setBookingDateFrom] = useState('');
   const [bookingDateTo, setBookingDateTo] = useState('');
+  const [contactPage, setContactPage] = useState(1);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
   const [isConfirmingAction, setIsConfirmingAction] = useState(false);
   const { data, isLoading, isError } = useAdminDashboard();
@@ -444,6 +514,12 @@ export default function AdminDashboard() {
 
       return matchesSearch && matchesType && matchesDateFrom && matchesDateTo;
     }) ?? [];
+  const filteredContacts = data?.contacts ?? [];
+  const filteredCategories = data?.categories ?? [];
+  const paginatedActivities = paginateItems(filteredActivities, activityPage);
+  const paginatedBookings = paginateItems(filteredBookings, bookingPage);
+  const paginatedContacts = paginateItems(filteredContacts, contactPage);
+  const paginatedCategories = paginateItems(filteredCategories, categoryPage);
 
   const setFormValue = <Key extends keyof ActivityFormState>(
     key: Key,
@@ -596,16 +672,20 @@ export default function AdminDashboard() {
                   <input
                     type="search"
                     value={bookingSearch}
-                    onChange={(event) => setBookingSearch(event.target.value)}
+                    onChange={(event) => {
+                      setBookingSearch(event.target.value);
+                      setBookingPage(1);
+                    }}
                     placeholder="Search bookings"
                     className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                   />
                 </div>
                 <select
                   value={bookingTypeFilter}
-                  onChange={(event) =>
-                    setBookingTypeFilter(event.target.value as AdminBookingRequest['status'] | 'all')
-                  }
+                  onChange={(event) => {
+                    setBookingTypeFilter(event.target.value as AdminBookingRequest['status'] | 'all');
+                    setBookingPage(1);
+                  }}
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                   aria-label="Filter bookings by type"
                 >
@@ -621,7 +701,10 @@ export default function AdminDashboard() {
                   <input
                     type="date"
                     value={bookingDateFrom}
-                    onChange={(event) => setBookingDateFrom(event.target.value)}
+                    onChange={(event) => {
+                      setBookingDateFrom(event.target.value);
+                      setBookingPage(1);
+                    }}
                     className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                     aria-label="Filter bookings from date"
                   />
@@ -631,7 +714,10 @@ export default function AdminDashboard() {
                   <input
                     type="date"
                     value={bookingDateTo}
-                    onChange={(event) => setBookingDateTo(event.target.value)}
+                    onChange={(event) => {
+                      setBookingDateTo(event.target.value);
+                      setBookingPage(1);
+                    }}
                     className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                     aria-label="Filter bookings to date"
                   />
@@ -643,6 +729,7 @@ export default function AdminDashboard() {
                     setBookingTypeFilter('all');
                     setBookingDateFrom('');
                     setBookingDateTo('');
+                    setBookingPage(1);
                   }}
                   className="inline-flex items-center justify-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
                 >
@@ -654,7 +741,7 @@ export default function AdminDashboard() {
                 {isLoading ? (
                   <div className="px-4 py-8 text-center text-gray-500">Loading bookings...</div>
                 ) : filteredBookings.length ? (
-                  filteredBookings.map((booking) => (
+                  paginatedBookings.items.map((booking) => (
                     <button
                       key={booking._id}
                       type="button"
@@ -737,7 +824,7 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ) : filteredBookings.length ? (
-                      filteredBookings.map((booking) => (
+                      paginatedBookings.items.map((booking) => (
                         <tr
                           key={booking._id}
                           role="button"
@@ -829,6 +916,12 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              {!isLoading && (
+                <PaginationControls
+                  pagination={paginatedBookings}
+                  onPageChange={setBookingPage}
+                />
+              )}
             </div>
               </section>
             )}
@@ -840,8 +933,8 @@ export default function AdminDashboard() {
                 <div className="rounded-lg bg-white p-6 text-gray-500 shadow-sm dark:bg-[var(--dark-card)]">
                   Loading contacts...
                 </div>
-              ) : data?.contacts.length ? (
-                data.contacts.map((contact) => (
+              ) : filteredContacts.length ? (
+                paginatedContacts.items.map((contact) => (
                   <article
                     key={contact._id}
                     className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)]"
@@ -913,6 +1006,13 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+            {!isLoading && (
+              <PaginationControls
+                pagination={paginatedContacts}
+                onPageChange={setContactPage}
+                standalone
+              />
+            )}
               </section>
             )}
 
@@ -927,7 +1027,10 @@ export default function AdminDashboard() {
                     <input
                       type="search"
                       value={activitySearch}
-                      onChange={(event) => setActivitySearch(event.target.value)}
+                      onChange={(event) => {
+                        setActivitySearch(event.target.value);
+                        setActivityPage(1);
+                      }}
                       placeholder="Search activities"
                       className="w-72 rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                     />
@@ -951,7 +1054,10 @@ export default function AdminDashboard() {
                   <input
                     type="search"
                     value={activitySearch}
-                    onChange={(event) => setActivitySearch(event.target.value)}
+                    onChange={(event) => {
+                      setActivitySearch(event.target.value);
+                      setActivityPage(1);
+                    }}
                     placeholder="Search activities"
                     className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
                   />
@@ -961,7 +1067,7 @@ export default function AdminDashboard() {
                 {isLoading ? (
                   <div className="px-4 py-8 text-center text-gray-500">Loading activities...</div>
                 ) : filteredActivities.length ? (
-                  filteredActivities.map((activity) => (
+                  paginatedActivities.items.map((activity) => (
                     <article key={activity._id} className="px-4 py-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
@@ -1057,7 +1163,7 @@ export default function AdminDashboard() {
                         </td>
                       </tr>
                     ) : filteredActivities.length ? (
-                      filteredActivities.map((activity) => (
+                      paginatedActivities.items.map((activity) => (
                         <tr
                           key={activity._id}
                           role="button"
@@ -1140,6 +1246,12 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+              {!isLoading && (
+                <PaginationControls
+                  pagination={paginatedActivities}
+                  onPageChange={setActivityPage}
+                />
+              )}
             </div>
               </section>
             )}
@@ -1168,8 +1280,8 @@ export default function AdminDashboard() {
                       <div className="px-4 py-8 text-center text-gray-500">
                         Loading categories...
                       </div>
-                    ) : data?.categories.length ? (
-                      data.categories.map((category) => (
+                    ) : filteredCategories.length ? (
+                      paginatedCategories.items.map((category) => (
                         <article key={category._id} className="px-4 py-4">
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div className="min-w-0 flex-1">
@@ -1241,8 +1353,8 @@ export default function AdminDashboard() {
                               Loading categories...
                             </td>
                           </tr>
-                        ) : data?.categories.length ? (
-                          data.categories.map((category) => (
+                        ) : filteredCategories.length ? (
+                          paginatedCategories.items.map((category) => (
                             <tr key={category._id}>
                               <td className="px-4 py-4 align-top font-mono text-sm text-gray-600 dark:text-gray-300">
                                 {category.id}
@@ -1297,6 +1409,12 @@ export default function AdminDashboard() {
                       </tbody>
                     </table>
                   </div>
+                  {!isLoading && (
+                    <PaginationControls
+                      pagination={paginatedCategories}
+                      onPageChange={setCategoryPage}
+                    />
+                  )}
                 </div>
 
               </section>
