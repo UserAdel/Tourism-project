@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { activities as fallbackActivities } from '../data/activities';
+import Loading from '../components/Loading';
 import Button from '../components/Button';
 import CountryPhoneInput from '../components/CountryPhoneInput';
 import type { BookingFormData } from '../types';
 import { CheckCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useActivities, useCreateBookingRequest } from '../hooks/queries';
-import { normalizeActivity } from '../utils/activityImages';
 import {
   buildInternationalPhoneNumber,
   getDefaultPhoneCountry,
@@ -23,9 +22,8 @@ export default function BookNow() {
   const { language, t } = useLanguage();
   const [searchParams] = useSearchParams();
   const preselectedActivity = searchParams.get('activity') || '';
-  const { data: apiActivities } = useActivities();
+  const { data: apiActivities, isLoading: isActivitiesLoading } = useActivities();
   const createBookingRequest = useCreateBookingRequest();
-  const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
   const defaultPhoneCountryName = getDefaultPhoneCountry().name;
 
   useSEO({
@@ -59,8 +57,15 @@ export default function BookNow() {
   });
   const [phoneCountryName, setPhoneCountryName] = useState(defaultPhoneCountryName);
   const [whatsappCountryName, setWhatsappCountryName] = useState(defaultPhoneCountryName);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  if (isActivitiesLoading) {
+    return <Loading />;
+  }
+
+  const activities = apiActivities ?? [];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

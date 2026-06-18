@@ -1,8 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { activities as fallbackActivities } from '../data/activities';
-import { activityGalleries, activityVideos, activityVideoTestimonials } from '../data/activityMedia';
 import Button from '../components/Button';
 import ActivityCard from '../components/ActivityCard';
 import ImageGallery from '../components/ImageGallery';
@@ -13,7 +11,6 @@ import { motion } from 'motion/react';
 import { toast } from 'sonner';
 import Loading from '../components/Loading';
 import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';
-import { normalizeActivity } from '../utils/activityImages';
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
 import { countries } from '../data/countries';
 import { useSEO } from '../hooks/useSEO';
@@ -54,7 +51,6 @@ export default function ActivityDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { language, t } = useLanguage();
   const navigate = useNavigate();
-  const fallbackActivityList = fallbackActivities.map(normalizeActivity);
   const { data: apiActivity, isLoading } = useActivity(slug);
   const { data: apiActivities } = useActivities();
   const createReview = useCreateActivityReview(slug);
@@ -69,9 +65,8 @@ export default function ActivityDetail() {
     setIsCountryDropdownOpen(false);
   }, [slug]);
 
-  const activities = apiActivities ?? fallbackActivityList;
-  const activity = apiActivity ?? fallbackActivityList.find((a) => a.slug === slug);
-  const isApiActivity = Boolean(apiActivity);
+  const activities = apiActivities ?? [];
+  const activity = apiActivity;
 
   // Generate dynamic keywords — admin keywords take priority at the front
   const autoKeywords = activity
@@ -153,11 +148,7 @@ export default function ActivityDetail() {
     .filter((a) => a.category === activity.category && a.id !== activity.id)
     .slice(0, 3);
 
-  const gallery = isApiActivity
-    ? activity.galleryImages ?? []
-    : activity.galleryImages?.length
-      ? activity.galleryImages
-      : activityGalleries[activity.slug] || [];
+  const gallery = activity.galleryImages ?? [];
 
   const videos = activity.videoHighlights?.length
     ? activity.videoHighlights.map((video, index) => {
@@ -170,9 +161,7 @@ export default function ActivityDetail() {
           youtubeId,
         };
       })
-    : isApiActivity
-      ? []
-      : activityVideos[activity.slug] || [];
+    : [];
   const pricingFields = getPricingFields(activity);
   const primaryPricing = getPrimaryPricingField(activity);
   const isPrivatePrice = primaryPricing?.id === 'private';
@@ -209,9 +198,7 @@ export default function ActivityDetail() {
           youtubeId,
         };
       })
-    : isApiActivity
-      ? []
-      : activityVideoTestimonials[activity.slug] || [];
+    : [];
   const countrySearch = reviewCountry.trim().toLowerCase();
   const filteredReviewCountries = reviewCountries
     .filter((country) => country.toLowerCase().includes(countrySearch))

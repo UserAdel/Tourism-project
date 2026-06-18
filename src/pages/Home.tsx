@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { activities as fallbackActivities, categories as fallbackCategories } from '../data/activities';
+import Loading from '../components/Loading';
 import { tourismImages } from '../data/tourismImages';
 import ActivityCard from '../components/ActivityCard';
 import Button from '../components/Button';
 import { useActivities, useCategories } from '../hooks/queries';
-import { normalizeActivity } from '../utils/activityImages';
 import { useSEO } from '../hooks/useSEO';
 import { motion } from 'motion/react';
 import {
@@ -27,12 +26,8 @@ import {
 
 export default function Home() {
   const { language, t } = useLanguage();
-  const { data: apiActivities } = useActivities();
-  const { data: apiCategories } = useCategories();
-  const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
-  const categories = apiCategories ?? fallbackCategories;
-
-  const featuredActivities = activities.filter((a) => a.featured).slice(0, 6);
+  const { data: apiActivities, isLoading: isActivitiesLoading } = useActivities();
+  const { data: apiCategories, isLoading: isCategoriesLoading } = useCategories();
 
   useSEO({
     title: language === 'fr'
@@ -68,6 +63,15 @@ export default function Home() {
       sameAs: ['https://wa.me/201234567890'],
     },
   });
+
+  if (isActivitiesLoading || isCategoriesLoading) {
+    return <Loading />;
+  }
+
+  const activities = apiActivities ?? [];
+  const categories = apiCategories ?? [];
+
+  const featuredActivities = activities.filter((a) => a.featured).slice(0, 6);
 
   const whyChooseUsItems = [
     {

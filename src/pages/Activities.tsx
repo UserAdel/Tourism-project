@@ -1,11 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { activities as fallbackActivities, categories as fallbackCategories } from '../data/activities';
+import Loading from '../components/Loading';
 import ActivityCard from '../components/ActivityCard';
 import { Filter, Search } from 'lucide-react';
 import { useActivities, useCategories } from '../hooks/queries';
-import { normalizeActivity } from '../utils/activityImages';
 import { getPrimaryPrice } from '../utils/pricing';
 import { useSEO } from '../hooks/useSEO';
 
@@ -14,9 +13,7 @@ export default function Activities() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { data: apiActivities, isLoading, isError } = useActivities();
-  const { data: apiCategories } = useCategories();
-  const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
-  const categories = apiCategories ?? fallbackCategories;
+  const { data: apiCategories, isLoading: isCategoriesLoading } = useCategories();
 
   const [filters, setFilters] = useState({
     search: '',
@@ -43,6 +40,13 @@ export default function Activities() {
     canonical: 'https://hurghadafrenchguide.com/activities',
     lang: language,
   });
+
+  if (isLoading || isCategoriesLoading) {
+    return <Loading />;
+  }
+
+  const activities = apiActivities ?? [];
+  const categories = apiCategories ?? [];
 
   const filteredActivities = useMemo(() => {
     return activities.filter((activity) => {
@@ -109,8 +113,8 @@ export default function Activities() {
         {isError && (
           <div className="mb-6 rounded-lg border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-800">
             {language === 'en'
-              ? 'The API is unavailable, so cached local activities are being shown.'
-              : 'L API est indisponible, les activités locales en cache sont affichées.'}
+              ? 'Failed to load activities. Please check your network connection or try again later.'
+              : 'Impossible de charger les activités. Veuillez vérifier votre connexion réseau ou réessayer plus tard.'}
           </div>
         )}
 
