@@ -3,7 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'motion/react';
 
 interface TrustBadge {
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   label: {
     en: string;
     fr: string;

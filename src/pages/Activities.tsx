@@ -41,12 +41,8 @@ export default function Activities() {
     lang: language,
   });
 
-  if (isLoading || isCategoriesLoading) {
-    return <Loading />;
-  }
-
-  const activities = apiActivities ?? [];
-  const categories = apiCategories ?? [];
+  const activities = useMemo(() => apiActivities ?? [], [apiActivities]);
+  const categories = useMemo(() => apiCategories ?? [], [apiCategories]);
 
   const filteredActivities = useMemo(() => {
     return activities.filter((activity) => {
@@ -73,6 +69,10 @@ export default function Activities() {
       return true;
     });
   }, [activities, filters]);
+
+  if (isLoading || isCategoriesLoading) {
+    return <Loading />;
+  }
 
   const handleFilterChange = (key: string, value: string | boolean) => {
     setFilters((prev) => ({ ...prev, [key]: value }));

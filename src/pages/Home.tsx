@@ -21,7 +21,8 @@ import {
   Waves,
   Ship,
   Compass,
-  Sparkles
+  Sparkles,
+  type LucideIcon
 } from 'lucide-react';
 
 export default function Home() {
@@ -106,7 +107,7 @@ export default function Home() {
     }
   ];
 
-  const categoryIcons: Record<string, any> = {
+  const categoryIcons: Record<string, LucideIcon> = {
     'island-trips': Palmtree,
     'historical-tours': Landmark,
     'dolphin-experiences': Waves,
