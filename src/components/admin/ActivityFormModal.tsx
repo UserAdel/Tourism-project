@@ -72,6 +72,8 @@ export interface ActivityFormState {
   privateAvailable: boolean;
   groupAvailable: boolean;
   isActive: boolean;
+  /** Comma-separated SEO keywords set by the admin */
+  seoKeywords: string;
 }
 
 export const defaultCategories = [
@@ -124,6 +126,7 @@ export const emptyActivityForm: ActivityFormState = {
   privateAvailable: true,
   groupAvailable: true,
   isActive: true,
+  seoKeywords: '',
 };
 
 function toItems(en: string[] = [], fr: string[] = []) {
@@ -334,6 +337,7 @@ export function activityToForm(activity: AdminActivity): ActivityFormState {
     privateAvailable: activity.privateAvailable,
     groupAvailable: activity.groupAvailable,
     isActive: activity.isActive,
+    seoKeywords: (activity.seoKeywords ?? []).join(', '),
   };
 }
 
@@ -345,6 +349,10 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
   const videoHighlights = compactVideoHighlights(form.videoHighlights);
   const videoReviews = compactVideoReviews(form.videoReviews);
   const generatedIdentifier = slugifyName(form.nameEn);
+  const seoKeywords = form.seoKeywords
+    .split(',')
+    .map((kw) => kw.trim())
+    .filter(Boolean);
 
   return {
     id: generatedIdentifier,
@@ -389,6 +397,7 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
     groupAvailable: form.groupAvailable,
     videoHighlights,
     videoReviews,
+    seoKeywords,
     isActive: form.isActive,
   };
 }
@@ -1342,6 +1351,38 @@ export default function ActivityFormModal({
             </section>
           </div>
         </div>
+
+        <section className="rounded-lg border border-[var(--teal)] bg-[var(--teal)]/5 p-4 dark:border-[var(--teal)]/40 dark:bg-[var(--teal)]/10">
+          <div className="mb-3">
+            <h3 className="font-semibold text-[var(--navy)] dark:text-white">🔍 SEO Keywords</h3>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Enter keywords separated by commas. These will be merged with auto-generated keywords on the public activity page.
+            </p>
+          </div>
+          <textarea
+            value={form.seoKeywords}
+            onChange={(event) => setFormValue('seoKeywords', event.target.value)}
+            rows={3}
+            placeholder="e.g. snorkeling Hurghada, Red Sea excursion, best water activities Egypt"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+          />
+          {form.seoKeywords.trim() && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {form.seoKeywords
+                .split(',')
+                .map((kw) => kw.trim())
+                .filter(Boolean)
+                .map((kw) => (
+                  <span
+                    key={kw}
+                    className="inline-flex items-center rounded-full bg-[var(--teal)]/10 px-3 py-1 text-xs font-semibold text-[var(--teal)] dark:bg-[var(--teal)]/20"
+                  >
+                    {kw}
+                  </span>
+                ))}
+            </div>
+          )}
+        </section>
 
         <div className="sticky bottom-0 flex flex-col-reverse gap-3 border-t border-gray-200 bg-white px-4 py-4 dark:border-gray-700 dark:bg-[var(--dark-card)] sm:flex-row sm:justify-end sm:px-5">
           <button

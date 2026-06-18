@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ChevronDown, MessageCircle } from 'lucide-react';
 import Button from '../components/Button';
+import { useSEO } from '../hooks/useSEO';
 
 export default function FAQ() {
   const { language } = useLanguage();
@@ -113,6 +114,33 @@ export default function FAQ() {
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+
+  useSEO({
+    title: language === 'fr'
+      ? 'FAQ — Questions Fréquentes | Hurghada French Guide'
+      : 'FAQ — Frequently Asked Questions | Hurghada French Guide',
+    description: language === 'fr'
+      ? 'Réponses à vos questions : transferts, annulations, restrictions d\'âge, paiement, repas inclus, guides francophones à Hurghada.'
+      : 'Answers to your questions: transfers, cancellations, age restrictions, payment, meals included, French-speaking guides in Hurghada.',
+    keywords: language === 'fr'
+      ? ['FAQ Hurghada', 'questions excursions Hurghada', 'annulation excursion', 'guide français Hurghada', 'politique annulation Mer Rouge']
+      : ['FAQ Hurghada excursions', 'cancellation policy', 'age restrictions Hurghada', 'French guide questions'],
+    ogUrl: window.location.href,
+    canonical: 'https://hurghadafrenchguide.com/faq',
+    lang: language,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question[language],
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer[language],
+        },
+      })),
+    },
+  });
 
   return (
     <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">

@@ -6,6 +6,7 @@ import ActivityCard from '../components/ActivityCard';
 import Button from '../components/Button';
 import { useActivities, useCategories } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
+import { useSEO } from '../hooks/useSEO';
 import { motion } from 'motion/react';
 import {
   Languages,
@@ -32,6 +33,41 @@ export default function Home() {
   const categories = apiCategories ?? fallbackCategories;
 
   const featuredActivities = activities.filter((a) => a.featured).slice(0, 6);
+
+  useSEO({
+    title: language === 'fr'
+      ? 'Hurghada French Guide | Excursions & Activités en Mer Rouge'
+      : 'Hurghada French Guide | Red Sea Excursions & Activities',
+    description: language === 'fr'
+      ? 'Guide francophone à Hurghada. Excursions Orange Bay, Louxor, dauphins, plongée et plus. Réservez votre aventure en Mer Rouge avec un guide en français.'
+      : 'French-speaking guide in Hurghada. Orange Bay, Luxor, dolphins, snorkeling & more. Book your Red Sea adventure with an expert guide.',
+    keywords: language === 'fr'
+      ? ['guide français Hurghada', 'excursions Hurghada', 'activités Mer Rouge', 'Orange Bay', 'guide francophone Égypte', 'Louxor excursion', 'dauphins Hurghada', 'plongée Hurghada']
+      : ['Hurghada guide', 'Hurghada excursions', 'Red Sea activities', 'Orange Bay', 'French guide Egypt', 'Luxor tour', 'dolphins Hurghada', 'snorkeling Hurghada'],
+    ogUrl: window.location.href,
+    canonical: 'https://hurghadafrenchguide.com/',
+    lang: language,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'TouristInformationCenter',
+      name: 'Hurghada French Guide',
+      url: 'https://hurghadafrenchguide.com',
+      description: language === 'fr'
+        ? 'Guide francophone à Hurghada proposant des excursions en Mer Rouge'
+        : 'French-speaking guide in Hurghada offering Red Sea excursions',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Hurghada',
+        addressCountry: 'EG',
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        availableLanguage: ['French', 'English'],
+      },
+      sameAs: ['https://wa.me/201234567890'],
+    },
+  });
 
   const whyChooseUsItems = [
     {

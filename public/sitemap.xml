@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- Home -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://hurghadafrenchguide.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://hurghadafrenchguide.com/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Activities listing -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/activities</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- FAQ -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Book Now -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/book</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Key activity pages — add more slugs as new activities are created -->
+  <url>
+    <loc>https://hurghadafrenchguide.com/activities/orange-bay</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hurghadafrenchguide.com/activities/luxor-day-trip</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hurghadafrenchguide.com/activities/swim-with-dolphins</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://hurghadafrenchguide.com/activities/grand-egyptian-museum</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://hurghadafrenchguide.com/activities/quad-desert-safari</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

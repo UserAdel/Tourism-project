@@ -15,6 +15,7 @@ import { useActivities, useActivity, useCreateActivityReview } from '../hooks/qu
 import { normalizeActivity } from '../utils/activityImages';
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
 import { countries } from '../data/countries';
+import { useSEO } from '../hooks/useSEO';
 import {
   Clock,
   Users,
@@ -71,6 +72,63 @@ export default function ActivityDetail() {
   const activity = apiActivity ?? fallbackActivityList.find((a) => a.slug === slug);
   const isApiActivity = Boolean(apiActivity);
 
+  // Generate dynamic keywords — admin keywords take priority at the front
+  const autoKeywords = activity
+    ? [
+        activity.name[language],
+        language === 'fr' ? `excursion ${activity.name[language]}` : `${activity.name[language]} excursion`,
+        language === 'fr' ? `activité ${activity.name[language]} Hurghada` : `${activity.name[language]} activity Hurghada`,
+        activity.category,
+        'Hurghada',
+        language === 'fr' ? 'Égypte' : 'Egypt',
+        language === 'fr' ? 'guide francophone Hurghada' : 'Hurghada guide',
+        language === 'fr' ? 'guide français Hurghada' : 'excursion Hurghada',
+        language === 'fr' ? 'que faire à Hurghada' : 'things to do in Hurghada',
+        'Hurghada French Guide',
+      ]
+    : [];
+  const adminKeywords = activity?.seoKeywords ?? [];
+  const seoKeywords = [...adminKeywords, ...autoKeywords.filter((kw) => !adminKeywords.includes(kw))];
+
+  const primaryPricing = activity ? getPrimaryPricingField(activity) : null;
+
+  // Generate JSON-LD TouristAttraction Structured Data
+  const jsonLd = activity
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'TouristAttraction',
+        name: activity.name[language],
+        description: activity.description[language].slice(0, 200),
+        image: activity.imageUrl,
+        touristType: activity.childFriendly ? ['Family', 'Kids', 'Adults'] : ['Adults'],
+        provider: {
+          '@type': 'LocalBusiness',
+          name: 'Hurghada French Guide',
+          url: window.location.origin,
+        },
+        offers: {
+          '@type': 'Offer',
+          price: primaryPricing?.price ?? 0,
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+        },
+      }
+    : undefined;
+
+  useSEO({
+    title: activity
+      ? `${activity.name[language]} | Hurghada French Guide`
+      : 'Hurghada French Guide',
+    description: activity
+      ? activity.description[language].slice(0, 160)
+      : 'Discover the best excursions and activities in Hurghada with a French-speaking guide.',
+    keywords: seoKeywords,
+    ogImage: activity?.imageUrl,
+    ogUrl: window.location.href,
+    ogType: 'article',
+    jsonLd,
+  });
+
   if (!activity) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F0EAD8]/30 dark:bg-[#040E26]">
@@ -95,6 +153,7 @@ export default function ActivityDetail() {
     : activity.galleryImages?.length
       ? activity.galleryImages
       : activityGalleries[activity.slug] || [];
+
   const videos = activity.videoHighlights?.length
     ? activity.videoHighlights.map((video, index) => {
         const youtubeId = video.youtubeId || extractYouTubeId(video.youtubeUrl);

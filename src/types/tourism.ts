@@ -86,6 +86,7 @@ export interface Activity {
   reviews?: ActivityReview[];
   videoHighlights?: ActivityVideoHighlight[];
   videoReviews?: ActivityVideoReview[];
+  seoKeywords?: string[];
 }
 
 export interface BookingFormData {

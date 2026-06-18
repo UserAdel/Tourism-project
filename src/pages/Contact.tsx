@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import { Phone, Mail, MapPin, MessageCircle, Clock, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCreateContactRequest } from '../hooks/queries';
+import { useSEO } from '../hooks/useSEO';
 
 function getContactErrorMessage(error: unknown, language: 'en' | 'fr') {
   const fallback =
@@ -36,6 +37,22 @@ function getContactErrorMessage(error: unknown, language: 'en' | 'fr') {
 export default function Contact() {
   const { language, t } = useLanguage();
   const createContactRequest = useCreateContactRequest();
+
+  useSEO({
+    title: language === 'fr'
+      ? 'Contactez-Nous | Hurghada French Guide'
+      : 'Contact Us | Hurghada French Guide',
+    description: language === 'fr'
+      ? 'Contactez Hurghada French Guide par WhatsApp, téléphone ou formulaire. Réponse garantie en 2 heures. Basés à Hurghada, Égypte.'
+      : 'Contact Hurghada French Guide via WhatsApp, phone or form. Response guaranteed within 2 hours. Based in Hurghada, Egypt.',
+    keywords: language === 'fr'
+      ? ['contact Hurghada French Guide', 'WhatsApp Hurghada', 'réserver excursion Hurghada', 'guide français contact']
+      : ['contact Hurghada guide', 'WhatsApp Hurghada excursion', 'book Hurghada tour'],
+    ogUrl: window.location.href,
+    canonical: 'https://hurghadafrenchguide.com/contact',
+    lang: language,
+  });
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',

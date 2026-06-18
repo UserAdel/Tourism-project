@@ -1,9 +1,25 @@
 import { useLanguage } from '../contexts/LanguageContext';
 import { tourismImages } from '../data/tourismImages';
 import { Award, Users, Heart, Languages, Star } from 'lucide-react';
+import { useSEO } from '../hooks/useSEO';
 
 export default function About() {
   const { language } = useLanguage();
+
+  useSEO({
+    title: language === 'fr'
+      ? 'À Propos | Hurghada French Guide'
+      : 'About Us | Hurghada French Guide',
+    description: language === 'fr'
+      ? 'Découvrez notre histoire : 10 ans d\'expérience à Hurghada, guides francophones experts, plus de 10 000 clients satisfaits en Mer Rouge.'
+      : 'Learn about us: 10+ years in Hurghada, expert French-speaking guides, over 10,000 happy guests on Red Sea excursions.',
+    keywords: language === 'fr'
+      ? ['guide francophone Hurghada', 'à propos Hurghada French Guide', 'expérience Mer Rouge', 'guide français Égypte']
+      : ['about Hurghada French Guide', 'French guide Egypt experience', 'Red Sea tour operator'],
+    ogUrl: window.location.href,
+    canonical: 'https://hurghadafrenchguide.com/about',
+    lang: language,
+  });
 
   const values = [
     {

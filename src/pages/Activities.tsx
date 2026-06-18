@@ -7,6 +7,7 @@ import { Filter, Search } from 'lucide-react';
 import { useActivities, useCategories } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 import { getPrimaryPrice } from '../utils/pricing';
+import { useSEO } from '../hooks/useSEO';
 
 export default function Activities() {
   const { language, t } = useLanguage();
@@ -26,6 +27,21 @@ export default function Activities() {
     group: false,
     childFriendly: false,
     pickupIncluded: false
+  });
+
+  useSEO({
+    title: language === 'fr'
+      ? 'Toutes nos Excursions & Activités | Hurghada French Guide'
+      : 'All Excursions & Activities | Hurghada French Guide',
+    description: language === 'fr'
+      ? 'Parcourez toutes nos excursions à Hurghada : Orange Bay, Louxor, dauphins, plongée, safaris et plus. Filtrez par prix, catégorie ou âge.'
+      : 'Browse all our Hurghada excursions: Orange Bay, Luxor, dolphins, snorkeling, safaris & more. Filter by price, category, or suitability.',
+    keywords: language === 'fr'
+      ? ['toutes les excursions Hurghada', 'activités Mer Rouge', 'excursion Orange Bay', 'visite Louxor', 'nager avec dauphins Hurghada', 'safari désert Hurghada']
+      : ['all Hurghada excursions', 'Red Sea activities', 'Orange Bay trip', 'Luxor tour', 'swim with dolphins Hurghada', 'desert safari Hurghada'],
+    ogUrl: window.location.href,
+    canonical: 'https://hurghadafrenchguide.com/activities',
+    lang: language,
   });
 
   const filteredActivities = useMemo(() => {

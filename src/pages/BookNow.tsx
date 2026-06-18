@@ -14,6 +14,7 @@ import {
   getDefaultPhoneCountry,
   getPhoneCountry,
 } from '../utils/phoneNumbers';
+import { useSEO } from '../hooks/useSEO';
 
 type GuestCountField = 'adults' | 'children';
 type BookingFormState = Omit<BookingFormData, GuestCountField> & Record<GuestCountField, number | ''>;
@@ -27,11 +28,24 @@ export default function BookNow() {
   const activities = apiActivities ?? fallbackActivities.map(normalizeActivity);
   const defaultPhoneCountryName = getDefaultPhoneCountry().name;
 
+  useSEO({
+    title: language === 'fr'
+      ? 'Réserver une Excursion | Hurghada French Guide'
+      : 'Book an Excursion | Hurghada French Guide',
+    description: language === 'fr'
+      ? 'Réservez votre excursion à Hurghada en ligne. Aucun paiement en ligne requis. Confirmation rapide via WhatsApp par notre équipe francophone.'
+      : 'Book your Hurghada excursion online. No online payment required. Quick confirmation via WhatsApp from our French-speaking team.',
+    keywords: language === 'fr'
+      ? ['réserver excursion Hurghada', 'réservation guide français', 'book tour Hurghada', 'confirmation WhatsApp Hurghada']
+      : ['book Hurghada excursion', 'reserve Red Sea tour', 'Hurghada booking form', 'WhatsApp booking Hurghada'],
+    ogUrl: typeof window !== 'undefined' ? window.location.href : '',
+    canonical: 'https://hurghadafrenchguide.com/book',
+    lang: language,
+  });
+
   const [formData, setFormData] = useState<BookingFormState>({
     fullName: '',
     email: '',
-    phone: '',
-    whatsapp: '',
     nationality: '',
     arrivalDate: '',
     preferredDate: '',
