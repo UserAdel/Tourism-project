@@ -46,6 +46,8 @@ export default function BookNow() {
   const [formData, setFormData] = useState<BookingFormState>({
     fullName: '',
     email: '',
+    phone: '',
+    whatsapp: '',
     nationality: '',
     arrivalDate: '',
     preferredDate: '',
@@ -57,7 +59,6 @@ export default function BookNow() {
   });
   const [phoneCountryName, setPhoneCountryName] = useState(defaultPhoneCountryName);
   const [whatsappCountryName, setWhatsappCountryName] = useState(defaultPhoneCountryName);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 

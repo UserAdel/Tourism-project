@@ -11,6 +11,7 @@ import Testimonials from '../components/Testimonials';
 import VideoTestimonials from '../components/VideoTestimonials';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
+import Loading from '../components/Loading';
 import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';
 import { normalizeActivity } from '../utils/activityImages';
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
@@ -54,7 +55,7 @@ export default function ActivityDetail() {
   const { language, t } = useLanguage();
   const navigate = useNavigate();
   const fallbackActivityList = fallbackActivities.map(normalizeActivity);
-  const { data: apiActivity } = useActivity(slug);
+  const { data: apiActivity, isLoading } = useActivity(slug);
   const { data: apiActivities } = useActivities();
   const createReview = useCreateActivityReview(slug);
   const [reviewName, setReviewName] = useState('');
@@ -90,7 +91,7 @@ export default function ActivityDetail() {
   const adminKeywords = activity?.seoKeywords ?? [];
   const seoKeywords = [...adminKeywords, ...autoKeywords.filter((kw) => !adminKeywords.includes(kw))];
 
-  const primaryPricing = activity ? getPrimaryPricingField(activity) : null;
+  const seoPrimaryPricing = activity ? getPrimaryPricingField(activity) : null;
 
   // Generate JSON-LD TouristAttraction Structured Data
   const jsonLd = activity
@@ -108,7 +109,7 @@ export default function ActivityDetail() {
         },
         offers: {
           '@type': 'Offer',
-          price: primaryPricing?.price ?? 0,
+          price: seoPrimaryPricing?.price ?? 0,
           priceCurrency: 'EUR',
           availability: 'https://schema.org/InStock',
         },
@@ -128,6 +129,10 @@ export default function ActivityDetail() {
     ogType: 'article',
     jsonLd,
   });
+
+  if (isLoading && !activity) {
+    return <Loading />;
+  }
 
   if (!activity) {
     return (
