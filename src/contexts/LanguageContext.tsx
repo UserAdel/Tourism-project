@@ -126,6 +126,7 @@ const translations = {
       terms: 'Terms of Service'
     },
     common: {
+      explore: 'Explore',
       learnMore: 'Learn More',
       viewAll: 'View All',
       readMore: 'Read More',
@@ -251,6 +252,7 @@ const translations = {
       terms: 'Conditions d\'Utilisation'
     },
     common: {
+      explore: 'Explorer',
       learnMore: 'En Savoir Plus',
       viewAll: 'Voir Tout',
       readMore: 'Lire Plus',

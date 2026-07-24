@@ -15,14 +15,7 @@ import {
   Heart,
   CheckCircle,
   Star,
-  MessageCircle,
-  Palmtree,
-  Landmark,
-  Waves,
-  Ship,
-  Compass,
-  Sparkles,
-  type LucideIcon
+  MessageCircle
 } from 'lucide-react';
 
 export default function Home() {
@@ -107,15 +100,7 @@ export default function Home() {
     }
   ];
 
-  const categoryIcons: Record<string, LucideIcon> = {
-    'island-trips': Palmtree,
-    'historical-tours': Landmark,
-    'dolphin-experiences': Waves,
-    'sea-adventures': Ship,
-    'private-tours': Compass,
-    'wellness': Sparkles,
-    'family-activities': Users
-  };
+
 
   const reviews = [
     {
@@ -195,7 +180,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Explore by Category Section (Before Top Experiences) */}
+      {/* Explore by Category Section (3 in the same row - Restored Design) */}
       <section className="py-16 bg-[#F9F5EE] dark:bg-[var(--background)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -209,9 +194,8 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {categories.map((category, index) => {
-              const Icon = categoryIcons[category.id] || Compass;
               const defaultImgs: Record<string, string> = {
                 'sea-trips': tourismImages.dolphinWater,
                 'desert-safari': tourismImages.island,
@@ -228,29 +212,31 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.08 }}
                   whileHover={{ scale: 1.03 }}
+                  className="h-full flex flex-col"
                 >
                   <Link
                     to={`/activities?category=${category.id}`}
-                    className="group relative h-60 rounded-2xl overflow-hidden shadow-lg border border-[var(--gold)]/20 dark:border-[rgba(201,168,92,0.3)] block"
+                    className="group relative rounded-2xl overflow-hidden shadow-lg border border-gray-200/80 dark:border-[rgba(201,168,92,0.3)] bg-white dark:bg-[#061533] flex flex-col h-full transform transition-all duration-300 hover:-translate-y-1"
                   >
-                    <img
-                      src={categoryImg}
-                      alt={category.name[language]}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--navy)]/90 via-[var(--navy)]/40 to-transparent dark:from-[#061533]/95 dark:via-[#061533]/50 transition-opacity duration-300 group-hover:from-[var(--navy)]/95"></div>
+                    {/* Clean Bright Category Image (No overlay, No icon) */}
+                    <div className="relative h-52 sm:h-60 w-full overflow-hidden shrink-0">
+                      <img
+                        src={categoryImg}
+                        alt={category.name[language]}
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    </div>
 
-                    <div className="absolute inset-0 p-5 flex flex-col justify-between z-10 text-white">
-                      <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-sm group-hover:bg-[var(--gold)] group-hover:text-[var(--navy)] transition-colors duration-300">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white group-hover:text-[var(--gold)] transition-colors duration-300">
+                    {/* Clean Footer Bar */}
+                    <div className="p-5 flex-1 flex items-center justify-between gap-3 bg-white dark:bg-[#0C2147] border-t border-gray-100 dark:border-gray-800">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-lg sm:text-xl font-bold text-[var(--navy)] dark:text-white group-hover:text-[var(--gold)] transition-colors duration-300 line-clamp-2">
                           {category.name[language]}
                         </h3>
-                        <p className="text-xs text-white/80 mt-1 flex items-center gap-1 font-medium">
-                          <span>{t('common.explore')}</span> &rarr;
-                        </p>
+                      </div>
+                      <div className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--navy)] text-white font-bold text-xs shadow-sm group-hover:bg-[var(--gold)] group-hover:text-[var(--navy)] transition-all duration-300 transform group-hover:translate-x-1 dark:bg-white/10 dark:text-white dark:group-hover:bg-[var(--gold)] dark:group-hover:text-[var(--navy)]">
+                        <span>{t('common.explore')}</span>
+                        <span className="text-sm leading-none">&rarr;</span>
                       </div>
                     </div>
                   </Link>
