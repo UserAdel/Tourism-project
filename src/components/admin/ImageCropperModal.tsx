@@ -11,6 +11,23 @@ interface ImageCropperModalProps {
   title?: string;
 }
 
+function getClampedOffset(
+  rawX: number,
+  rawY: number,
+  zoomVal: number,
+  containerEl: HTMLDivElement | null
+) {
+  if (!containerEl || zoomVal <= 1) return { x: 0, y: 0 };
+  const rect = containerEl.getBoundingClientRect();
+  const maxOffsetX = (rect.width * (zoomVal - 1)) / 2;
+  const maxOffsetY = (rect.height * (zoomVal - 1)) / 2;
+
+  return {
+    x: Math.max(-maxOffsetX, Math.min(maxOffsetX, rawX)),
+    y: Math.max(-maxOffsetY, Math.min(maxOffsetY, rawY)),
+  };
+}
+
 export default function ImageCropperModal({
   isOpen,
   imageSrc,
@@ -43,10 +60,24 @@ export default function ImageCropperModal({
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
-    setOffset({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y,
-    });
+    const newX = e.clientX - dragStart.x;
+    const newY = e.clientY - dragStart.y;
+    setOffset(getClampedOffset(newX, newY, zoom, containerRef.current));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!e.touches[0]) return;
+    const touch = e.touches[0];
+    setIsDragging(true);
+    setDragStart({ x: touch.clientX - offset.x, y: touch.clientY - offset.y });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !e.touches[0]) return;
+    const touch = e.touches[0];
+    const newX = touch.clientX - dragStart.x;
+    const newY = touch.clientY - dragStart.y;
+    setOffset(getClampedOffset(newX, newY, zoom, containerRef.current));
   };
 
   const handleMouseUp = () => {
@@ -54,7 +85,9 @@ export default function ImageCropperModal({
   };
 
   const handleZoomChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setZoom(parseFloat(e.target.value));
+    const newZoom = parseFloat(e.target.value);
+    setZoom(newZoom);
+    setOffset((prev) => getClampedOffset(prev.x, prev.y, newZoom, containerRef.current));
   };
 
   const handleReset = () => {
@@ -122,46 +155,49 @@ export default function ImageCropperModal({
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-fade-in">
-      <div className="flex max-h-[95dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-[#0C2147] border border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-3 sm:p-4 backdrop-blur-md animate-fade-in">
+      <div className="flex max-h-[92dvh] w-[95vw] sm:w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-[#0C2147] border border-gray-200 dark:border-gray-700">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4 dark:border-gray-700 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--gold)]/10 text-[var(--gold)]">
-              <Crop className="h-5 w-5" />
+            <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[var(--gold)]/10 text-[var(--gold)]">
+              <Crop className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[var(--navy)] dark:text-white">{title}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-300">
-                Adjust position & zoom to fit card dimensions (16:10 Aspect Ratio)
+              <h3 className="text-base sm:text-lg font-bold text-[var(--navy)] dark:text-white">{title}</h3>
+              <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-300">
+                Fit image to card dimensions (16:10 Aspect Ratio)
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-white"
+            className="rounded-lg p-1.5 sm:p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Cropper Container */}
-        <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-gray-900 p-6">
+        <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-gray-900 p-4 sm:p-6 min-h-[260px]">
           <div
             ref={containerRef}
-            className="relative overflow-hidden rounded-xl border-2 border-[var(--gold)] shadow-2xl"
+            className="relative overflow-hidden rounded-xl border-2 border-[var(--gold)] shadow-2xl touch-none select-none"
             style={{
               width: '100%',
-              maxWidth: '520px',
+              maxWidth: '460px',
               aspectRatio: `${aspectRatio}`,
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleMouseUp}
           >
-            {/* Dark Mask Grid Grid Lines */}
+            {/* Dark Mask Grid Lines */}
             <div className="pointer-events-none absolute inset-0 z-10 grid grid-cols-3 grid-rows-3 border border-white/20">
               <div className="border-[0.5px] border-white/15"></div>
               <div className="border-[0.5px] border-white/15"></div>
@@ -193,8 +229,8 @@ export default function ImageCropperModal({
             />
           </div>
 
-          <p className="mt-3 text-xs text-gray-400">
-            💡 Tip: Click and drag image to reposition • Use slider below to zoom
+          <p className="mt-2.5 text-[11px] sm:text-xs text-gray-400 text-center">
+            💡 Drag to reposition • Use slider to zoom
           </p>
         </div>
 
