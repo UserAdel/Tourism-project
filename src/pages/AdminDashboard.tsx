@@ -38,6 +38,7 @@ import ActivityFormModal, {
   getVideoReviewThumbnailFiles,
   getVideoThumbnailFiles,
 } from '../components/admin/ActivityFormModal';
+import ImageCropperModal from '../components/admin/ImageCropperModal';
 import AdminLayout from '../components/admin/AdminLayout';
 import ConfirmActionModal from '../components/admin/ConfirmActionModal';
 import { getPrimaryPrice } from '../utils/pricing';
@@ -305,172 +306,187 @@ function CategoryFormModal({
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   setCategoryForm: Dispatch<SetStateAction<CategoryFormState>>;
 }) {
+  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:px-4 sm:py-6">
-      <form
-        onSubmit={onSubmit}
-        className="flex max-h-[calc(100dvh-1rem)] w-full max-w-lg flex-col overflow-hidden rounded-t-lg bg-white shadow-xl dark:bg-[var(--dark-card)] sm:max-h-[calc(100dvh-2rem)] sm:rounded-lg"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-4 py-4 dark:border-gray-700 sm:px-5">
-          <div className="min-w-0">
-            <h2 className="break-words text-lg font-bold text-[var(--navy)] dark:text-white sm:text-xl">
-              {isEditing ? 'Edit Category' : 'Create Category'}
-            </h2>
-            <p className="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
-              Add the category names used across activities.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
-            aria-label="Close category form"
-            title="Close"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+    <>
+      <ImageCropperModal
+        isOpen={Boolean(cropperSrc)}
+        imageSrc={cropperSrc || ''}
+        onClose={() => setCropperSrc(null)}
+        onCropComplete={(croppedFile, croppedPreviewUrl) => {
+          setCategoryForm((current) => ({
+            ...current,
+            image: croppedPreviewUrl,
+            imageFile: croppedFile,
+          }));
+        }}
+        aspectRatio={1.6}
+        title="Crop Category Image (Card Dimensions)"
+      />
 
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={form.isActive}
-            onClick={() =>
-              setCategoryForm((current) => ({
-                ...current,
-                isActive: !current.isActive,
-              }))
-            }
-            className="flex w-full items-center justify-between gap-3 rounded-lg border border-gray-200 px-3 py-3 text-left hover:border-[var(--teal)] dark:border-gray-700"
-          >
-            <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-              Active
-            </span>
-            <span
-              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                form.isActive ? 'bg-[var(--teal)]' : 'bg-gray-300 dark:bg-gray-600'
-              }`}
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:px-4 sm:py-6">
+        <form
+          onSubmit={onSubmit}
+          className="flex max-h-[calc(100dvh-1rem)] w-full max-w-lg flex-col overflow-hidden rounded-t-lg bg-white shadow-xl dark:bg-[var(--dark-card)] sm:max-h-[calc(100dvh-2rem)] sm:rounded-lg"
+        >
+          <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-4 py-4 dark:border-gray-700 sm:px-5">
+            <div className="min-w-0">
+              <h2 className="break-words text-lg font-bold text-[var(--navy)] dark:text-white sm:text-xl">
+                {isEditing ? 'Edit Category' : 'Create Category'}
+              </h2>
+              <p className="mt-1 text-sm leading-5 text-gray-500 dark:text-gray-300">
+                Add the category names used across activities.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="shrink-0 rounded-lg border border-gray-300 p-2 text-gray-600 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200"
+              aria-label="Close category form"
+              title="Close"
             >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={form.isActive}
+              onClick={() =>
+                setCategoryForm((current) => ({
+                  ...current,
+                  isActive: !current.isActive,
+                }))
+              }
+              className="flex w-full items-center justify-between gap-3 rounded-lg border border-gray-200 px-3 py-3 text-left hover:border-[var(--teal)] dark:border-gray-700"
+            >
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                Active
+              </span>
               <span
-                className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                  form.isActive ? 'translate-x-6' : 'translate-x-1'
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                  form.isActive ? 'bg-[var(--teal)]' : 'bg-gray-300 dark:bg-gray-600'
                 }`}
-              />
-            </span>
-          </button>
+              >
+                <span
+                  className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+                    form.isActive ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </span>
+            </button>
 
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              English Name
-            </span>
-            <input
-              value={form.nameEn}
-              onChange={(event) =>
-                setCategoryForm((current) => ({ ...current, nameEn: event.target.value }))
-              }
-              required
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-            />
-          </label>
-
-          <label className="block">
-            <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              French Name
-            </span>
-            <input
-              value={form.nameFr}
-              onChange={(event) =>
-                setCategoryForm((current) => ({ ...current, nameFr: event.target.value }))
-              }
-              required
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-            />
-          </label>
-
-          <div className="space-y-2">
-            <span className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Category Image
-            </span>
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-gray-200 dark:hover:bg-[var(--dark-card)] transition-colors">
-              <Upload className="h-6 w-6 text-[var(--teal)]" />
-              <span>{form.image ? 'Change Category Image' : 'Upload Image from Device'}</span>
-              <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
-                PNG, JPG, or WEBP (Uploads to Cloud Storage)
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                English Name
               </span>
               <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) {
-                    const previewUrl = URL.createObjectURL(file);
-                    setCategoryForm((current) => ({
-                      ...current,
-                      image: previewUrl,
-                      imageFile: file,
-                    }));
-                  }
-                }}
+                value={form.nameEn}
+                onChange={(event) =>
+                  setCategoryForm((current) => ({ ...current, nameEn: event.target.value }))
+                }
+                required
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
               />
             </label>
 
-            {form.image && (
-              <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-2.5 dark:border-gray-700">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={form.image}
-                    alt="Category Preview"
-                    className="h-16 w-24 rounded-lg object-cover shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                  <div className="text-xs text-gray-600 dark:text-gray-300">
-                    <span className="font-semibold block text-sm text-gray-900 dark:text-white">Image Selected</span>
-                    <span>{form.imageFile ? form.imageFile.name : 'Current Image'}</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCategoryForm((current) => ({
-                      ...current,
-                      image: '',
-                      imageFile: null,
-                    }))
-                  }
-                  className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
-                  title="Remove Image"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                French Name
+              </span>
+              <input
+                value={form.nameFr}
+                onChange={(event) =>
+                  setCategoryForm((current) => ({ ...current, nameFr: event.target.value }))
+                }
+                required
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+              />
+            </label>
 
-        <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-gray-200 px-4 py-4 dark:border-gray-700 sm:flex-row sm:justify-end sm:px-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:w-auto"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="inline-flex w-full items-center justify-center rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
-          >
-            {isEditing ? 'Save Category' : 'Create Category'}
-          </button>
-        </div>
-      </form>
-    </div>
+            <div className="space-y-2">
+              <span className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Category Image
+              </span>
+              <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-gray-200 dark:hover:bg-[var(--dark-card)] transition-colors">
+                <Upload className="h-6 w-6 text-[var(--teal)]" />
+                <span>{form.image ? 'Change Category Image' : 'Upload Image from Device'}</span>
+                <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                  Select image to crop & adjust for card dimensions (16:10)
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                      setCropperSrc(URL.createObjectURL(file));
+                      event.target.value = '';
+                    }
+                  }}
+                />
+              </label>
+
+              {form.image && (
+                <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-2.5 dark:border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={form.image}
+                      alt="Category Preview"
+                      className="h-16 w-24 rounded-lg object-cover shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <div className="text-xs text-gray-600 dark:text-gray-300">
+                      <span className="font-semibold block text-sm text-gray-900 dark:text-white">Cropped Image Ready</span>
+                      <span>{form.imageFile ? form.imageFile.name : 'Current Image'}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCategoryForm((current) => ({
+                        ...current,
+                        image: '',
+                        imageFile: null,
+                      }))
+                    }
+                    className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
+                    title="Remove Image"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-gray-200 px-4 py-4 dark:border-gray-700 sm:flex-row sm:justify-end sm:px-5">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[var(--teal)] dark:border-gray-600 dark:text-gray-200 sm:w-auto"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="inline-flex w-full items-center justify-center rounded-lg bg-[var(--teal)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--teal-dark)] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+            >
+              {isEditing ? 'Save Category' : 'Create Category'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
 
