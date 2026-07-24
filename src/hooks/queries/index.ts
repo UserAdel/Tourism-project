@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/axios';
 import type { Activity, ActivityReview, BookingFormData } from '../../types';
 import { normalizeActivity } from '../../utils/activityImages';
@@ -10,6 +10,7 @@ export interface Category {
     en: string;
     fr: string;
   };
+  image?: string;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;

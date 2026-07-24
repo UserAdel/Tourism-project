@@ -96,7 +96,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8 mt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm">
-              © 2026 Hurghada French Guide Excursions. {t('footer.rights')}
+              © {new Date().getFullYear()} Hurghada French Guide Excursions. {t('footer.rights')}
             </p>
             <div className="flex items-center gap-4">
               <a

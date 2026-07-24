@@ -105,3 +105,11 @@ export interface BookingFormData {
 }
 
 export type Language = 'en' | 'fr';
+
+export interface ActivityCategory {
+  _id?: string;
+  id: string;
+  name: LocalizedString;
+  image?: string;
+  isActive?: boolean;
+}

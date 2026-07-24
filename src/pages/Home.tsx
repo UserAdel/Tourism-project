@@ -195,7 +195,74 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#071530]">
+      {/* Explore by Category Section (Before Top Experiences) */}
+      <section className="py-16 bg-[#F9F5EE] dark:bg-[var(--background)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--navy)] dark:text-white mb-4">
+              {t('sections.categories')}
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((category, index) => {
+              const Icon = categoryIcons[category.id] || Compass;
+              const defaultImgs: Record<string, string> = {
+                'sea-trips': tourismImages.dolphinWater,
+                'desert-safari': tourismImages.island,
+                'historical-cultural': tourismImages.luxor,
+                'city-tours': tourismImages.temple,
+              };
+              const categoryImg = (category as any).image || defaultImgs[category.id] || tourismImages.redSea;
+
+              return (
+                <motion.div
+                  key={category.id}
+                  initial={{ y: 30, opacity: 0, scale: 0.95 }}
+                  whileInView={{ y: 0, opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.08 }}
+                  whileHover={{ scale: 1.03 }}
+                >
+                  <Link
+                    to={`/activities?category=${category.id}`}
+                    className="group relative h-60 rounded-2xl overflow-hidden shadow-lg border border-[var(--gold)]/20 dark:border-[rgba(201,168,92,0.3)] block"
+                  >
+                    <img
+                      src={categoryImg}
+                      alt={category.name[language]}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--navy)]/90 via-[var(--navy)]/40 to-transparent dark:from-[#061533]/95 dark:via-[#061533]/50 transition-opacity duration-300 group-hover:from-[var(--navy)]/95"></div>
+
+                    <div className="absolute inset-0 p-5 flex flex-col justify-between z-10 text-white">
+                      <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 text-white shadow-sm group-hover:bg-[var(--gold)] group-hover:text-[var(--navy)] transition-colors duration-300">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-white group-hover:text-[var(--gold)] transition-colors duration-300">
+                          {category.name[language]}
+                        </h3>
+                        <p className="text-xs text-white/80 mt-1 flex items-center gap-1 font-medium">
+                          <span>{t('common.explore')}</span> &rarr;
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Top Experiences Section */}
+      <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#0C2147]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -228,49 +295,6 @@ export default function Home() {
                 {t('common.viewAll')}
               </Button>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-[#F9F5EE] dark:bg-[#040E26]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-[var(--navy)] dark:text-white mb-4">
-              {t('sections.categories')}
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {categories.map((category, index) => {
-              const Icon = categoryIcons[category.id] || Compass;
-              return (
-                <motion.div
-                  key={category.id}
-                  initial={{ y: 30, opacity: 0, scale: 0.9 }}
-                  whileInView={{ y: 0, opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Link
-                    to={`/activities?category=${category.id}`}
-                    className="group bg-gradient-to-br from-[var(--sand)] to-white dark:from-[#0B1E42] dark:to-[#071530] p-6 rounded-2xl text-center hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all duration-300 hover:-translate-y-1 border border-[var(--gold)]/20 dark:border-[var(--teal)]/20 block"
-                  >
-                    <div className="w-16 h-16 mx-auto mb-4 bg-[#F9F5EE] dark:bg-[#071530] rounded-full flex items-center justify-center group-hover:bg-[var(--teal)] transition-all duration-300 shadow-md group-hover:shadow-lg group-hover:scale-110">
-                      <Icon className="w-8 h-8 text-[var(--teal)] group-hover:text-white transition-colors" />
-                    </div>
-                    <h3 className="font-semibold text-[var(--navy)] dark:text-white">
-                      {category.name[language]}
-                    </h3>
-                  </Link>
-                </motion.div>
-              );
-            })}
           </div>
         </div>
       </section>

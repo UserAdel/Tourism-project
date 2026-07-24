@@ -13,6 +13,7 @@ import {
   Search,
   Tags,
   Trash2,
+  Upload,
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -53,12 +54,16 @@ interface ConfirmAction {
 interface CategoryFormState {
   nameEn: string;
   nameFr: string;
+  image: string;
+  imageFile?: File | null;
   isActive: boolean;
 }
 
 const emptyCategoryForm: CategoryFormState = {
   nameEn: '',
   nameFr: '',
+  image: '',
+  imageFile: null,
   isActive: true,
 };
 
@@ -384,6 +389,68 @@ function CategoryFormModal({
               className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
             />
           </label>
+
+          <div className="space-y-2">
+            <span className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Category Image
+            </span>
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-gray-200 dark:hover:bg-[var(--dark-card)] transition-colors">
+              <Upload className="h-6 w-6 text-[var(--teal)]" />
+              <span>{form.image ? 'Change Category Image' : 'Upload Image from Device'}</span>
+              <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
+                PNG, JPG, or WEBP (Uploads to Cloud Storage)
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    const previewUrl = URL.createObjectURL(file);
+                    setCategoryForm((current) => ({
+                      ...current,
+                      image: previewUrl,
+                      imageFile: file,
+                    }));
+                  }
+                }}
+              />
+            </label>
+
+            {form.image && (
+              <div className="mt-3 flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-2.5 dark:border-gray-700">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={form.image}
+                    alt="Category Preview"
+                    className="h-16 w-24 rounded-lg object-cover shadow-sm ring-1 ring-gray-300 dark:ring-gray-600"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                  <div className="text-xs text-gray-600 dark:text-gray-300">
+                    <span className="font-semibold block text-sm text-gray-900 dark:text-white">Image Selected</span>
+                    <span>{form.imageFile ? form.imageFile.name : 'Current Image'}</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCategoryForm((current) => ({
+                      ...current,
+                      image: '',
+                      imageFile: null,
+                    }))
+                  }
+                  className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600 dark:hover:bg-gray-800"
+                  title="Remove Image"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex shrink-0 flex-col-reverse gap-3 border-t border-gray-200 px-4 py-4 dark:border-gray-700 sm:flex-row sm:justify-end sm:px-5">
@@ -551,27 +618,38 @@ export default function AdminDashboard() {
   const handleCategorySubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const payload = {
+    const categoryData = {
       id: slugifyCategoryName(categoryForm.nameEn),
       name: {
         en: categoryForm.nameEn,
         fr: categoryForm.nameFr,
       },
+      image: categoryForm.imageFile ? '' : categoryForm.image,
       isActive: categoryForm.isActive,
     };
 
+    let submitPayload: FormData | typeof categoryData = categoryData;
+
+    if (categoryForm.imageFile) {
+      const formData = new FormData();
+      formData.append('image', categoryForm.imageFile);
+      formData.append('payload', JSON.stringify(categoryData));
+      submitPayload = formData;
+    }
+
     try {
       if (editingCategoryId) {
-        await updateCategory.mutateAsync({ id: editingCategoryId, payload });
+        await updateCategory.mutateAsync({ id: editingCategoryId, payload: submitPayload as any });
         toast.success('Category updated');
       } else {
-        await createCategory.mutateAsync(payload);
+        await createCategory.mutateAsync(submitPayload as any);
         toast.success('Category created');
       }
       resetCategoryForm();
       setIsCategoryModalOpen(false);
-    } catch {
-      toast.error('Could not save category. Check that the English name is unique.');
+    } catch (error: any) {
+      const message = error?.response?.data?.message || 'Could not save category. Check that the English name is unique.';
+      toast.error(message);
     }
   };
 
@@ -1313,6 +1391,7 @@ export default function AdminDashboard() {
                                 setCategoryForm({
                                   nameEn: category.name.en,
                                   nameFr: category.name.fr,
+                                  image: category.image || '',
                                   isActive: category.isActive,
                                 });
                                 setIsCategoryModalOpen(true);
@@ -1336,7 +1415,7 @@ export default function AdminDashboard() {
                     <table className="w-full min-w-[760px] divide-y divide-gray-200 dark:divide-gray-700">
                       <thead className="bg-gray-50 dark:bg-[var(--dark-muted)]">
                         <tr>
-                          {['ID', 'English', 'French', 'Status', 'Actions'].map((heading) => (
+                          {['ID', 'Image', 'English', 'French', 'Status', 'Actions'].map((heading) => (
                             <th
                               key={heading}
                               className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-300"
@@ -1349,7 +1428,7 @@ export default function AdminDashboard() {
                       <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {isLoading ? (
                           <tr>
-                            <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                            <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                               Loading categories...
                             </td>
                           </tr>
@@ -1358,6 +1437,19 @@ export default function AdminDashboard() {
                             <tr key={category._id}>
                               <td className="px-4 py-4 align-top font-mono text-sm text-gray-600 dark:text-gray-300">
                                 {category.id}
+                              </td>
+                              <td className="px-4 py-4 align-top">
+                                {category.image ? (
+                                  <img
+                                    src={category.image}
+                                    alt={category.name.en}
+                                    className="h-10 w-14 rounded-lg object-cover shadow-sm ring-1 ring-gray-200 dark:ring-gray-700"
+                                  />
+                                ) : (
+                                  <div className="flex h-10 w-14 items-center justify-center rounded-lg bg-gray-100 text-[10px] font-semibold text-gray-400 dark:bg-gray-800">
+                                    No Img
+                                  </div>
+                                )}
                               </td>
                               <td className="px-4 py-4 align-top font-semibold text-gray-900 dark:text-white">
                                 {category.name.en}
@@ -1385,6 +1477,7 @@ export default function AdminDashboard() {
                                       setCategoryForm({
                                         nameEn: category.name.en,
                                         nameFr: category.name.fr,
+                                        image: category.image || '',
                                         isActive: category.isActive,
                                       });
                                       setIsCategoryModalOpen(true);
