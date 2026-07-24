@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, type ChangeEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { ZoomIn, ZoomOut, RotateCcw, Check, X, Crop } from 'lucide-react';
 
 interface ImageCropperModalProps {
@@ -120,8 +121,8 @@ export default function ImageCropperModal({
     );
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm animate-fade-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md animate-fade-in">
       <div className="flex max-h-[95dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-[#0C2147] border border-gray-200 dark:border-gray-700">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
@@ -241,6 +242,7 @@ export default function ImageCropperModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
