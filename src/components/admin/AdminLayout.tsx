@@ -7,6 +7,7 @@ import {
   Mail,
   Menu,
   Moon,
+  Settings,
   Sun,
   Tags,
   X,
@@ -23,6 +24,7 @@ interface AdminLayoutProps {
     contacts?: number;
     activities?: number;
     categories?: number;
+    settings?: number;
   };
 }
 
@@ -31,6 +33,7 @@ const navItems = [
   { id: 'contacts', label: 'Contact Requests', icon: Mail },
   { id: 'activities', label: 'Activities CRUD', icon: CalendarCheck },
   { id: 'categories', label: 'Activity Categories', icon: Tags },
+  { id: 'settings', label: 'WhatsApp Settings', icon: Settings },
 ];
 
 function getActiveId(pathname: string) {

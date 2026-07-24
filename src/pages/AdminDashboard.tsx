@@ -41,9 +41,10 @@ import ActivityFormModal, {
 import ImageCropperModal from '../components/admin/ImageCropperModal';
 import AdminLayout from '../components/admin/AdminLayout';
 import ConfirmActionModal from '../components/admin/ConfirmActionModal';
+import WhatsappSettingsPanel from '../components/admin/WhatsappSettingsPanel';
 import { getPrimaryPrice } from '../utils/pricing';
 
-type AdminTab = 'bookings' | 'contacts' | 'activities' | 'categories';
+type AdminTab = 'bookings' | 'contacts' | 'activities' | 'categories' | 'settings';
 
 interface ConfirmAction {
   title: string;
@@ -495,7 +496,7 @@ export default function AdminDashboard() {
   const [searchParams] = useSearchParams();
   const requestedTab = searchParams.get('tab');
   const activeTab: AdminTab =
-    requestedTab === 'contacts' || requestedTab === 'activities' || requestedTab === 'categories'
+    requestedTab === 'contacts' || requestedTab === 'activities' || requestedTab === 'categories' || requestedTab === 'settings'
       ? requestedTab
       : 'bookings';
   const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
@@ -1528,6 +1529,7 @@ export default function AdminDashboard() {
 
               </section>
             )}
+            {activeTab === 'settings' && <WhatsappSettingsPanel />}
         </div>
         <ActivityFormModal
           categories={categoryOptions}

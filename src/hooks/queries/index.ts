@@ -53,6 +53,13 @@ export interface AdminActivity extends Activity {
 
 export type ActivityReviewPayload = Pick<ActivityReview, 'name' | 'country' | 'rating' | 'comment'>;
 
+export interface SystemSettings {
+  whatsappApiUrl: string;
+  whatsappApiKey: string;
+  whatsappSessionId: string;
+  adminPhone: string;
+}
+
 export interface AdminDashboardData {
   stats: {
     activities: number;
@@ -400,6 +407,30 @@ export function useDeleteAdminCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+  });
+}
+
+export function useAdminSettings() {
+  return useQuery({
+    queryKey: ['admin-settings'],
+    queryFn: async () => {
+      const response = await api.get('/admin/settings');
+      return response.data.data.settings as SystemSettings;
+    },
+  });
+}
+
+export function useUpdateAdminSettings() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: Partial<SystemSettings>) => {
+      const response = await api.patch('/admin/settings', payload);
+      return response.data.data.settings as SystemSettings;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-settings'] });
     },
   });
 }
