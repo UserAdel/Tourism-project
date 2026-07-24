@@ -14,7 +14,7 @@ export default function Header() {
   const navLinks = [
     { path: '/', label: t('nav.home') },
     { path: '/activities', label: t('nav.activities') },
-    { path: '/about', label: t('nav.about') },
+    // { path: '/about', label: t('nav.about') },
     { path: '/faq', label: t('nav.faq') },
     { path: '/contact', label: t('nav.contact') }
   ];
@@ -25,17 +25,19 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-[rgba(4,27,74,0.08)] bg-[#F9F5EE]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(201,168,92,0.1)] dark:bg-[#040E26]/95 dark:shadow-[0_4px_12px_rgba(201,168,92,0.12)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src={logoPath}
-              alt="Hurghada French Guide"
-              className="h-14 w-14 rounded-full object-cover shadow-md ring-2 ring-[var(--gold)]/30"
-            />
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="p-1 rounded-full bg-white dark:bg-white shadow-sm ring-2 ring-[var(--gold)]/30 flex items-center justify-center transition-transform group-hover:scale-105">
+              <img
+                src={logoPath}
+                alt="Hurghada French Guide"
+                className="h-16 w-16 object-contain"
+              />
+            </div>
             <div className="hidden sm:block">
-              <div className="text-[var(--navy)] dark:text-[var(--ivory)] font-semibold text-lg leading-tight tracking-wide">
+              <div className="text-[var(--navy)] dark:text-[var(--ivory)] font-semibold text-xl leading-tight tracking-wide">
                 Hurghada French Guide
               </div>
-              <div className="text-[var(--gold)] text-xs tracking-widest uppercase">Excursions</div>
+              <div className="text-[var(--gold)] text-xs tracking-widest uppercase font-medium">Excursions</div>
             </div>
           </Link>
 
