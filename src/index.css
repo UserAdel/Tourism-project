@@ -80,13 +80,13 @@
   --blue-600: #2563eb;
   --blue-800: #1e40af;
   --blue-900: #1e3a8a;
-  --dark-page: #0b1120;
-  --dark-section: #121d33;
-  --dark-card: #121d33;
-  --dark-muted: #1c2e4f;
-  --shadow-cyan-soft: 0 4px 20px rgba(229, 193, 88, 0.15);
-  --shadow-cyan-large: 0 12px 40px rgba(229, 193, 88, 0.25);
-  --shadow-cyan-glow: 0 0 35px rgba(229, 193, 88, 0.35);
+  --dark-page: #061533;
+  --dark-section: #0c2147;
+  --dark-card: #0c2147;
+  --dark-muted: #132d5e;
+  --shadow-cyan-soft: 0 4px 20px rgba(201, 168, 92, 0.18);
+  --shadow-cyan-large: 0 12px 40px rgba(201, 168, 92, 0.28);
+  --shadow-cyan-glow: 0 0 35px rgba(201, 168, 92, 0.38);
   --shadow-whatsapp: 0 0 30px rgba(37, 211, 102, 0.5);
   --whatsapp: #25d366;
   --whatsapp-hover: #20ba5a;
@@ -94,32 +94,32 @@
 }
 
 .dark {
-  --background: #0b1120;
-  --foreground: #f8fafc;
-  --card: #121d33;
-  --card-foreground: #f8fafc;
-  --popover: #16233d;
-  --popover-foreground: #f8fafc;
-  --primary: #e5c158;
-  --primary-foreground: #0b1120;
-  --secondary: #16233d;
-  --secondary-foreground: #f8fafc;
-  --muted: #1c2e4f;
-  --muted-foreground: #94a3b8;
-  --accent: #e5c158;
-  --accent-foreground: #0b1120;
-  --border: rgba(229, 193, 88, 0.22);
-  --input-background: #16233d;
-  --ring: #e5c158;
-  --teal: #e5c158;
-  --teal-dark: #d4af37;
-  --turquoise: #38bdf8;
-  --turquoise-dark: #0284c7;
-  --ivory: #f8fafc;
-  --sand: #e2d1a6;
-  --navy: #cbd5e1;
-  --text-soft: #cbd5e1;
-  --text-muted: #94a3b8;
+  --background: #061533;
+  --foreground: #f4efe6;
+  --card: #0c2147;
+  --card-foreground: #f4efe6;
+  --popover: #112852;
+  --popover-foreground: #f4efe6;
+  --primary: #c9a85c;
+  --primary-foreground: #061533;
+  --secondary: #0c2147;
+  --secondary-foreground: #f4efe6;
+  --muted: #132d5e;
+  --muted-foreground: #a3b8de;
+  --accent: #c9a85c;
+  --accent-foreground: #061533;
+  --border: rgba(201, 168, 92, 0.25);
+  --input-background: #0c2147;
+  --ring: #c9a85c;
+  --teal: #c9a85c;
+  --teal-dark: #b8963f;
+  --turquoise: #1a8fa8;
+  --turquoise-dark: #14758a;
+  --ivory: #f4efe6;
+  --sand: #ede0c4;
+  --navy: #a3b8de;
+  --text-soft: #d8e3f5;
+  --text-muted: #a3b8de;
 }
 
 @theme inline {
