@@ -131,7 +131,7 @@ export default function Home() {
 
   return (
     <div className="bg-[#F9F5EE] dark:bg-[#040E26]">
-      <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="public-hero relative h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <motion.img
             initial={{ scale: 1.1 }}
@@ -161,7 +161,11 @@ export default function Home() {
           >
             {t('hero.subtitle')}
           </motion.p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+            data-reveal="up"
+            data-reveal-delay="300"
+          >
             <Link to="/book">
               <Button size="lg" className="w-full sm:w-auto">
                 {t('hero.bookNow')}
@@ -202,7 +206,7 @@ export default function Home() {
                 'historical-cultural': tourismImages.luxor,
                 'city-tours': tourismImages.temple,
               };
-              const categoryImg = (category as any).image || defaultImgs[category.id] || tourismImages.redSea;
+              const categoryImg = category.image || defaultImgs[category.id] || tourismImages.redSea;
 
               return (
                 <motion.div
@@ -360,8 +364,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white relative overflow-hidden">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="public-hero py-20 bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white relative overflow-hidden">
+        <div
+          className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          data-reveal="scale"
+        >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             {language === 'en' ? 'Ready for Your Red Sea Adventure?' : 'Prêt pour Votre Aventure en Mer Rouge?'}
           </h2>

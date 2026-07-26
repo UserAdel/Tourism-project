@@ -144,8 +144,8 @@ export default function FAQ() {
 
   return (
     <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">
-      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="public-hero bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-reveal="scale">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {language === 'en' ? 'Frequently Asked Questions' : 'Questions Fréquemment Posées'}
           </h1>
@@ -158,11 +158,11 @@ export default function FAQ() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="space-y-4 mb-12">
+        <div className="space-y-4 mb-12" data-stagger data-stagger-step="55">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-[#F9F5EE] dark:bg-[#071530] rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700"
+              className="public-card-soft bg-[#F9F5EE] dark:bg-[#071530] rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700"
             >
               <button
                 onClick={() => toggleFaq(index)}
@@ -178,7 +178,7 @@ export default function FAQ() {
                 />
               </button>
               {openIndex === index && (
-                <div className="px-6 pb-5 text-gray-700 dark:text-gray-300 leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-4">
+                <div className="faq-answer px-6 pb-5 text-gray-700 dark:text-gray-300 leading-relaxed border-t border-gray-100 dark:border-gray-700 pt-4">
                   {faq.answer[language]}
                 </div>
               )}
@@ -186,7 +186,10 @@ export default function FAQ() {
           ))}
         </div>
 
-        <div className="bg-gradient-to-br from-[var(--teal)] to-[var(--turquoise)] rounded-2xl p-8 text-center text-white">
+        <div
+          className="public-card-soft bg-gradient-to-br from-[var(--teal)] to-[var(--turquoise)] rounded-2xl p-8 text-center text-white"
+          data-reveal="scale"
+        >
           <h2 className="text-2xl font-bold mb-4">
             {language === 'en' ? 'Still Have Questions?' : 'Vous Avez Encore Des Questions?'}
           </h2>

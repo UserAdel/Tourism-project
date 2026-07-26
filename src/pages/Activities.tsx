@@ -96,8 +96,8 @@ export default function Activities() {
 
   return (
     <div className="bg-[#F9F5EE] dark:bg-[#040E26] min-h-screen">
-      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="public-hero bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-reveal="left">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             {t('nav.activities')}
           </h1>
@@ -118,7 +118,7 @@ export default function Activities() {
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6" data-reveal="fade">
           <p className="text-gray-600 dark:text-gray-300">
             {isLoading && !apiActivities
               ? t('common.loading')
@@ -142,6 +142,7 @@ export default function Activities() {
 
         <div className="flex gap-8">
           <aside
+            data-reveal="left"
             className={`${
               filtersOpen ? 'block' : 'hidden'
             } lg:block w-full lg:w-64 bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-6 shadow-lg h-fit sticky top-24`}
@@ -260,7 +261,7 @@ export default function Activities() {
             </button>
           </aside>
 
-          <div className="flex-1">
+          <div className="flex-1" data-reveal="right">
             <div className="mb-6">
               <label className="sr-only">
                 {language === 'en' ? 'Search by name' : 'Recherche par nom'}
@@ -278,7 +279,11 @@ export default function Activities() {
             </div>
 
             {filteredActivities.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+                data-stagger
+                data-stagger-step="65"
+              >
                 {filteredActivities.map((activity) => (
                   <ActivityCard key={activity.id} activity={activity} />
                 ))}

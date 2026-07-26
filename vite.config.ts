@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
-import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,11 +11,6 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
       },
-    },
-  },
-  resolve: {
-    alias: {
-      'motion/react': fileURLToPath(new URL('./src/lib/motion.tsx', import.meta.url)),
     },
   },
   plugins: [

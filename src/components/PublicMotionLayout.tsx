@@ -1,0 +1,113 @@
+import { useEffect, useRef } from 'react'
+import { MotionConfig } from 'motion/react'
+import { Outlet, useLocation } from 'react-router-dom'
+import Header from './Header'
+import Footer from './Footer'
+import FloatingWhatsApp from './FloatingWhatsApp'
+
+const REVEAL_SELECTOR = '[data-reveal]'
+
+export default function PublicMotionLayout() {
+  const location = useLocation()
+  const siteRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const site = siteRef.current
+    if (!site) return
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let revealFrame = 0
+    const revealObserver = reducedMotion || !('IntersectionObserver' in window)
+      ? null
+      : new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return
+              entry.target.classList.add('is-revealed')
+              revealObserver?.unobserve(entry.target)
+            })
+          },
+          { rootMargin: '0px 0px -5% 0px', threshold: 0.08 },
+        )
+
+    const revealVisibleElements = () => {
+      site.querySelectorAll<HTMLElement>(`${REVEAL_SELECTOR}.reveal-ready`).forEach((element) => {
+        if (element.classList.contains('is-revealed')) return
+        const bounds = element.getBoundingClientRect()
+        if (bounds.bottom < 0 || bounds.top > window.innerHeight * 0.92) return
+        element.classList.add('is-revealed')
+        revealObserver?.unobserve(element)
+      })
+    }
+
+    const scheduleVisibleCheck = () => {
+      window.cancelAnimationFrame(revealFrame)
+      revealFrame = window.requestAnimationFrame(revealVisibleElements)
+    }
+
+    const prepareAnimations = () => {
+      site.querySelectorAll<HTMLElement>('[data-stagger]').forEach((container) => {
+        const step = Number(container.dataset.staggerStep ?? 70)
+        Array.from(container.children).forEach((child, index) => {
+          if (!(child instanceof HTMLElement)) return
+          if (!child.dataset.reveal) child.dataset.reveal = 'up'
+          if (!child.dataset.revealDelay) {
+            child.style.setProperty('--reveal-delay', `${Math.min(index * step, 360)}ms`)
+          }
+        })
+      })
+
+      site.querySelectorAll<HTMLElement>(REVEAL_SELECTOR).forEach((element) => {
+        if (element.classList.contains('reveal-ready')) return
+        if (element.dataset.revealDelay) {
+          element.style.setProperty('--reveal-delay', `${element.dataset.revealDelay}ms`)
+        }
+        element.classList.add('reveal-ready')
+
+        if (reducedMotion) {
+          element.classList.add('is-revealed')
+        } else if (revealObserver) {
+          revealObserver?.observe(element)
+        } else {
+          element.classList.add('is-revealed')
+        }
+      })
+
+      site.classList.add('motion-ready')
+      scheduleVisibleCheck()
+    }
+
+    prepareAnimations()
+    const mutationObserver = new MutationObserver(prepareAnimations)
+    mutationObserver.observe(site, { childList: true, subtree: true })
+    window.addEventListener('resize', scheduleVisibleCheck)
+
+    return () => {
+      window.cancelAnimationFrame(revealFrame)
+      window.removeEventListener('resize', scheduleVisibleCheck)
+      mutationObserver.disconnect()
+      revealObserver?.disconnect()
+    }
+  }, [location.key])
+
+  return (
+    <MotionConfig
+      reducedMotion="user"
+      transition={{ duration: 0.82, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div
+        ref={siteRef}
+        className="public-site min-h-screen flex flex-col bg-background text-foreground"
+      >
+        <Header />
+        <main className="flex-1">
+          <div key={location.key} className="public-page-route">
+            <Outlet />
+          </div>
+        </main>
+        <Footer />
+        <FloatingWhatsApp />
+      </div>
+    </MotionConfig>
+  )
+}

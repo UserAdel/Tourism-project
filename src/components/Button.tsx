@@ -13,7 +13,7 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center rounded-xl transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'motion-button relative isolate overflow-hidden inline-flex items-center justify-center rounded-xl transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
     primary: 'bg-[var(--navy)] dark:bg-[var(--gold)] text-[var(--ivory)] dark:text-[#041B4A] hover:bg-[#031035] dark:hover:bg-[#B8963F] active:scale-95 shadow-lg hover:shadow-xl',

@@ -99,22 +99,22 @@ export default function Contact() {
 
   return (
     <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">
-      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="public-hero bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-reveal="scale">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('contact.title')}</h1>
           <p className="text-xl text-white/90">{t('contact.subtitle')}</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid md:grid-cols-2 gap-12">
-          <div>
+        <div className="grid md:grid-cols-2 gap-12" data-stagger data-stagger-step="120">
+          <div data-reveal="left">
             <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
               {t('contact.info')}
             </h2>
 
-            <div className="space-y-6 mb-8">
-              <div className="flex items-start gap-4">
+            <div className="space-y-6 mb-8" data-stagger data-stagger-step="55">
+              <div className="contact-info-item flex items-start gap-4">
                 <div className="w-12 h-12 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-lg flex items-center justify-center flex-shrink-0">
                   <Phone className="w-6 h-6 text-[var(--teal)]" />
                 </div>
@@ -131,7 +131,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              <div className="contact-info-item flex items-start gap-4">
                 <div className="w-12 h-12 bg-[var(--sand)] rounded-lg flex items-center justify-center flex-shrink-0">
                   <MessageCircle className="w-6 h-6 text-[var(--teal)]" />
                 </div>
@@ -150,7 +150,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              <div className="contact-info-item flex items-start gap-4">
                 <div className="w-12 h-12 bg-[var(--sand)] rounded-lg flex items-center justify-center flex-shrink-0">
                   <Mail className="w-6 h-6 text-[var(--teal)]" />
                 </div>
@@ -167,7 +167,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              <div className="contact-info-item flex items-start gap-4">
                 <div className="w-12 h-12 bg-[var(--sand)] rounded-lg flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-6 h-6 text-[var(--teal)]" />
                 </div>
@@ -181,7 +181,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
+              <div className="contact-info-item flex items-start gap-4">
                 <div className="w-12 h-12 bg-[var(--sand)] rounded-lg flex items-center justify-center flex-shrink-0">
                   <Clock className="w-6 h-6 text-[var(--teal)]" />
                 </div>
@@ -208,13 +208,16 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-xl p-8">
+          <div
+            className="public-card-soft bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-xl p-8"
+            data-reveal="right"
+          >
             <h2 className="text-2xl font-bold text-[var(--navy)] dark:text-white mb-6">
               {t('contact.send')}
             </h2>
 
             {submitted ? (
-              <div className="text-center py-8">
+              <div className="form-success text-center py-8">
                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
@@ -310,7 +313,10 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="mt-12 bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-lg overflow-hidden h-96">
+        <div
+          className="public-image-frame mt-12 bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-lg overflow-hidden h-96"
+          data-reveal="scale"
+        >
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d220924.52196876685!2d33.647788!3d27.25738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14531a7d47c3c499%3A0x86a8bd14e7de7081!2sHurghada%2C%20Red%20Sea%20Governorate%2C%20Egypt!5e0!3m2!1sen!2s!4v1234567890"
             width="100%"

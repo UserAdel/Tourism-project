@@ -8,9 +8,9 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[var(--teal)] to-[var(--turquoise)] flex items-center justify-center px-4">
-      <div className="text-center text-white max-w-2xl">
+      <div className="text-center text-white max-w-2xl" data-reveal="scale">
         <div className="mb-8">
-          <h1 className="text-9xl font-bold mb-4">404</h1>
+          <h1 className="not-found-number text-9xl font-bold mb-4">404</h1>
           <h2 className="text-3xl md:text-4xl font-semibold mb-4">
             {language === 'en' ? 'Page Not Found' : 'Page Non Trouvée'}
           </h2>

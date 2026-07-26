@@ -15,15 +15,15 @@ export default function Footer() {
   return (
     <footer className="bg-[var(--navy)] dark:bg-[#061533] text-white border-t border-transparent dark:border-[rgba(201,168,92,0.15)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8" data-stagger>
+          <div data-reveal="up">
             <h3 className="text-[var(--gold)] font-semibold mb-4">{t('footer.about')}</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               {t('footer.aboutText')}
             </p>
           </div>
 
-          <div>
+          <div data-reveal="up">
             <h3 className="text-[var(--gold)] font-semibold mb-4">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
@@ -54,7 +54,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div data-reveal="up">
             <h3 className="text-[var(--gold)] font-semibold mb-4">{t('footer.popular')}</h3>
             <ul className="space-y-2">
               {popularActivities.map((activity) => (
@@ -70,7 +70,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div data-reveal="up">
             <h3 className="text-[var(--gold)] font-semibold mb-4">{t('footer.contact')}</h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
@@ -93,7 +93,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 mt-8">
+        <div className="border-t border-white/10 pt-8 mt-8" data-reveal="fade">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} Hurghada French Guide Excursions. {t('footer.rights')}

@@ -65,8 +65,8 @@ export default function About() {
 
   return (
     <div className="bg-[#F9F5EE] dark:bg-[#040E26]">
-      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="public-hero bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-reveal="scale">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             {language === 'en' ? 'About Hurghada French Guide' : 'À Propos d\'Hurghada French Guide'}
           </h1>
@@ -79,9 +79,9 @@ export default function About() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20" data-stagger>
           {stats.map((stat, index) => (
-            <div key={index} className="text-center">
+            <div key={index} className="stat-item text-center">
               <div className="text-4xl md:text-5xl font-bold text-[var(--teal)] mb-2">
                 {stat.number}
               </div>
@@ -92,7 +92,7 @@ export default function About() {
 
         <div className="mb-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
+            <div data-reveal="left">
               <h2 className="text-3xl font-bold text-[var(--navy)] mb-6">
                 {language === 'en' ? 'Our Story' : 'Notre Histoire'}
               </h2>
@@ -114,7 +114,10 @@ export default function About() {
                 </p>
               </div>
             </div>
-            <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+            <div
+              className="public-image-frame relative h-96 rounded-2xl overflow-hidden shadow-2xl"
+              data-reveal="right"
+            >
               <img
                 src={tourismImages.redSea}
                 alt="Red Sea"
@@ -125,12 +128,12 @@ export default function About() {
         </div>
 
         <div className="mb-20">
-          <h2 className="text-3xl font-bold text-[var(--navy)] mb-12 text-center">
+          <h2 className="text-3xl font-bold text-[var(--navy)] mb-12 text-center" data-reveal="up">
             {language === 'en' ? 'Our Values' : 'Nos Valeurs'}
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8" data-stagger>
             {values.map((value, index) => (
-              <div key={index} className="text-center">
+              <div key={index} className="public-card-soft rounded-2xl p-5 text-center">
                 <div className="w-20 h-20 bg-[var(--sand)] rounded-full flex items-center justify-center mx-auto mb-4">
                   <value.icon className="w-10 h-10 text-[var(--teal)]" />
                 </div>
@@ -143,7 +146,10 @@ export default function About() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[var(--sand)] to-white rounded-2xl p-12 text-center">
+        <div
+          className="public-card-soft bg-gradient-to-br from-[var(--sand)] to-white rounded-2xl p-12 text-center"
+          data-reveal="scale"
+        >
           <h2 className="text-3xl font-bold text-[var(--navy)] mb-4">
             {language === 'en' ? 'Why Choose Us?' : 'Pourquoi Nous Choisir?'}
           </h2>

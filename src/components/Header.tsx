@@ -15,14 +15,14 @@ export default function Header() {
     { path: '/', label: t('nav.home') },
     { path: '/activities', label: t('nav.activities') },
     // { path: '/about', label: t('nav.about') },
-    { path: '/faq', label: t('nav.faq') },
+    // { path: '/faq', label: t('nav.faq') },
     { path: '/contact', label: t('nav.contact') }
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[rgba(4,27,74,0.08)] bg-[#F9F5EE]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(201,168,92,0.2)] dark:bg-[#061533]/95 dark:shadow-[0_4px_20px_rgba(6,21,51,0.5)]">
+    <header className="public-header sticky top-0 z-50 border-b border-[rgba(4,27,74,0.08)] bg-[#F9F5EE]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(201,168,92,0.2)] dark:bg-[#061533]/95 dark:shadow-[0_4px_20px_rgba(6,21,51,0.5)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 group">
@@ -46,7 +46,7 @@ export default function Header() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`transition-colors ${
+                className={`nav-link relative transition-colors ${
                   isActive(link.path)
                     ? 'text-[var(--navy)] dark:text-[var(--gold)] font-semibold'
                     : 'text-[#3A4A6A] dark:text-[#C7D0DE] hover:text-[var(--navy)] dark:hover:text-[var(--gold)]'
@@ -105,8 +105,8 @@ export default function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[rgba(4,27,74,0.08)] bg-[#F9F5EE] dark:border-[rgba(201,168,92,0.15)] dark:bg-[#061533]">
-          <nav className="flex flex-col px-4 py-4 gap-2">
+        <div className="mobile-menu-panel lg:hidden border-t border-[rgba(4,27,74,0.08)] bg-[#F9F5EE] dark:border-[rgba(201,168,92,0.15)] dark:bg-[#061533]">
+          <nav className="flex flex-col px-4 py-4 gap-2" data-stagger data-stagger-step="45">
             {navLinks.map((link) => (
               <Link
                 key={link.path}

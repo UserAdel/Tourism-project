@@ -132,7 +132,10 @@ export default function BookNow() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-[#F0EAD8]/30 dark:bg-[#040E26] flex items-center justify-center px-4">
-        <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
+        <div
+          className="form-success public-card-soft bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl p-8 max-w-md w-full text-center shadow-xl"
+          data-reveal="scale"
+        >
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400" />
           </div>
@@ -154,8 +157,8 @@ export default function BookNow() {
 
   return (
     <div className="bg-[#F0EAD8]/30 dark:bg-[#040E26] min-h-screen">
-      <div className="bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="public-hero bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-reveal="scale">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('booking.title')}</h1>
           <p className="text-xl text-white/90">
             {language === 'en'
@@ -166,8 +169,11 @@ export default function BookNow() {
       </div>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div
+          className="public-card-soft bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl shadow-xl p-8"
+          data-reveal="up"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6" data-stagger data-stagger-step="55">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {t('booking.activity')} *
@@ -190,7 +196,7 @@ export default function BookNow() {
               </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-stagger data-stagger-step="40">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   {t('booking.fullName')} *
