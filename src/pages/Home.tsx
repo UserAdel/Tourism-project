@@ -320,27 +320,21 @@ export default function Home() {
 
       <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#071530]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
+          <div className="text-center mb-12" data-reveal="up">
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--navy)] dark:text-white mb-4">
               {t('sections.reviews')}
             </h2>
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            data-stagger
+            data-stagger-step="120"
+          >
             {reviews.map((review, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all"
+                className="guest-review-card bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(review.rating)].map((_, i) => (
@@ -352,7 +346,7 @@ export default function Home() {
                   <p className="font-semibold text-[var(--navy)] dark:text-white">{review.name}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{review.activity}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

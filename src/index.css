@@ -807,6 +807,14 @@ button {
   transform: translate3d(0, -7px, 0) scale(1.025);
 }
 
+.public-site .guest-review-card {
+  transform-origin: center bottom;
+}
+
+.public-site.motion-ready .guest-review-card.reveal-ready.is-revealed:hover {
+  transform: translate3d(0, -7px, 0) rotate(-0.35deg);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
