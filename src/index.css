@@ -799,6 +799,14 @@ button {
   box-shadow: 0 10px 28px rgba(201, 168, 92, 0.18);
 }
 
+.public-site .why-us-card {
+  transform-origin: center bottom;
+}
+
+.public-site.motion-ready .why-us-card.reveal-ready.is-revealed:hover {
+  transform: translate3d(0, -7px, 0) scale(1.025);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

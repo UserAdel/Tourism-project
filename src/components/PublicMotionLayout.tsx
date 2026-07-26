@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { MotionConfig } from 'motion/react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Header'
@@ -11,11 +11,16 @@ export default function PublicMotionLayout() {
   const location = useLocation()
   const siteRef = useRef<HTMLDivElement>(null)
 
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname, location.search])
+
   useEffect(() => {
     const site = siteRef.current
     if (!site) return
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const pendingElements = new Set<HTMLElement>()
     let revealFrame = 0
     const revealObserver = reducedMotion || !('IntersectionObserver' in window)
       ? null
@@ -25,18 +30,20 @@ export default function PublicMotionLayout() {
               if (!entry.isIntersecting) return
               entry.target.classList.add('is-revealed')
               revealObserver?.unobserve(entry.target)
+              pendingElements.delete(entry.target as HTMLElement)
             })
           },
           { rootMargin: '0px 0px -5% 0px', threshold: 0.08 },
         )
 
     const revealVisibleElements = () => {
-      site.querySelectorAll<HTMLElement>(`${REVEAL_SELECTOR}.reveal-ready`).forEach((element) => {
+      pendingElements.forEach((element) => {
         if (element.classList.contains('is-revealed')) return
         const bounds = element.getBoundingClientRect()
         if (bounds.bottom < 0 || bounds.top > window.innerHeight * 0.92) return
         element.classList.add('is-revealed')
         revealObserver?.unobserve(element)
+        pendingElements.delete(element)
       })
     }
 
@@ -58,18 +65,24 @@ export default function PublicMotionLayout() {
       })
 
       site.querySelectorAll<HTMLElement>(REVEAL_SELECTOR).forEach((element) => {
-        if (element.classList.contains('reveal-ready')) return
-        if (element.dataset.revealDelay) {
-          element.style.setProperty('--reveal-delay', `${element.dataset.revealDelay}ms`)
+        if (!element.classList.contains('reveal-ready')) {
+          if (element.dataset.revealDelay) {
+            element.style.setProperty('--reveal-delay', `${element.dataset.revealDelay}ms`)
+          }
+          element.classList.add('reveal-ready')
         }
-        element.classList.add('reveal-ready')
+
+        if (element.classList.contains('is-revealed')) return
+        pendingElements.add(element)
 
         if (reducedMotion) {
           element.classList.add('is-revealed')
+          pendingElements.delete(element)
         } else if (revealObserver) {
           revealObserver?.observe(element)
         } else {
           element.classList.add('is-revealed')
+          pendingElements.delete(element)
         }
       })
 
@@ -80,13 +93,16 @@ export default function PublicMotionLayout() {
     prepareAnimations()
     const mutationObserver = new MutationObserver(prepareAnimations)
     mutationObserver.observe(site, { childList: true, subtree: true })
+    window.addEventListener('scroll', scheduleVisibleCheck, { passive: true })
     window.addEventListener('resize', scheduleVisibleCheck)
 
     return () => {
       window.cancelAnimationFrame(revealFrame)
+      window.removeEventListener('scroll', scheduleVisibleCheck)
       window.removeEventListener('resize', scheduleVisibleCheck)
       mutationObserver.disconnect()
       revealObserver?.disconnect()
+      pendingElements.clear()
     }
   }, [location.key])
 
