@@ -6,6 +6,7 @@ import temple from '../assets/tourism/images/temple.jpg'
 import dolphinWater from '../assets/tourism/images/dolphin-water.jpg'
 import boat from '../assets/tourism/images/boat.jpg'
 import localTourism from '../assets/tourism/images/local-tourism.png'
+import activityPlaceholder from '../assets/tourism/images/activity-placeholder.webp'
 
 export const tourismImages = {
   redSea,
@@ -16,4 +17,5 @@ export const tourismImages = {
   dolphinWater,
   boat,
   localTourism,
+  activityPlaceholder,
 }

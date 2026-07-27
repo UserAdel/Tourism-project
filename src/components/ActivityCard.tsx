@@ -3,6 +3,7 @@ import type { Activity } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Clock, Users, MapPin } from 'lucide-react';
 import { getPrimaryPricingField } from '../utils/pricing';
+import { handleActivityImageError, resolveActivityImageUrl } from '../utils/activityImages';
 import { motion, useReducedMotion } from 'framer-motion';
 
 interface ActivityCardProps {
@@ -36,8 +37,9 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     >
       <div className="relative h-64 overflow-hidden">
         <img
-          src={activity.imageUrl}
+          src={resolveActivityImageUrl(activity.imageUrl)}
           alt={activity.name[language]}
+          onError={handleActivityImageError}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>

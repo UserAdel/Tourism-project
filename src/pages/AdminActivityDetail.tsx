@@ -33,7 +33,7 @@ import ActivityFormModal, {
 } from '../components/admin/ActivityFormModal';
 import ConfirmActionModal from '../components/admin/ConfirmActionModal';
 import type { ActivityReview } from '../types';
-import { resolveActivityImageUrl } from '../utils/activityImages';
+import { handleActivityImageError, resolveActivityImageUrl } from '../utils/activityImages';
 import { getPrimaryPrice, getPricingFields } from '../utils/pricing';
 
 function DetailList({ title, items }: { title: string; items: string[] }) {
@@ -331,6 +331,7 @@ export default function AdminActivityDetail() {
               <img
                 src={resolveActivityImageUrl(activity.imageUrl)}
                 alt={activity.name.en}
+                onError={handleActivityImageError}
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5">

@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import Loading from '../components/Loading';
 import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
+import { handleActivityImageError } from '../utils/activityImages';
 import { countries } from '../data/countries';
 import { useSEO } from '../hooks/useSEO';
 import {
@@ -248,6 +249,7 @@ export default function ActivityDetail() {
           style={{ y: heroImageY }}
           src={activity.imageUrl}
           alt={activity.name[language]}
+          onError={handleActivityImageError}
           className="absolute -top-[12%] h-[124%] w-full object-cover will-change-transform"
         />
         <motion.div
