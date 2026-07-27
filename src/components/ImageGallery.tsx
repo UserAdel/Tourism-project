@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { MouseEvent } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ImageGalleryProps {
   images: string[];

@@ -3,20 +3,36 @@ import type { Activity } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Clock, Users, MapPin } from 'lucide-react';
 import { getPrimaryPricingField } from '../utils/pricing';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface ActivityCardProps {
   activity: Activity;
 }
 
+const MotionLink = motion.create(Link);
+const CARD_HOVER_SPRING = {
+  type: 'spring' as const,
+  stiffness: 145,
+  damping: 22,
+  mass: 1.05,
+};
+
 export default function ActivityCard({ activity }: ActivityCardProps) {
   const { language, t } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const primaryPricing = getPrimaryPricingField(activity);
   const isPrivatePrice = primaryPricing?.id === 'private';
 
   return (
-    <Link
+    <MotionLink
       to={`/activities/${activity.slug}`}
-      className="public-card group relative block h-full bg-[var(--card)] dark:bg-[#102A3A] rounded-2xl overflow-hidden border border-[rgba(11,83,97,0.12)] dark:border-[rgba(33,199,183,0.18)] shadow-lg hover:border-[rgba(21,156,146,0.35)] hover:shadow-2xl dark:hover:border-[rgba(33,199,183,0.4)] dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
+      whileHover={
+        reduceMotion
+          ? undefined
+          : { y: -7, scale: 1.012, transition: CARD_HOVER_SPRING }
+      }
+      whileTap={reduceMotion ? undefined : { scale: 0.995 }}
+      className="public-card group relative block h-full bg-[var(--card)] dark:bg-[#102A3A] rounded-2xl overflow-hidden border border-[rgba(11,83,97,0.12)] dark:border-[rgba(33,199,183,0.18)] shadow-lg hover:border-[rgba(21,156,146,0.35)] hover:shadow-2xl dark:hover:border-[rgba(33,199,183,0.4)] dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-[border-color,box-shadow] duration-500"
     >
       <div className="relative h-64 overflow-hidden">
         <img
@@ -65,6 +81,6 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </MotionLink>
   );
 }

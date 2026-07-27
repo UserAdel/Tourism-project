@@ -6,7 +6,8 @@ import ActivityCard from '../components/ActivityCard';
 import Button from '../components/Button';
 import { useActivities, useCategories } from '../hooks/queries';
 import { useSEO } from '../hooks/useSEO';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import {
   Languages,
   Car,
@@ -18,8 +19,61 @@ import {
   MessageCircle
 } from 'lucide-react';
 
+const SMOOTH_EASE = [0.16, 1, 0.3, 1] as const;
+const SMOOTH_VIEWPORT = { once: true, amount: 0.16, margin: '0px 0px -8% 0px' } as const;
+const HOVER_SPRING = { type: 'spring' as const, stiffness: 220, damping: 28, mass: 0.9 };
+
+const heroContainer: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      delayChildren: 0.16,
+      staggerChildren: 0.16,
+    },
+  },
+};
+
+const heroItem: Variants = {
+  hidden: { opacity: 0, y: 22 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.92, ease: SMOOTH_EASE },
+  },
+};
+
+const revealUp: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.82, delay, ease: SMOOTH_EASE },
+  }),
+};
+
+const revealScale: Variants = {
+  hidden: { opacity: 0, y: 14, scale: 0.985 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.88, delay, ease: SMOOTH_EASE },
+  }),
+};
+
+const cardReveal: Variants = {
+  hidden: { opacity: 0, y: 24, scale: 0.975 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 1.15, delay, ease: SMOOTH_EASE },
+  }),
+};
+
 export default function Home() {
   const { language, t } = useLanguage();
+  const reduceMotion = useReducedMotion();
   const { data: apiActivities, isLoading: isActivitiesLoading } = useActivities();
   const { data: apiCategories, isLoading: isCategoriesLoading } = useCategories();
 
@@ -134,9 +188,13 @@ export default function Home() {
       <section className="public-hero relative h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <motion.img
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 10, repeat: Infinity, repeatType: 'reverse' }}
+            initial={false}
+            animate={reduceMotion ? { scale: 1 } : { scale: [1.04, 1.075, 1.04] }}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : { duration: 24, ease: 'easeInOut', repeat: Infinity }
+            }
             src={tourismImages.redSea}
             alt="Red Sea"
             className="w-full h-full object-cover"
@@ -144,27 +202,27 @@ export default function Home() {
           <div className="hero-image-overlay absolute inset-0"></div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <motion.div
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white"
+          variants={heroContainer}
+          initial="hidden"
+          animate="visible"
+        >
           <motion.h1
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            variants={heroItem}
             className="text-4xl md:text-6xl font-bold mb-6 leading-tight"
           >
             {t('hero.title')}
           </motion.h1>
           <motion.p
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            variants={heroItem}
             className="text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto"
           >
             {t('hero.subtitle')}
           </motion.p>
-          <div
+          <motion.div
+            variants={heroItem}
             className="flex flex-col sm:flex-row gap-4 justify-center"
-            data-reveal="up"
-            data-reveal-delay="300"
           >
             <Link to="/book">
               <Button size="lg" className="w-full sm:w-auto">
@@ -180,17 +238,18 @@ export default function Home() {
               <MessageCircle className="mr-2 h-5 w-5" />
               {t('hero.whatsapp')}
             </a>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Explore by Category Section (3 in the same row - Restored Design) */}
       <section className="py-16 bg-[var(--background)] dark:bg-[var(--background)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SMOOTH_VIEWPORT}
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--navy)] dark:text-white mb-4">
@@ -211,16 +270,21 @@ export default function Home() {
               return (
                 <motion.div
                   key={category.id}
-                  initial={{ y: 30, opacity: 0, scale: 0.95 }}
-                  whileInView={{ y: 0, opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                  whileHover={{ scale: 1.03 }}
+                  variants={cardReveal}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={SMOOTH_VIEWPORT}
+                  custom={(index % 3) * 0.12}
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : { y: -6, transition: HOVER_SPRING }
+                  }
                   className="h-full flex flex-col"
                 >
                   <Link
                     to={`/activities?category=${category.id}`}
-                    className="group relative rounded-2xl overflow-hidden shadow-lg border border-gray-200/80 dark:border-[rgba(33,199,183,0.24)] bg-white dark:bg-[#061533] flex flex-col h-full transform transition-all duration-300 hover:-translate-y-1"
+                    className="group relative rounded-2xl overflow-hidden shadow-lg border border-gray-200/80 dark:border-[rgba(33,199,183,0.24)] bg-white dark:bg-[#061533] flex flex-col h-full transition-[box-shadow,border-color] duration-300"
                   >
                     {/* Clean Bright Category Image (No overlay, No icon) */}
                     <div className="relative h-52 sm:h-60 w-full overflow-hidden shrink-0">
@@ -255,9 +319,10 @@ export default function Home() {
       <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[var(--background)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SMOOTH_VIEWPORT}
             className="text-center mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--navy)] dark:text-white mb-4">
@@ -269,10 +334,11 @@ export default function Home() {
             {featuredActivities.map((activity, index) => (
               <motion.div
                 key={activity.id}
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                variants={cardReveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={SMOOTH_VIEWPORT}
+                custom={(index % 3) * 0.12}
                 className="h-full"
               >
                 <ActivityCard activity={activity} />
@@ -280,40 +346,58 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <motion.div
+            className="text-center mt-12"
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SMOOTH_VIEWPORT}
+          >
             <Link to="/activities">
               <Button variant="outline" size="lg">
                 {t('common.viewAll')}
               </Button>
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       <section className="py-16 bg-[var(--navy)] dark:bg-[#071530] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12" data-reveal="up">
+          <motion.div
+            className="text-center mb-12"
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SMOOTH_VIEWPORT}
+          >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               {t('sections.whyChooseUs')}
             </h2>
-          </div>
+          </motion.div>
 
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            data-stagger
-            data-stagger-step="100"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {whyChooseUsItems.map((item, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="why-us-card bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/20 hover:bg-white/15 dark:hover:bg-white/10 transition-all hover:shadow-[0_0_30px_rgba(201,168,92,0.3)]"
+                variants={cardReveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={SMOOTH_VIEWPORT}
+                custom={(index % 3) * 0.12}
+                whileHover={
+                  reduceMotion
+                    ? undefined
+                    : { y: -6, transition: HOVER_SPRING }
+                }
+                className="why-us-card bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/20 hover:bg-white/15 dark:hover:bg-white/10 transition-[background-color,box-shadow,border-color] duration-300 hover:shadow-[0_0_30px_rgba(21,156,146,0.28)]"
               >
-                <div className="w-14 h-14 bg-[var(--gold)] dark:bg-[var(--turquoise)] rounded-full flex items-center justify-center mb-4 animate-float">
+                <div className="w-14 h-14 bg-[var(--gold)] dark:bg-[var(--turquoise)] rounded-full flex items-center justify-center mb-4">
                   <item.icon className="w-7 h-7 text-[var(--navy)]" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
                 <p className="text-white/80">{item.description}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -321,21 +405,33 @@ export default function Home() {
 
       <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#071530]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12" data-reveal="up">
+          <motion.div
+            className="text-center mb-12"
+            variants={revealUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SMOOTH_VIEWPORT}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--navy)] dark:text-white mb-4">
               {t('sections.reviews')}
             </h2>
-          </div>
+          </motion.div>
 
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            data-stagger
-            data-stagger-step="120"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {reviews.map((review, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="guest-review-card bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-all"
+                variants={cardReveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={SMOOTH_VIEWPORT}
+                custom={index * 0.12}
+                whileHover={
+                  reduceMotion
+                    ? undefined
+                    : { y: -6, transition: HOVER_SPRING }
+                }
+                className="guest-review-card bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-shadow duration-300"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(review.rating)].map((_, i) => (
@@ -347,16 +443,19 @@ export default function Home() {
                   <p className="font-semibold text-[var(--navy)] dark:text-white">{review.name}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{review.activity}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       <section className="public-hero py-20 bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white relative overflow-hidden">
-        <div
+        <motion.div
           className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
-          data-reveal="scale"
+          variants={revealScale}
+          initial="hidden"
+          whileInView="visible"
+          viewport={SMOOTH_VIEWPORT}
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
             {language === 'en' ? 'Ready for Your Red Sea Adventure?' : 'Prêt pour Votre Aventure en Mer Rouge?'}
@@ -385,7 +484,7 @@ export default function Home() {
               {t('hero.whatsapp')}
             </a>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Star, Quote } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getCountryWithFlag } from '../data/countries';
 

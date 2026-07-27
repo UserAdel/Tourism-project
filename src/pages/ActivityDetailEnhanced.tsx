@@ -7,7 +7,7 @@ import ImageGallery from '../components/ImageGallery';
 import VideoGallery from '../components/VideoGallery';
 import Testimonials from '../components/Testimonials';
 import VideoTestimonials from '../components/VideoTestimonials';
-import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react';
+import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import { toast } from 'sonner';
 import Loading from '../components/Loading';
 import { useActivities, useActivity, useCreateActivityReview } from '../hooks/queries';

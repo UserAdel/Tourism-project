@@ -1,6 +1,6 @@
 import { CheckCircle, Car, Languages, Users, Heart, Shield } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface TrustBadge {
   icon: React.ComponentType<{ className?: string }>;

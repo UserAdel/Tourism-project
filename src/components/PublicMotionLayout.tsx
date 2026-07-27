@@ -1,11 +1,12 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
-import { MotionConfig } from 'motion/react'
+import { motion, MotionConfig } from 'framer-motion'
 import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 import FloatingWhatsApp from './FloatingWhatsApp'
 
 const REVEAL_SELECTOR = '[data-reveal]'
+const SMOOTH_EASE = [0.16, 1, 0.3, 1] as const
 
 export default function PublicMotionLayout() {
   const location = useLocation()
@@ -109,7 +110,7 @@ export default function PublicMotionLayout() {
   return (
     <MotionConfig
       reducedMotion="user"
-      transition={{ duration: 0.82, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.82, ease: SMOOTH_EASE }}
     >
       <div
         ref={siteRef}
@@ -117,9 +118,15 @@ export default function PublicMotionLayout() {
       >
         <Header />
         <main className="flex-1">
-          <div key={location.key} className="public-page-route">
+          <motion.div
+            key={location.key}
+            className="public-page-route"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.58, ease: SMOOTH_EASE }}
+          >
             <Outlet />
-          </div>
+          </motion.div>
         </main>
         <Footer />
         <FloatingWhatsApp />

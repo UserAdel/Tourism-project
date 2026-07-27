@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Share2, Heart, Link2, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 interface ShareSaveProps {
   activityName: string;
