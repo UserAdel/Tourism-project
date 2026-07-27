@@ -20,12 +20,12 @@ const platformStyles: Record<SocialProfileId, {
   qrColor: string;
 }> = {
   instagram: {
-    trigger: 'text-white [background:radial-gradient(circle_at_30%_110%,#ffdc80_0%,#f77737_27%,#e1306c_48%,#c13584_64%,#833ab4_80%,#405de6_100%)]',
-    header: 'text-white [background:radial-gradient(circle_at_30%_115%,#ffdc80_0%,#f77737_28%,#e1306c_49%,#c13584_65%,#833ab4_81%,#405de6_100%)]',
+    trigger: 'text-white [background:linear-gradient(135deg,#405de6_0%,#833ab4_34%,#c13584_58%,#e1306c_78%,#f77737_100%)]',
+    header: 'text-white [background:linear-gradient(135deg,#405de6_0%,#833ab4_34%,#c13584_58%,#e1306c_78%,#f77737_100%)]',
     close: 'bg-white/15 text-white hover:bg-white/25',
-    button: 'text-white [background:linear-gradient(90deg,#405de6_0%,#833ab4_28%,#c13584_48%,#e1306c_68%,#f77737_100%)]',
-    logo: 'text-[#e1306c]',
-    qrColor: '#833ab4',
+    button: 'bg-[#e1306c] text-white hover:bg-[#c13584]',
+    logo: 'text-[#d6249f]',
+    qrColor: '#8a3ab9',
   },
   tiktok: {
     trigger: 'border border-[#25f4ee] bg-[#101010] text-white [box-shadow:3px_3px_0_#fe2c55]',
@@ -220,7 +220,9 @@ export default function FloatingSocialQr() {
                 rel="noopener noreferrer"
                 className={`flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 font-bold shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[var(--turquoise)]/30 ${platformStyles[activeProfile.id].button}`}
               >
-                {language === 'fr' ? 'Ouvrir sur cet appareil' : 'Open on this device'}
+                {language === 'fr'
+                  ? `Voir le profil ${activeProfile.name}`
+                  : `View ${activeProfile.name} profile`}
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </a>
             </div>
