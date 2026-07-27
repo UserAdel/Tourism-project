@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 import FloatingWhatsApp from './FloatingWhatsApp'
+import FloatingSocialQr from './FloatingSocialQr'
 
 const REVEAL_SELECTOR = '[data-reveal]'
 const SMOOTH_EASE = [0.16, 1, 0.3, 1] as const
@@ -129,6 +130,7 @@ export default function PublicMotionLayout() {
           </motion.div>
         </main>
         <Footer />
+        <FloatingSocialQr />
         <FloatingWhatsApp />
       </div>
     </MotionConfig>

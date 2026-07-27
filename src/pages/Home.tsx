@@ -108,7 +108,12 @@ export default function Home() {
         contactType: 'customer service',
         availableLanguage: ['French', 'English'],
       },
-      sameAs: ['https://wa.me/201234567890'],
+      sameAs: [
+        'https://wa.me/201234567890',
+        'https://www.instagram.com/Hurghada_french_guide',
+        'https://www.tiktok.com/@hurghada_french_guide',
+        'https://www.snapchat.com/add/french_guide',
+      ],
     },
   });
 

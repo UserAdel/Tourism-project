@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Phone, Mail, MapPin, MessageCircle, Share2, Camera, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { socialProfiles } from '../data/socialProfiles';
+import SocialPlatformIcon from './SocialPlatformIcon';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -93,28 +95,20 @@ export default function Footer() {
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} Hurghada French Guide Excursions. {t('footer.rights')}
             </p>
-            <div className="flex items-center gap-4">
-              <a
-                href="#"
-                className="text-gray-400 hover:text-[var(--turquoise)] transition-colors"
-                aria-label="Facebook"
-              >
-                <Share2 className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-[var(--turquoise)] transition-colors"
-                aria-label="Instagram"
-              >
-                <Camera className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-[var(--turquoise)] transition-colors"
-                aria-label="Twitter"
-              >
-                <Send className="w-5 h-5" />
-              </a>
+            <div className="flex items-center gap-2" aria-label={t('footer.followUs')}>
+              {socialProfiles.map((profile) => (
+                <a
+                  key={profile.id}
+                  href={profile.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-gray-300 hover:bg-white/10 hover:text-[var(--turquoise)]"
+                  aria-label={`${profile.name}: ${profile.handle}`}
+                  title={`${profile.name} ${profile.handle}`}
+                >
+                  <SocialPlatformIcon id={profile.id} className="h-5 w-5" />
+                </a>
+              ))}
             </div>
           </div>
         </div>
