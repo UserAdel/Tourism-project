@@ -16,7 +16,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   return (
     <Link
       to={`/activities/${activity.slug}`}
-      className="public-card group relative block h-full bg-[#F9F5EE] dark:bg-[#102A3A] rounded-2xl overflow-hidden border border-transparent dark:border-[rgba(33,199,183,0.18)] shadow-lg hover:shadow-2xl dark:hover:border-[rgba(33,199,183,0.4)] dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
+      className="public-card group relative block h-full bg-[var(--card)] dark:bg-[#102A3A] rounded-2xl overflow-hidden border border-[rgba(11,83,97,0.12)] dark:border-[rgba(33,199,183,0.18)] shadow-lg hover:border-[rgba(21,156,146,0.35)] hover:shadow-2xl dark:hover:border-[rgba(33,199,183,0.4)] dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
     >
       <div className="relative h-64 overflow-hidden">
         <img

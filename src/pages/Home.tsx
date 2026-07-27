@@ -130,7 +130,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-[#F9F5EE] dark:bg-[#040E26]">
+    <div className="bg-[var(--background)] dark:bg-[#040E26]">
       <section className="public-hero relative h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <motion.img
@@ -185,7 +185,7 @@ export default function Home() {
       </section>
 
       {/* Explore by Category Section (3 in the same row - Restored Design) */}
-      <section className="py-16 bg-[#F9F5EE] dark:bg-[var(--background)]">
+      <section className="py-16 bg-[var(--background)] dark:bg-[var(--background)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}

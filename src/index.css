@@ -11,38 +11,39 @@
   --font-weight-normal: 400;
   --font-weight-medium: 500;
 
-  --background: #f9f5ee;
-  --foreground: #041b4a;
+  --background: #f2f8f7;
+  --foreground: #0b3440;
   --card: #ffffff;
-  --card-foreground: #041b4a;
+  --card-foreground: #0b3440;
   --popover: #ffffff;
-  --popover-foreground: #041b4a;
-  --primary: #041b4a;
+  --popover-foreground: #0b3440;
+  --primary: #0b5361;
   --primary-foreground: #ffffff;
-  --secondary: #1a8fa8;
+  --secondary: #159c92;
   --secondary-foreground: #ffffff;
-  --muted: #ede0c4;
-  --muted-foreground: #041b4a;
-  --accent: #c9a85c;
-  --accent-foreground: #041b4a;
+  --muted: #dceeea;
+  --muted-foreground: #315a63;
+  --accent: #e4b76b;
+  --accent-foreground: #0b3440;
   --destructive: #c0392b;
   --destructive-foreground: #ffffff;
-  --border: rgba(4, 27, 74, 0.12);
+  --border: rgba(11, 83, 97, 0.16);
   --input: transparent;
-  --input-background: #ede0c4;
-  --switch-background: #1a8fa8;
-  --ring: #c9a85c;
-  --teal: #041b4a;
-  --teal-dark: #031035;
-  --turquoise: #1a8fa8;
-  --turquoise-dark: #14758a;
-  --gold: #c9a85c;
-  --ivory: #f4efe6;
-  --sand: #ede0c4;
-  --navy: #041b4a;
-  --page-soft: #fbf8f1;
-  --text-soft: #3a4a6a;
-  --text-muted: #697386;
+  --input-background: #e6f2ef;
+  --switch-background: #159c92;
+  --ring: #159c92;
+  --teal: #0d6a72;
+  --teal-dark: #074b55;
+  --turquoise: #159c92;
+  --turquoise-dark: #0f7f79;
+  --gold: #d5a34f;
+  --ivory: #fdfbf5;
+  --sand: #dceeea;
+  --navy: #0b5361;
+  --page-soft: #f7fbfa;
+  --section-soft: #e5f1ef;
+  --text-soft: #315a63;
+  --text-muted: #617980;
   --white: #ffffff;
   --black: #000000;
   --gray-50: #f9fafb;
@@ -84,13 +85,56 @@
   --dark-section: #0d2431;
   --dark-card: #102a3a;
   --dark-muted: #173c4d;
-  --shadow-cyan-soft: 0 4px 20px rgba(201, 168, 92, 0.18);
-  --shadow-cyan-large: 0 12px 40px rgba(201, 168, 92, 0.28);
-  --shadow-cyan-glow: 0 0 35px rgba(201, 168, 92, 0.38);
+  --shadow-cyan-soft: 0 4px 20px rgba(21, 156, 146, 0.16);
+  --shadow-cyan-large: 0 12px 40px rgba(21, 156, 146, 0.24);
+  --shadow-cyan-glow: 0 0 35px rgba(21, 156, 146, 0.32);
   --shadow-whatsapp: 0 0 30px rgba(37, 211, 102, 0.5);
   --whatsapp: #25d366;
   --whatsapp-hover: #20ba5a;
   --radius: 1rem;
+}
+
+/* Keep legacy light utility colors aligned with the coastal palette. */
+html:not(.dark) .bg-\[\#F9F5EE\] {
+  background-color: var(--card);
+}
+
+html:not(.dark) .bg-\[\#F0EAD8\]\/30,
+html:not(.dark) .bg-\[\#F0EAD8\]\/40 {
+  background-color: var(--section-soft);
+}
+
+html:not(.dark) .hover\:bg-\[\#F0EAD8\]\/60:hover,
+html:not(.dark) .hover\:bg-\[\#F0EAD8\]\/70:hover {
+  background-color: var(--muted);
+}
+
+html:not(.dark) .text-\[\#3A4A6A\] {
+  color: var(--text-soft);
+}
+
+html:not(.dark) .text-\[\#041B4A\] {
+  color: var(--foreground);
+}
+
+html:not(.dark) .hover\:text-\[\#041B4A\]:hover {
+  color: var(--foreground);
+}
+
+html:not(.dark) .hover\:bg-\[\#031035\]:hover {
+  background-color: var(--teal-dark);
+}
+
+html:not(.dark) .from-\[\#041B4A\] {
+  --tw-gradient-from: var(--navy);
+}
+
+html:not(.dark) .via-\[\#0A2456\] {
+  --tw-gradient-via: var(--teal);
+}
+
+html:not(.dark) .to-\[\#1A8FA8\] {
+  --tw-gradient-to: var(--turquoise);
 }
 
 .dark {

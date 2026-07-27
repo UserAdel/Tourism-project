@@ -95,7 +95,7 @@ export default function Activities() {
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== '').length;
 
   return (
-    <div className="bg-[#F9F5EE] dark:bg-[#040E26] min-h-screen">
+    <div className="bg-[var(--background)] dark:bg-[#040E26] min-h-screen">
       <div className="public-hero bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-reveal="left">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">

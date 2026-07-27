@@ -22,7 +22,7 @@ export default function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="public-header sticky top-0 z-50 border-b border-[rgba(4,27,74,0.08)] bg-[#F9F5EE]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(33,199,183,0.22)] dark:bg-[#102A3A]/95 dark:shadow-[0_4px_20px_rgba(3,14,20,0.55)]">
+    <header className="public-header sticky top-0 z-50 border-b border-[rgba(11,83,97,0.12)] bg-[#F7FBFA]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(33,199,183,0.22)] dark:bg-[#102A3A]/95 dark:shadow-[0_4px_20px_rgba(3,14,20,0.55)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 group">
@@ -105,7 +105,7 @@ export default function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="mobile-menu-panel lg:hidden border-t border-[rgba(4,27,74,0.08)] bg-[#F9F5EE] dark:border-[rgba(33,199,183,0.18)] dark:bg-[#102A3A]">
+        <div className="mobile-menu-panel lg:hidden border-t border-[rgba(11,83,97,0.1)] bg-[#F7FBFA] dark:border-[rgba(33,199,183,0.18)] dark:bg-[#102A3A]">
           <nav className="flex flex-col px-4 py-4 gap-2" data-stagger data-stagger-step="45">
             {navLinks.map((link) => (
               <Link
