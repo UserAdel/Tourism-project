@@ -79,7 +79,7 @@ export default function Header() {
             </button>
 
             <Link
-              to="/book"
+              to="/activities"
               className="hidden sm:inline-flex items-center px-6 py-2.5 bg-[var(--navy)] dark:bg-[var(--gold)] text-[var(--ivory)] dark:text-[#041B4A] rounded-xl hover:bg-[#031035] dark:hover:bg-[#B8963F] transition-all shadow-lg hover:shadow-xl active:scale-95 font-medium text-sm tracking-wide"
             >
               {t('nav.bookNow')}
@@ -122,7 +122,7 @@ export default function Header() {
               </Link>
             ))}
             <Link
-              to="/book"
+              to="/activities"
               onClick={() => setMobileMenuOpen(false)}
               className="px-4 py-3 bg-[var(--navy)] dark:bg-[var(--gold)] text-[var(--ivory)] dark:text-[#041B4A] rounded-lg text-center font-semibold hover:bg-[#031035] dark:hover:bg-[#B8963F] transition-colors mt-2"
             >

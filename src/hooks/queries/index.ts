@@ -51,6 +51,29 @@ export interface AdminActivity extends Activity {
   updatedAt?: string;
 }
 
+export interface Testimonial {
+  _id: string;
+  name: string;
+  rating: number;
+  text: {
+    en: string;
+    fr: string;
+  };
+  activity: {
+    en: string;
+    fr: string;
+  };
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type TestimonialPayload = Omit<
+  Testimonial,
+  '_id' | 'createdAt' | 'updatedAt'
+>;
+
 export type ActivityReviewPayload = Pick<ActivityReview, 'name' | 'country' | 'rating' | 'comment'>;
 
 export interface SystemSettings {
@@ -68,11 +91,13 @@ export interface AdminDashboardData {
     contacts: number;
     newContacts: number;
     categories: number;
+    testimonials: number;
   };
   bookings: AdminBookingRequest[];
   contacts: AdminContactRequest[];
   activities: AdminActivity[];
   categories: AdminCategory[];
+  testimonials: Testimonial[];
 }
 
 interface AdminActivityMutationPayload {
@@ -82,6 +107,13 @@ interface AdminActivityMutationPayload {
   videoThumbnailFiles?: Array<{ index: number; file: File }>;
   videoReviewThumbnailFiles?: Array<{ index: number; file: File }>;
 }
+
+type AdminCategoryMutationPayload = Pick<
+  AdminCategory,
+  'id' | 'name' | 'isActive'
+> & {
+  image?: string;
+};
 
 function buildActivityFormData({
   activity,
@@ -145,6 +177,16 @@ export function useCategories() {
   });
 }
 
+export function useTestimonials() {
+  return useQuery({
+    queryKey: ['testimonials'],
+    queryFn: async () => {
+      const response = await api.get('/testimonials');
+      return response.data.data.testimonials as Testimonial[];
+    },
+  });
+}
+
 export function useCreateBookingRequest() {
   return useMutation({
     mutationFn: async (payload: BookingFormData) => {
@@ -184,6 +226,57 @@ export function useAdminDashboard() {
     queryFn: async () => {
       const response = await api.get('/admin/dashboard');
       return response.data.data as AdminDashboardData;
+    },
+  });
+}
+
+export function useCreateAdminTestimonial() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: TestimonialPayload) => {
+      const response = await api.post('/admin/testimonials', payload);
+      return response.data.data.testimonial as Testimonial;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+    },
+  });
+}
+
+export function useUpdateAdminTestimonial() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: TestimonialPayload;
+    }) => {
+      const response = await api.patch(`/admin/testimonials/${id}`, payload);
+      return response.data.data.testimonial as Testimonial;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
+    },
+  });
+}
+
+export function useDeleteAdminTestimonial() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete(`/admin/testimonials/${id}`);
+      return response.data.data.testimonial as Testimonial;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['testimonials'] });
     },
   });
 }
@@ -364,7 +457,9 @@ export function useCreateAdminCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (payload: Pick<AdminCategory, 'id' | 'name' | 'isActive'>) => {
+    mutationFn: async (
+      payload: AdminCategoryMutationPayload | FormData,
+    ) => {
       const response = await api.post('/admin/activity-categories', payload);
       return response.data.data.category as AdminCategory;
     },
@@ -384,7 +479,7 @@ export function useUpdateAdminCategory() {
       payload,
     }: {
       id: string;
-      payload: Pick<AdminCategory, 'id' | 'name' | 'isActive'>;
+      payload: AdminCategoryMutationPayload | FormData;
     }) => {
       const response = await api.patch(`/admin/activity-categories/${id}`, payload);
       return response.data.data.category as AdminCategory;

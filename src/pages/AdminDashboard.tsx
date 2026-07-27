@@ -42,9 +42,16 @@ import ImageCropperModal from '../components/admin/ImageCropperModal';
 import AdminLayout from '../components/admin/AdminLayout';
 import ConfirmActionModal from '../components/admin/ConfirmActionModal';
 import WhatsappSettingsPanel from '../components/admin/WhatsappSettingsPanel';
+import TestimonialsPanel from '../components/admin/TestimonialsPanel';
 import { getPrimaryPrice } from '../utils/pricing';
 
-type AdminTab = 'bookings' | 'contacts' | 'activities' | 'categories' | 'settings';
+type AdminTab =
+  | 'bookings'
+  | 'contacts'
+  | 'activities'
+  | 'categories'
+  | 'testimonials'
+  | 'settings';
 
 interface ConfirmAction {
   title: string;
@@ -496,7 +503,11 @@ export default function AdminDashboard() {
   const [searchParams] = useSearchParams();
   const requestedTab = searchParams.get('tab');
   const activeTab: AdminTab =
-    requestedTab === 'contacts' || requestedTab === 'activities' || requestedTab === 'categories' || requestedTab === 'settings'
+    requestedTab === 'contacts' ||
+    requestedTab === 'activities' ||
+    requestedTab === 'categories' ||
+    requestedTab === 'testimonials' ||
+    requestedTab === 'settings'
       ? requestedTab
       : 'bookings';
   const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
@@ -547,6 +558,7 @@ export default function AdminDashboard() {
     contacts: 0,
     newContacts: 0,
     categories: 0,
+    testimonials: 0,
   };
 
   const categoryOptions = Array.from(
@@ -656,17 +668,36 @@ export default function AdminDashboard() {
 
     try {
       if (editingCategoryId) {
-        await updateCategory.mutateAsync({ id: editingCategoryId, payload: submitPayload as any });
+        await updateCategory.mutateAsync({
+          id: editingCategoryId,
+          payload: submitPayload,
+        });
         toast.success('Category updated');
       } else {
-        await createCategory.mutateAsync(submitPayload as any);
+        await createCategory.mutateAsync(submitPayload);
         toast.success('Category created');
       }
       resetCategoryForm();
       setIsCategoryModalOpen(false);
-    } catch (error: any) {
-      const message = error?.response?.data?.message || 'Could not save category. Check that the English name is unique.';
-      toast.error(message);
+    } catch (error: unknown) {
+      const message =
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error
+          ? (
+              error as {
+                response?: {
+                  data?: {
+                    message?: string;
+                  };
+                };
+              }
+            ).response?.data?.message
+          : undefined;
+      toast.error(
+        message ??
+          'Could not save category. Check that the English name is unique.',
+      );
     }
   };
 
@@ -712,6 +743,7 @@ export default function AdminDashboard() {
         contacts: stats.contacts,
         activities: stats.activities,
         categories: stats.categories,
+        testimonials: stats.testimonials,
       }}
     >
         <div className="mb-6">
@@ -729,7 +761,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 xl:grid-cols-7">
           {[
             { label: 'Activities', value: stats.activities, icon: Tags },
             { label: 'Booking requests', value: stats.bookings, icon: CheckCircle },
@@ -737,6 +769,7 @@ export default function AdminDashboard() {
             { label: 'Contacts', value: stats.contacts, icon: Mail },
             { label: 'New contacts', value: stats.newContacts, icon: MessageSquare },
             { label: 'Categories', value: stats.categories, icon: Tags },
+            { label: 'Guest reviews', value: stats.testimonials, icon: MessageSquare },
           ].map((item) => (
             <div
               key={item.label}
@@ -1528,6 +1561,12 @@ export default function AdminDashboard() {
                 </div>
 
               </section>
+            )}
+            {activeTab === 'testimonials' && (
+              <TestimonialsPanel
+                testimonials={data?.testimonials ?? []}
+                isLoading={isLoading}
+              />
             )}
             {activeTab === 'settings' && <WhatsappSettingsPanel />}
         </div>

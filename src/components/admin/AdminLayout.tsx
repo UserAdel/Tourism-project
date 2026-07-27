@@ -8,6 +8,7 @@ import {
   Menu,
   Moon,
   Settings,
+  Star,
   Sun,
   Tags,
   X,
@@ -24,6 +25,7 @@ interface AdminLayoutProps {
     contacts?: number;
     activities?: number;
     categories?: number;
+    testimonials?: number;
     settings?: number;
   };
 }
@@ -33,6 +35,7 @@ const navItems = [
   { id: 'contacts', label: 'Contact Requests', icon: Mail },
   { id: 'activities', label: 'Activities CRUD', icon: CalendarCheck },
   { id: 'categories', label: 'Activity Categories', icon: Tags },
+  { id: 'testimonials', label: 'Guest Reviews', icon: Star },
   { id: 'settings', label: 'WhatsApp Settings', icon: Settings },
 ];
 

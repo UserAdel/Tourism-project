@@ -2,22 +2,17 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Loading from '../components/Loading';
 import { tourismImages } from '../data/tourismImages';
-import ActivityCard from '../components/ActivityCard';
+import TopExperiencesSlider from '../components/TopExperiencesSlider';
 import Button from '../components/Button';
-import { useActivities, useCategories } from '../hooks/queries';
+import {
+  useActivities,
+  useCategories,
+  useTestimonials,
+} from '../hooks/queries';
 import { useSEO } from '../hooks/useSEO';
 import { motion, useReducedMotion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import {
-  Languages,
-  Car,
-  Award,
-  Users,
-  Heart,
-  CheckCircle,
-  Star,
-  MessageCircle
-} from 'lucide-react';
+import { Star, MessageCircle } from 'lucide-react';
 
 const SMOOTH_EASE = [0.16, 1, 0.3, 1] as const;
 const SMOOTH_VIEWPORT = { once: true, amount: 0.16, margin: '0px 0px -8% 0px' } as const;
@@ -76,6 +71,8 @@ export default function Home() {
   const reduceMotion = useReducedMotion();
   const { data: apiActivities, isLoading: isActivitiesLoading } = useActivities();
   const { data: apiCategories, isLoading: isCategoriesLoading } = useCategories();
+  const { data: apiTestimonials, isLoading: isTestimonialsLoading } =
+    useTestimonials();
 
   useSEO({
     title: language === 'fr'
@@ -117,93 +114,45 @@ export default function Home() {
     },
   });
 
-  if (isActivitiesLoading || isCategoriesLoading) {
+  if (
+    isActivitiesLoading ||
+    isCategoriesLoading ||
+    isTestimonialsLoading
+  ) {
     return <Loading />;
   }
 
   const activities = apiActivities ?? [];
   const categories = apiCategories ?? [];
+  const reviews = apiTestimonials ?? [];
 
   const featuredActivities = activities.filter((a) => a.featured).slice(0, 6);
-
-  const whyChooseUsItems = [
-    {
-      icon: Languages,
-      title: t('whyUs.french'),
-      description: t('whyUs.frenchDesc')
-    },
-    {
-      icon: Car,
-      title: t('whyUs.pickup'),
-      description: t('whyUs.pickupDesc')
-    },
-    {
-      icon: Award,
-      title: t('whyUs.trusted'),
-      description: t('whyUs.trustedDesc')
-    },
-    {
-      icon: Users,
-      title: t('whyUs.flexible'),
-      description: t('whyUs.flexibleDesc')
-    },
-    {
-      icon: Heart,
-      title: t('whyUs.family'),
-      description: t('whyUs.familyDesc')
-    },
-    {
-      icon: CheckCircle,
-      title: t('whyUs.instant'),
-      description: t('whyUs.instantDesc')
-    }
-  ];
-
-
-
-  const reviews = [
-    {
-      name: 'Sophie Laurent',
-      rating: 5,
-      text: language === 'en'
-        ? 'Amazing experience! Our guide spoke perfect French and the Orange Bay trip was unforgettable.'
-        : 'Expérience incroyable! Notre guide parlait parfaitement français et le voyage à Orange Bay était inoubliable.',
-      activity: 'Orange Bay'
-    },
-    {
-      name: 'Pierre Martin',
-      rating: 5,
-      text: language === 'en'
-        ? 'The Luxor tour exceeded all expectations. Professional guides and excellent organization.'
-        : 'La visite de Louxor a dépassé toutes les attentes. Guides professionnels et excellente organisation.',
-      activity: 'Luxor'
-    },
-    {
-      name: 'Marie Dubois',
-      rating: 5,
-      text: language === 'en'
-        ? 'Swimming with dolphins was a dream come true! Highly recommend for families.'
-        : 'Nager avec les dauphins était un rêve devenu réalité! Hautement recommandé pour les familles.',
-      activity: 'Swim with Dolphins'
-    }
-  ];
 
   return (
     <div className="bg-[var(--background)] dark:bg-[#040E26]">
       <section className="public-hero relative h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <motion.img
-            initial={false}
-            animate={reduceMotion ? { scale: 1 } : { scale: [1.04, 1.075, 1.04] }}
-            transition={
-              reduceMotion
-                ? { duration: 0 }
-                : { duration: 24, ease: 'easeInOut', repeat: Infinity }
-            }
-            src={tourismImages.redSea}
-            alt="Red Sea"
-            className="w-full h-full object-cover"
-          />
+          {reduceMotion ? (
+            <img
+              src="/hero-background-poster.webp"
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              disablePictureInPicture
+              preload="auto"
+              poster="/hero-background-poster.webp"
+              className="h-full w-full object-cover"
+              aria-hidden="true"
+            >
+              <source src="/hero-background.mp4" type="video/mp4" />
+            </video>
+          )}
           <div className="hero-image-overlay absolute inset-0"></div>
         </div>
 
@@ -229,7 +178,7 @@ export default function Home() {
             variants={heroItem}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link to="/book">
+            <Link to="/activities">
               <Button size="lg" className="w-full sm:w-auto">
                 {t('hero.bookNow')}
               </Button>
@@ -335,21 +284,14 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredActivities.map((activity, index) => (
-              <motion.div
-                key={activity.id}
-                variants={cardReveal}
-                initial="hidden"
-                whileInView="visible"
-                viewport={SMOOTH_VIEWPORT}
-                custom={(index % 3) * 0.12}
-                className="h-full"
-              >
-                <ActivityCard activity={activity} />
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            variants={cardReveal}
+            initial="hidden"
+            whileInView="visible"
+            viewport={SMOOTH_VIEWPORT}
+          >
+            <TopExperiencesSlider activities={featuredActivities} />
+          </motion.div>
 
           <motion.div
             className="text-center mt-12"
@@ -367,47 +309,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-[var(--navy)] dark:bg-[#071530] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-12"
-            variants={revealUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={SMOOTH_VIEWPORT}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              {t('sections.whyChooseUs')}
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {whyChooseUsItems.map((item, index) => (
-              <motion.div
-                key={index}
-                variants={cardReveal}
-                initial="hidden"
-                whileInView="visible"
-                viewport={SMOOTH_VIEWPORT}
-                custom={(index % 3) * 0.12}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : { y: -6, transition: HOVER_SPRING }
-                }
-                className="why-us-card bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/20 hover:bg-white/15 dark:hover:bg-white/10 transition-[background-color,box-shadow,border-color] duration-300 hover:shadow-[0_0_30px_rgba(21,156,146,0.28)]"
-              >
-                <div className="w-14 h-14 bg-[var(--gold)] dark:bg-[var(--turquoise)] rounded-full flex items-center justify-center mb-4">
-                  <item.icon className="w-7 h-7 text-[var(--navy)]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-white/80">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      {reviews.length > 0 && (
       <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#071530]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -425,7 +327,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {reviews.map((review, index) => (
               <motion.div
-                key={index}
+                key={review._id}
                 variants={cardReveal}
                 initial="hidden"
                 whileInView="visible"
@@ -443,16 +345,21 @@ export default function Home() {
                     <Star key={i} className="w-5 h-5 fill-[var(--gold)] text-[var(--gold)]" />
                   ))}
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 mb-4 italic">"{review.text}"</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-4 italic">
+                  "{review.text[language]}"
+                </p>
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                   <p className="font-semibold text-[var(--navy)] dark:text-white">{review.name}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{review.activity}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {review.activity[language]}
+                  </p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
+      )}
 
       <section className="public-hero py-20 bg-gradient-to-r from-[#041B4A] via-[#0A2456] to-[#1A8FA8] dark:from-[#040E26] dark:via-[#071530] dark:to-[#0B1E42] text-white relative overflow-hidden">
         <motion.div
@@ -471,7 +378,7 @@ export default function Home() {
               : 'Réservez votre expérience inoubliable avec nos guides francophones dès aujourd\'hui'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/book">
+            <Link to="/activities">
               <Button
                 size="lg"
                 className="w-full sm:w-auto !bg-[var(--gold)] !text-[#041B4A] hover:!bg-[#B8963F] !border-0"
