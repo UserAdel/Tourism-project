@@ -22,7 +22,7 @@ export default function Header() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="public-header sticky top-0 z-50 border-b border-[rgba(4,27,74,0.08)] bg-[#F9F5EE]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(201,168,92,0.2)] dark:bg-[#061533]/95 dark:shadow-[0_4px_20px_rgba(6,21,51,0.5)]">
+    <header className="public-header sticky top-0 z-50 border-b border-[rgba(4,27,74,0.08)] bg-[#F9F5EE]/95 shadow-md backdrop-blur-md transition-all duration-300 dark:border-[rgba(33,199,183,0.22)] dark:bg-[#102A3A]/95 dark:shadow-[0_4px_20px_rgba(3,14,20,0.55)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex items-center gap-3 group">
@@ -48,8 +48,8 @@ export default function Header() {
                 to={link.path}
                 className={`nav-link relative transition-colors ${
                   isActive(link.path)
-                    ? 'text-[var(--navy)] dark:text-[var(--gold)] font-semibold'
-                    : 'text-[#3A4A6A] dark:text-[#C7D0DE] hover:text-[var(--navy)] dark:hover:text-[var(--gold)]'
+                    ? 'text-[var(--navy)] dark:text-[var(--turquoise)] font-semibold'
+                    : 'text-[#3A4A6A] dark:text-[#A9C0CA] hover:text-[var(--navy)] dark:hover:text-[var(--turquoise)]'
                 }`}
               >
                 {link.label}
@@ -60,21 +60,21 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <button
               onClick={toggleTheme}
-              className="p-2.5 rounded-lg bg-[var(--sand)] dark:bg-[#0B1E42] hover:bg-[var(--gold)]/20 dark:hover:bg-[var(--gold)]/20 transition-all duration-300 hover:scale-110"
+              className="p-2.5 rounded-lg bg-[var(--sand)] dark:bg-[#173C4D] hover:bg-[var(--gold)]/20 dark:hover:bg-[var(--turquoise)]/15 transition-all duration-300 hover:scale-110"
               aria-label="Toggle theme"
             >
               {theme === 'light' ? (
                 <Moon className="w-5 h-5 text-[var(--navy)]" />
               ) : (
-                <Sun className="w-5 h-5 text-[var(--gold)]" />
+                <Sun className="w-5 h-5 text-[var(--turquoise)]" />
               )}
             </button>
 
             <button
               onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sand)] dark:bg-[#0B1E42] hover:bg-[var(--gold)]/20 dark:hover:bg-[var(--gold)]/20 transition-all duration-300"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sand)] dark:bg-[#173C4D] hover:bg-[var(--gold)]/20 dark:hover:bg-[var(--turquoise)]/15 transition-all duration-300"
             >
-              <Globe className="w-4 h-4 text-[var(--navy)] dark:text-[var(--gold)]" />
+              <Globe className="w-4 h-4 text-[var(--navy)] dark:text-[var(--turquoise)]" />
               <span className="font-medium text-[var(--navy)] dark:text-[var(--ivory)] uppercase text-sm">{language}</span>
             </button>
 
@@ -87,7 +87,7 @@ export default function Header() {
 
             <Link
               to="/admin"
-              className="hidden sm:inline-flex items-center justify-center rounded-lg bg-[var(--sand)] p-2.5 text-[var(--navy)] transition-all hover:bg-[var(--gold)]/20 dark:bg-[#0B1E42] dark:text-[var(--gold)] dark:hover:bg-[var(--gold)]/20"
+              className="hidden sm:inline-flex items-center justify-center rounded-lg bg-[var(--sand)] p-2.5 text-[var(--navy)] transition-all hover:bg-[var(--gold)]/20 dark:bg-[#173C4D] dark:text-[var(--turquoise)] dark:hover:bg-[var(--turquoise)]/15"
               aria-label="Admin dashboard"
               title="Admin dashboard"
             >
@@ -96,7 +96,7 @@ export default function Header() {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[var(--navy)] hover:text-[var(--gold)] dark:text-[var(--ivory)] dark:hover:text-[var(--gold)]"
+              className="lg:hidden p-2 text-[var(--navy)] hover:text-[var(--gold)] dark:text-[var(--ivory)] dark:hover:text-[var(--turquoise)]"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -105,7 +105,7 @@ export default function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="mobile-menu-panel lg:hidden border-t border-[rgba(4,27,74,0.08)] bg-[#F9F5EE] dark:border-[rgba(201,168,92,0.15)] dark:bg-[#061533]">
+        <div className="mobile-menu-panel lg:hidden border-t border-[rgba(4,27,74,0.08)] bg-[#F9F5EE] dark:border-[rgba(33,199,183,0.18)] dark:bg-[#102A3A]">
           <nav className="flex flex-col px-4 py-4 gap-2" data-stagger data-stagger-step="45">
             {navLinks.map((link) => (
               <Link
@@ -114,8 +114,8 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-3 rounded-lg transition-colors ${
                   isActive(link.path)
-                    ? 'bg-[var(--sand)] dark:bg-[#0B1E42] text-[var(--navy)] dark:text-[var(--gold)] font-semibold'
-                    : 'text-[#3A4A6A] dark:text-[#C7D0DE] hover:bg-[var(--sand)] dark:hover:bg-[#0B1E42]'
+                    ? 'bg-[var(--sand)] dark:bg-[rgba(33,199,183,0.12)] text-[var(--navy)] dark:text-[var(--turquoise)] font-semibold'
+                    : 'text-[#3A4A6A] dark:text-[#A9C0CA] hover:bg-[var(--sand)] dark:hover:bg-[#173C4D]'
                 }`}
               >
                 {link.label}
@@ -131,7 +131,7 @@ export default function Header() {
             <Link
               to="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-4 py-3 rounded-lg text-[#3A4A6A] hover:bg-[var(--sand)] dark:text-[#C7D0DE] dark:hover:bg-[#0B1E42]"
+              className="px-4 py-3 rounded-lg text-[#3A4A6A] hover:bg-[var(--sand)] dark:text-[#A9C0CA] dark:hover:bg-[#173C4D] dark:hover:text-[var(--turquoise)]"
             >
               Admin
             </Link>

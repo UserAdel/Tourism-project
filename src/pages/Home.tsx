@@ -141,7 +141,7 @@ export default function Home() {
             alt="Red Sea"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--navy)]/80 via-[var(--navy)]/60 to-transparent"></div>
+          <div className="hero-image-overlay absolute inset-0"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
@@ -220,7 +220,7 @@ export default function Home() {
                 >
                   <Link
                     to={`/activities?category=${category.id}`}
-                    className="group relative rounded-2xl overflow-hidden shadow-lg border border-gray-200/80 dark:border-[rgba(201,168,92,0.3)] bg-white dark:bg-[#061533] flex flex-col h-full transform transition-all duration-300 hover:-translate-y-1"
+                    className="group relative rounded-2xl overflow-hidden shadow-lg border border-gray-200/80 dark:border-[rgba(33,199,183,0.24)] bg-white dark:bg-[#061533] flex flex-col h-full transform transition-all duration-300 hover:-translate-y-1"
                   >
                     {/* Clean Bright Category Image (No overlay, No icon) */}
                     <div className="relative h-52 sm:h-60 w-full overflow-hidden shrink-0">
@@ -238,7 +238,7 @@ export default function Home() {
                           {category.name[language]}
                         </h3>
                       </div>
-                      <div className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--navy)] text-white font-bold text-xs shadow-sm group-hover:bg-[var(--gold)] group-hover:text-[var(--navy)] transition-all duration-300 transform group-hover:translate-x-1 dark:bg-white/10 dark:text-white dark:group-hover:bg-[var(--gold)] dark:group-hover:text-[var(--navy)]">
+                      <div className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--navy)] text-white font-bold text-xs shadow-sm group-hover:bg-[var(--gold)] group-hover:text-[var(--navy)] transition-all duration-300 transform group-hover:translate-x-1 dark:bg-white/10 dark:text-white dark:group-hover:bg-[var(--gold)] dark:group-hover:text-[#071A26]">
                         <span>{t('common.explore')}</span>
                         <span className="text-sm leading-none">&rarr;</span>
                       </div>
@@ -334,7 +334,7 @@ export default function Home() {
             {reviews.map((review, index) => (
               <div
                 key={index}
-                className="guest-review-card bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all"
+                className="guest-review-card bg-[#F9F5EE] dark:bg-[#071530] p-6 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-all"
               >
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(review.rating)].map((_, i) => (

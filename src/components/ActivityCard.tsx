@@ -16,7 +16,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   return (
     <Link
       to={`/activities/${activity.slug}`}
-      className="public-card group relative bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl dark:hover:shadow-[0_10px_40px_rgba(201,168,92,0.2)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
+      className="public-card group relative bg-[#F9F5EE] dark:bg-[#071530] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl dark:hover:shadow-[0_10px_40px_rgba(33,199,183,0.16)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]"
     >
       <div className="relative h-64 overflow-hidden">
         <img
@@ -33,7 +33,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           </div>
         </div>
         {activity.featured && (
-          <div className="absolute top-4 right-4 bg-[var(--gold)] text-[var(--navy)] px-3 py-1 rounded-full text-sm font-medium">
+          <div className="absolute top-4 right-4 bg-[var(--gold)] text-[#071A26] px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
             Featured
           </div>
         )}
