@@ -252,7 +252,7 @@ export default function Home() {
       </section>
 
       {/* Top Experiences Section */}
-      <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[#0C2147]">
+      <section className="py-16 bg-[#F0EAD8]/40 dark:bg-[var(--background)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 30, opacity: 0 }}
@@ -273,6 +273,7 @@ export default function Home() {
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                className="h-full"
               >
                 <ActivityCard activity={activity} />
               </motion.div>

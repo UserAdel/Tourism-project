@@ -42,11 +42,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-gray-300 hover:text-[var(--turquoise)] transition-colors text-sm">
-                  {t('nav.faq')}
-                </Link>
-              </li>
-              <li>
                 <Link to="/contact" className="text-gray-300 hover:text-[var(--turquoise)] transition-colors text-sm">
                   {t('nav.contact')}
                 </Link>
