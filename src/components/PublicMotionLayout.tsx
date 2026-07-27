@@ -110,7 +110,7 @@ export default function PublicMotionLayout() {
   return (
     <MotionConfig
       reducedMotion="user"
-      transition={{ duration: 0.82, ease: SMOOTH_EASE }}
+      transition={{ duration: 1.2, ease: SMOOTH_EASE }}
     >
       <div
         ref={siteRef}
@@ -123,7 +123,7 @@ export default function PublicMotionLayout() {
             className="public-page-route"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.58, ease: SMOOTH_EASE }}
+            transition={{ duration: 1, ease: SMOOTH_EASE }}
           >
             <Outlet />
           </motion.div>

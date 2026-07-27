@@ -27,8 +27,8 @@ const heroContainer: Variants = {
   hidden: {},
   visible: {
     transition: {
-      delayChildren: 0.16,
-      staggerChildren: 0.16,
+      delayChildren: 0.22,
+      staggerChildren: 0.22,
     },
   },
 };
@@ -38,7 +38,7 @@ const heroItem: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.92, ease: SMOOTH_EASE },
+    transition: { duration: 1.25, ease: SMOOTH_EASE },
   },
 };
 
@@ -47,7 +47,7 @@ const revealUp: Variants = {
   visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.82, delay, ease: SMOOTH_EASE },
+    transition: { duration: 1.15, delay, ease: SMOOTH_EASE },
   }),
 };
 
@@ -57,7 +57,7 @@ const revealScale: Variants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.88, delay, ease: SMOOTH_EASE },
+    transition: { duration: 1.2, delay, ease: SMOOTH_EASE },
   }),
 };
 
@@ -67,7 +67,7 @@ const cardReveal: Variants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 1.15, delay, ease: SMOOTH_EASE },
+    transition: { duration: 1.45, delay, ease: SMOOTH_EASE },
   }),
 };
 
