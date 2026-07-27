@@ -20,12 +20,12 @@ const platformStyles: Record<SocialProfileId, {
   qrColor: string;
 }> = {
   instagram: {
-    trigger: 'bg-gradient-to-br from-[#833ab4] via-[#e1306c] to-[#fcb045] text-white',
-    header: 'bg-gradient-to-br from-[#833ab4] via-[#e1306c] to-[#fcb045] text-white',
+    trigger: 'text-white [background:radial-gradient(circle_at_30%_110%,#ffdc80_0%,#f77737_27%,#e1306c_48%,#c13584_64%,#833ab4_80%,#405de6_100%)]',
+    header: 'text-white [background:radial-gradient(circle_at_30%_115%,#ffdc80_0%,#f77737_28%,#e1306c_49%,#c13584_65%,#833ab4_81%,#405de6_100%)]',
     close: 'bg-white/15 text-white hover:bg-white/25',
-    button: 'bg-gradient-to-r from-[#833ab4] via-[#e1306c] to-[#f77737] text-white',
-    logo: 'text-[#c13584]',
-    qrColor: '#6f287c',
+    button: 'text-white [background:linear-gradient(90deg,#405de6_0%,#833ab4_28%,#c13584_48%,#e1306c_68%,#f77737_100%)]',
+    logo: 'text-[#e1306c]',
+    qrColor: '#833ab4',
   },
   tiktok: {
     trigger: 'border border-[#25f4ee] bg-[#101010] text-white [box-shadow:3px_3px_0_#fe2c55]',
