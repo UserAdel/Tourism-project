@@ -233,7 +233,11 @@ export default function ActivityDetail() {
       setIsCountryDropdownOpen(false);
       setReviewRating(5);
       setReviewComment('');
-      toast.success(language === 'en' ? 'Review added' : 'Avis ajouté');
+      toast.success(
+        language === 'en'
+          ? 'Review submitted and awaiting admin approval'
+          : "Avis envoyé et en attente d'approbation"
+      );
     } catch {
       toast.error(language === 'en' ? 'Could not add review' : "Impossible d'ajouter l'avis");
     }

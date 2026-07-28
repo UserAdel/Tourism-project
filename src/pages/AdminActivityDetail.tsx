@@ -2,9 +2,11 @@ import { type FormEvent, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  CheckCircle2,
   Clock,
   Edit3,
   Euro,
+  EyeOff,
   ExternalLink,
   Folder,
   Link2,
@@ -20,6 +22,7 @@ import {
   useDeleteAdminActivityReview,
   useUpdateAdminActivity,
   useUpdateAdminActivityReview,
+  useUpdateAdminActivityReviewApproval,
 } from '../hooks/queries';
 import AdminLayout from '../components/admin/AdminLayout';
 import ActivityFormModal, {
@@ -60,6 +63,7 @@ export default function AdminActivityDetail() {
   const { data: dashboardData } = useAdminDashboard();
   const updateActivity = useUpdateAdminActivity();
   const updateReview = useUpdateAdminActivityReview();
+  const updateReviewApproval = useUpdateAdminActivityReviewApproval();
   const deleteReview = useDeleteAdminActivityReview();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activityForm, setActivityForm] = useState<ActivityFormState>(emptyActivityForm);
@@ -213,6 +217,21 @@ export default function AdminActivityDetail() {
     }
   };
 
+  const handleReviewApproval = async (review: ActivityReview, isApproved: boolean) => {
+    if (!id) return;
+
+    try {
+      await updateReviewApproval.mutateAsync({
+        activityId: id,
+        reviewId: review._id,
+        isApproved,
+      });
+      toast.success(isApproved ? 'Review approved and published' : 'Review hidden');
+    } catch {
+      toast.error('Could not update review approval');
+    }
+  };
+
   if (isLoading) {
     return (
       <AdminLayout counts={counts}>
@@ -233,7 +252,11 @@ export default function AdminActivityDetail() {
 
   const price = getPrimaryPrice(activity);
   const pricingFields = getPricingFields(activity);
-  const reviews = activity.reviews ?? [];
+  const reviews = [...(activity.reviews ?? [])].sort(
+    (first, second) =>
+      Number(first.isApproved !== false) - Number(second.isApproved !== false)
+  );
+  const pendingReviewCount = reviews.filter((review) => review.isApproved === false).length;
   const highlightsEn = activity.highlights?.en ?? [];
   const highlightsFr = activity.highlights?.fr ?? [];
   const includedEn = activity.included?.en ?? [];
@@ -417,6 +440,7 @@ export default function AdminActivityDetail() {
               <h2 className="font-semibold text-[var(--navy)] dark:text-white">Reviews</h2>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
+                {pendingReviewCount > 0 && ` · ${pendingReviewCount} pending approval`}
               </p>
             </div>
           </div>
@@ -429,11 +453,16 @@ export default function AdminActivityDetail() {
             <div className="space-y-4">
               {reviews.map((review) => {
                 const isEditing = editingReviewId === review._id;
+                const isApproved = review.isApproved !== false;
 
                 return (
                   <div
                     key={review._id}
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-[var(--dark-muted)]"
+                    className={`rounded-lg border p-4 ${
+                      isApproved
+                        ? 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-[var(--dark-muted)]'
+                        : 'border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/20'
+                    }`}
                   >
                     {isEditing ? (
                       <form onSubmit={handleReviewSubmit} className="grid gap-4">
@@ -532,9 +561,20 @@ export default function AdminActivityDetail() {
                       <div className="grid gap-3">
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
-                            <h3 className="font-semibold text-gray-900 dark:text-white">
-                              {review.name}
-                            </h3>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                                {review.name}
+                              </h3>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                  isApproved
+                                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300'
+                                    : 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
+                                }`}
+                              >
+                                {isApproved ? 'Approved' : 'Pending approval'}
+                              </span>
+                            </div>
                             {(review.date || review.createdAt) && (
                               <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {review.date ||
@@ -566,6 +606,23 @@ export default function AdminActivityDetail() {
                           {review.comment}
                         </p>
                         <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleReviewApproval(review, !isApproved)}
+                            disabled={updateReviewApproval.isPending}
+                            className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold disabled:opacity-60 ${
+                              isApproved
+                                ? 'border-amber-200 text-amber-800 hover:bg-amber-50 dark:border-amber-900/60 dark:text-amber-300 dark:hover:bg-amber-950/30'
+                                : 'border-emerald-200 bg-emerald-600 text-white hover:bg-emerald-700 dark:border-emerald-700'
+                            }`}
+                          >
+                            {isApproved ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <CheckCircle2 className="h-4 w-4" />
+                            )}
+                            {isApproved ? 'Hide' : 'Approve'}
+                          </button>
                           <button
                             type="button"
                             onClick={() => startEditingReview(review)}

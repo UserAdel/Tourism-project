@@ -17,6 +17,7 @@ export interface ActivityReview {
   rating: number;
   comment: string;
   date?: string;
+  isApproved?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

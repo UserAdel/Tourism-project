@@ -319,6 +319,33 @@ export function useUpdateAdminActivityReview() {
   });
 }
 
+export function useUpdateAdminActivityReviewApproval() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      activityId,
+      reviewId,
+      isApproved,
+    }: {
+      activityId: string;
+      reviewId: string;
+      isApproved: boolean;
+    }) => {
+      const response = await api.patch(
+        `/admin/activities/${activityId}/reviews/${reviewId}/approval`,
+        { isApproved }
+      );
+      return response.data.data.review as ActivityReview;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-activity'] });
+    },
+  });
+}
+
 export function useDeleteAdminActivityReview() {
   const queryClient = useQueryClient();
 
