@@ -1,5 +1,5 @@
 import { type FormEvent, useEffect, useState } from 'react';
-import { Eye, EyeOff, Save, Send, Server, ShieldCheck, Smartphone } from 'lucide-react';
+import { Save, Send, Server, ShieldCheck, Smartphone } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAdminSettings, useUpdateAdminSettings } from '../../hooks/queries';
 
@@ -11,12 +11,11 @@ export default function WhatsappSettingsPanel() {
   const [whatsappApiKey, setWhatsappApiKey] = useState('');
   const [whatsappSessionId, setWhatsappSessionId] = useState('main');
   const [adminPhone, setAdminPhone] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
 
   useEffect(() => {
     if (settings) {
       setWhatsappApiUrl(settings.whatsappApiUrl || '');
-      setWhatsappApiKey(settings.whatsappApiKey || '');
+      setWhatsappApiKey('');
       setWhatsappSessionId(settings.whatsappSessionId || 'main');
       setAdminPhone(settings.adminPhone || '');
     }
@@ -27,10 +26,11 @@ export default function WhatsappSettingsPanel() {
     try {
       await updateSettings.mutateAsync({
         whatsappApiUrl,
-        whatsappApiKey,
+        ...(whatsappApiKey.trim() ? { whatsappApiKey: whatsappApiKey.trim() } : {}),
         whatsappSessionId,
         adminPhone,
       });
+      setWhatsappApiKey('');
       toast.success('WhatsApp settings updated successfully');
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to update settings');
@@ -108,22 +108,17 @@ export default function WhatsappSettingsPanel() {
               <ShieldCheck className="h-4 w-4 text-[var(--teal)]" />
               API Key / Bearer Token
             </label>
-            <div className="relative">
-              <input
-                type={showApiKey ? 'text' : 'password'}
-                value={whatsappApiKey}
-                onChange={(e) => setWhatsappApiKey(e.target.value)}
-                placeholder="Leave blank if no authentication token is required"
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-900 focus:border-[var(--teal)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)]/20 dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
-              />
-              <button
-                type="button"
-                onClick={() => setShowApiKey(!showApiKey)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-              >
-                {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
+            <input
+              type="password"
+              value={whatsappApiKey}
+              onChange={(e) => setWhatsappApiKey(e.target.value)}
+              placeholder={
+                settings?.hasWhatsappApiKey
+                  ? 'Saved token is hidden. Enter a new token to replace it.'
+                  : 'Leave blank if no authentication token is required'
+              }
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-[var(--teal)] focus:outline-none focus:ring-2 focus:ring-[var(--teal)]/20 dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
+            />
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Passed in <code className="font-mono">Authorization</code> and <code className="font-mono">x-api-key</code> headers.
             </p>

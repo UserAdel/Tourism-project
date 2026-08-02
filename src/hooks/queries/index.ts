@@ -79,6 +79,7 @@ export type ActivityReviewPayload = Pick<ActivityReview, 'name' | 'country' | 'r
 export interface SystemSettings {
   whatsappApiUrl: string;
   whatsappApiKey: string;
+  hasWhatsappApiKey?: boolean;
   whatsappSessionId: string;
   adminPhone: string;
 }
