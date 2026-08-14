@@ -101,7 +101,7 @@ export default function CountryPhoneInput({
           </button>
 
           {isOpen && (
-            <div className="absolute left-0 z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-gray-200 bg-[#F9F5EE] shadow-xl dark:border-gray-700 dark:bg-[#071530]">
+            <div className="absolute bottom-full left-0 z-50 mb-2 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-lg border border-gray-200 bg-[#F9F5EE] shadow-xl dark:border-gray-700 dark:bg-[#071530]">
               <div className="flex items-center gap-2 border-b border-gray-200 px-3 py-2 dark:border-gray-700">
                 <Search className="h-4 w-4 shrink-0 text-gray-400" />
                 <input
