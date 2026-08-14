@@ -92,8 +92,8 @@ export interface Activity {
 
 export interface BookingFormData {
   fullName: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   whatsapp: string;
   nationality: string;
   arrivalDate: string;

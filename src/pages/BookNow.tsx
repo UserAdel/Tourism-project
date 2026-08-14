@@ -8,11 +8,7 @@ import type { BookingFormData } from '../types';
 import { CheckCircle, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useActivities, useCreateBookingRequest } from '../hooks/queries';
-import {
-  buildInternationalPhoneNumber,
-  getDefaultPhoneCountry,
-  getPhoneCountry,
-} from '../utils/phoneNumbers';
+import { buildInternationalPhoneNumber, getDefaultPhoneCountry, getPhoneCountry } from '../utils/phoneNumbers';
 import { useSEO } from '../hooks/useSEO';
 
 type GuestCountField = 'adults' | 'children';
@@ -43,19 +39,16 @@ export default function BookNow() {
 
   const [formData, setFormData] = useState<BookingFormState>({
     fullName: '',
-    email: '',
-    phone: '',
     whatsapp: '',
     nationality: '',
     arrivalDate: '',
     preferredDate: '',
     adults: 1,
     children: 0,
-    language: language,
+    language: 'fr',
     specialRequests: '',
     selectedActivity: preselectedActivity
   });
-  const [phoneCountryName, setPhoneCountryName] = useState(defaultPhoneCountryName);
   const [whatsappCountryName, setWhatsappCountryName] = useState(defaultPhoneCountryName);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -102,14 +95,11 @@ export default function BookNow() {
 
     setIsSubmitting(true);
 
-    const phoneCountry = getPhoneCountry(phoneCountryName);
     const whatsappCountry = getPhoneCountry(whatsappCountryName);
-    const phone = buildInternationalPhoneNumber(phoneCountry.dialCode, formData.phone);
     const whatsapp = buildInternationalPhoneNumber(whatsappCountry.dialCode, formData.whatsapp);
 
     const bookingPayload: BookingFormData = {
       ...formData,
-      phone,
       whatsapp,
       adults: formData.adults,
       children: formData.children,
@@ -208,33 +198,6 @@ export default function BookNow() {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {t('booking.email')} *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#0B1E42] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--teal)]"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <CountryPhoneInput
-                  id="phone"
-                  label={t('booking.phone')}
-                  value={formData.phone}
-                  countryName={phoneCountryName}
-                  language={language}
-                  onCountryNameChange={setPhoneCountryName}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, phone: value }))}
-                  required
                 />
               </div>
 
