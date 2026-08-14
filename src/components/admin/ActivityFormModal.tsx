@@ -348,7 +348,7 @@ export function formToActivity(form: ActivityFormState): Activity & { isActive: 
   const pricingFields = compactPricingFields(form.pricingFields);
   const videoHighlights = compactVideoHighlights(form.videoHighlights);
   const videoReviews = compactVideoReviews(form.videoReviews);
-  const generatedIdentifier = slugifyName(form.nameEn);
+  const generatedIdentifier = slugifyName(form.nameEn) || form.id;
   const seoKeywords = form.seoKeywords
     .split(',')
     .map((kw) => kw.trim())
@@ -442,7 +442,7 @@ function TextField({
   label,
   value,
   onChange,
-  required,
+  required = false,
   type = 'text',
 }: {
   label: string;
@@ -461,6 +461,7 @@ function TextField({
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          required={required}
           onClick={(event) => {
             if (type === 'time') {
               openNativePicker(event.currentTarget);
@@ -477,7 +478,6 @@ function TextField({
               openNativePicker(event.currentTarget);
             }
           }}
-          required={required}
           className={`w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white ${
             type === 'time' ? 'admin-time-input pr-10' : ''
           }`}
@@ -494,13 +494,11 @@ function TextAreaField({
   label,
   value,
   onChange,
-  required,
   rows = 3,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  required?: boolean;
   rows?: number;
 }) {
   return (
@@ -511,7 +509,6 @@ function TextAreaField({
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        required={required}
         rows={rows}
         className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
       />
@@ -560,14 +557,12 @@ function BilingualItemsEditor({
               value={item.en}
               onChange={(event) => updateItem(index, 'en', event.target.value)}
               placeholder="EN name"
-              required={minItems > 0}
               className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
             />
             <input
               value={item.fr}
               onChange={(event) => updateItem(index, 'fr', event.target.value)}
               placeholder="FR name"
-              required={minItems > 0}
               className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
             />
             <button
@@ -619,7 +614,6 @@ function PricingFieldsEditor({
             step="0.01"
             value={adultPrice}
             onChange={(event) => updateField('adult', event.target.value)}
-            required
             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[var(--teal)] dark:border-gray-600 dark:bg-[var(--dark-muted)] dark:text-white"
           />
         </label>
@@ -717,13 +711,11 @@ function VideoHighlightsEditor({
                     label="Title"
                     value={video.title}
                     onChange={(value) => updateVideo(index, 'title', value)}
-                    required
                   />
                   <TextField
                     label="YouTube link"
                     value={video.youtubeUrl}
                     onChange={(value) => updateVideo(index, 'youtubeUrl', value)}
-                    required
                   />
                   <label className="block">
                     <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -853,7 +845,6 @@ function VideoReviewsEditor({
                       label="Guest name"
                       value={videoReview.name}
                       onChange={(value) => updateVideoReview(index, 'name', value)}
-                      required
                     />
                     <label className="block">
                       <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -895,14 +886,12 @@ function VideoReviewsEditor({
                       label="YouTube link"
                       value={videoReview.youtubeUrl}
                       onChange={(value) => updateVideoReview(index, 'youtubeUrl', value)}
-                      required
                     />
                   </div>
                   <TextAreaField
                     label="Quote"
                     value={videoReview.quote}
                     onChange={(value) => updateVideoReview(index, 'quote', value)}
-                    required
                   />
                   <label className="block">
                     <span className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1104,11 +1093,11 @@ export default function ActivityFormModal({
                   ))}
                 </select>
               </label>
-              <TextField label="Duration" value={form.duration} onChange={(value) => setFormValue('duration', value)} required />
+              <TextField label="Duration" value={form.duration} onChange={(value) => setFormValue('duration', value)} />
             </div>
 
-            <TextAreaField label="Description EN" value={form.descriptionEn} onChange={(value) => setFormValue('descriptionEn', value)} required />
-            <TextAreaField label="Description FR" value={form.descriptionFr} onChange={(value) => setFormValue('descriptionFr', value)} required />
+            <TextAreaField label="Description EN" value={form.descriptionEn} onChange={(value) => setFormValue('descriptionEn', value)} />
+            <TextAreaField label="Description FR" value={form.descriptionFr} onChange={(value) => setFormValue('descriptionFr', value)} />
 
             <section className="rounded-lg border border-dashed border-gray-300 p-4 dark:border-gray-600">
               <h3 className="mb-3 font-semibold text-[var(--navy)] dark:text-white">Hero image</h3>
@@ -1119,7 +1108,6 @@ export default function ActivityFormModal({
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp,image/gif"
-                  required={!form.imageUrl}
                   onChange={(event) =>
                     setFormValue('imageFile', event.target.files?.[0] ?? null)
                   }

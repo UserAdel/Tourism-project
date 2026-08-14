@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import {
   CalendarCheck,
   Home,
@@ -16,6 +16,7 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAdminArabicLocalization } from './adminArabicLocalization';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -52,6 +53,9 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
   const routeActiveId = getActiveId(location.pathname);
   const currentActiveId = activeTab ?? routeActiveId;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const dashboardRef = useRef<HTMLDivElement>(null);
+
+  useAdminArabicLocalization(dashboardRef);
 
   useEffect(() => {
     setIsDrawerOpen(false);
@@ -135,7 +139,12 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
     });
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gray-50 dark:bg-[var(--dark-page)] lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
+    <div
+      ref={dashboardRef}
+      lang="ar"
+      dir="rtl"
+      className="admin-dashboard min-h-screen overflow-x-hidden bg-gray-50 dark:bg-[var(--dark-page)] lg:grid lg:grid-cols-[280px_minmax(0,1fr)]"
+    >
       <div className="sticky top-0 z-40 border-b border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-[var(--dark-card)] sm:px-6 lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <button
@@ -177,7 +186,7 @@ export default function AdminLayout({ children, activeTab, counts }: AdminLayout
             className="absolute inset-0 bg-black/50"
             aria-label="Close admin navigation"
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[min(20rem,calc(100vw-3rem))] flex-col gap-5 border-r border-gray-200 bg-white px-4 py-5 shadow-2xl dark:border-gray-700 dark:bg-[var(--dark-card)]">
+          <aside className="absolute inset-y-0 right-0 flex w-[min(20rem,calc(100vw-3rem))] flex-col gap-5 border-l border-gray-200 bg-white px-4 py-5 shadow-2xl dark:border-gray-700 dark:bg-[var(--dark-card)]">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h1 className="text-xl font-bold text-[var(--navy)] dark:text-white">Admin</h1>

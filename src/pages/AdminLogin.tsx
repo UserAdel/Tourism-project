@@ -39,29 +39,29 @@ export default function AdminLogin() {
       const data = response.data.data as LoginResponse
 
       setAuth(data.user, data.token)
-      toast.success('Signed in')
+      toast.success('تم تسجيل الدخول')
       navigate(redirectTo, { replace: true })
     } catch {
-      toast.error('Invalid phone number or password')
+      toast.error('رقم الهاتف أو كلمة المرور غير صحيحين')
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="min-h-[70vh] bg-gray-50 dark:bg-[var(--dark-page)] flex items-center justify-center px-4 py-12">
+    <div lang="ar" dir="rtl" className="min-h-[70vh] bg-gray-50 dark:bg-[var(--dark-page)] flex items-center justify-center px-4 py-12 font-[Cairo]">
       <div className="w-full max-w-md bg-white dark:bg-[var(--dark-card)] rounded-2xl shadow-xl p-8">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--teal)] text-white">
             <Lock className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--navy)] dark:text-white">Admin Login</h1>
+          <h1 className="text-2xl font-bold text-[var(--navy)] dark:text-white">تسجيل دخول الإدارة</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Phone number
+              رقم الهاتف
             </label>
             <div className="relative">
               <Phone className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -78,7 +78,7 @@ export default function AdminLogin() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
+              كلمة المرور
             </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -94,7 +94,7 @@ export default function AdminLogin() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+            {isSubmitting ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول'}
           </Button>
         </form>
       </div>

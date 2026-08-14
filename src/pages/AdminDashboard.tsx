@@ -102,7 +102,7 @@ const contactStatuses: AdminContactRequest['status'][] = [
 const PAGE_SIZE = 10;
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat('en', {
+  return new Intl.DateTimeFormat('ar-EG', {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(value));
@@ -672,10 +672,10 @@ export default function AdminDashboard() {
           id: editingCategoryId,
           payload: submitPayload,
         });
-        toast.success('Category updated');
+        toast.success('تم تحديث الفئة');
       } else {
         await createCategory.mutateAsync(submitPayload);
-        toast.success('Category created');
+        toast.success('تم إنشاء الفئة');
       }
       resetCategoryForm();
       setIsCategoryModalOpen(false);
@@ -715,10 +715,10 @@ export default function AdminDashboard() {
     try {
       if (editingActivityId) {
         await updateActivity.mutateAsync({ id: editingActivityId, payload });
-        toast.success('Activity updated');
+        toast.success('تم تحديث النشاط');
       } else {
         await createActivity.mutateAsync(payload);
-        toast.success('Activity created');
+        toast.success('تم إنشاء النشاط');
       }
       resetActivityForm();
       setIsActivityModalOpen(false);
@@ -730,7 +730,7 @@ export default function AdminDashboard() {
       if (data?.errors?.length) {
         data.errors.forEach((msg) => toast.error(msg, { duration: 8000 }));
       } else {
-        toast.error(data?.message || 'Could not save activity. Check required fields and slug uniqueness.');
+        toast.error(data?.message || 'تعذر حفظ النشاط. تحقق من صحة البيانات وتفرّد الرابط.');
       }
     }
   };
@@ -1107,9 +1107,9 @@ export default function AdminDashboard() {
                               onConfirm: async () => {
                                 try {
                                   await deleteContact.mutateAsync(contact._id);
-                                  toast.success('Contact request deleted');
+                                  toast.success('تم حذف طلب التواصل');
                                 } catch {
-                                  toast.error('Could not delete contact request');
+                                  toast.error('تعذر حذف طلب التواصل');
                                 }
                               },
                             });

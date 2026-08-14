@@ -140,17 +140,17 @@ export default function TestimonialsPanel({
           id: editingId,
           payload,
         });
-        toast.success('Guest review updated');
+        toast.success('تم تحديث تقييم الضيف');
       } else {
         await createTestimonial.mutateAsync(payload);
-        toast.success('Guest review created');
+        toast.success('تم إنشاء تقييم الضيف');
       }
 
       closeModal();
     } catch (error) {
       toast.error(
         getErrorMessage(error) ??
-          'Could not save the guest review. Check all required fields.',
+          'تعذر حفظ تقييم الضيف. تحقق من البيانات.',
       );
     }
   };
@@ -162,11 +162,11 @@ export default function TestimonialsPanel({
 
     try {
       await deleteTestimonial.mutateAsync(deletingTestimonial._id);
-      toast.success('Guest review deleted');
+      toast.success('تم حذف تقييم الضيف');
       setDeletingTestimonial(null);
     } catch (error) {
       toast.error(
-        getErrorMessage(error) ?? 'Could not delete the guest review.',
+        getErrorMessage(error) ?? 'تعذر حذف تقييم الضيف.',
       );
     }
   };

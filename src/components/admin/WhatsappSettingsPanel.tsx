@@ -31,9 +31,9 @@ export default function WhatsappSettingsPanel() {
         adminPhone,
       });
       setWhatsappApiKey('');
-      toast.success('WhatsApp settings updated successfully');
+      toast.success('تم تحديث إعدادات واتساب بنجاح');
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to update settings');
+      toast.error(err?.response?.data?.message || 'تعذر تحديث الإعدادات');
     }
   };
 

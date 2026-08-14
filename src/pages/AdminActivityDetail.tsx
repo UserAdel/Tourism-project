@@ -116,10 +116,10 @@ export default function AdminActivityDetail() {
           videoReviewThumbnailFiles: getVideoReviewThumbnailFiles(activityForm),
         },
       });
-      toast.success('Activity updated');
+      toast.success('تم تحديث النشاط');
       setIsModalOpen(false);
     } catch {
-      toast.error('Could not update activity');
+      toast.error('تعذر تحديث النشاط');
     }
   };
 
@@ -168,9 +168,9 @@ export default function AdminActivityDetail() {
           },
         },
       });
-      toast.success(nextIsActive ? 'Activity activated' : 'Activity deactivated');
+      toast.success(nextIsActive ? 'تم تفعيل النشاط' : 'تم إلغاء تفعيل النشاط');
     } catch {
-      toast.error('Could not update activity status');
+      toast.error('تعذر تحديث حالة النشاط');
     }
   };
 
@@ -195,10 +195,10 @@ export default function AdminActivityDetail() {
         reviewId: editingReviewId,
         payload: reviewForm,
       });
-      toast.success('Review updated');
+      toast.success('تم تحديث التقييم');
       setEditingReviewId(null);
     } catch {
-      toast.error('Could not update review');
+      toast.error('تعذر تحديث التقييم');
     }
   };
 
@@ -208,10 +208,10 @@ export default function AdminActivityDetail() {
     setIsDeletingReview(true);
     try {
       await deleteReview.mutateAsync({ activityId: id, reviewId: reviewToDelete._id });
-      toast.success('Review deleted');
+      toast.success('تم حذف التقييم');
       setReviewToDelete(null);
     } catch {
-      toast.error('Could not delete review');
+      toast.error('تعذر حذف التقييم');
     } finally {
       setIsDeletingReview(false);
     }
@@ -226,9 +226,9 @@ export default function AdminActivityDetail() {
         reviewId: review._id,
         isApproved,
       });
-      toast.success(isApproved ? 'Review approved and published' : 'Review hidden');
+      toast.success(isApproved ? 'تمت الموافقة على التقييم ونشره' : 'تم إخفاء التقييم');
     } catch {
-      toast.error('Could not update review approval');
+      toast.error('تعذر تحديث موافقة التقييم');
     }
   };
 
@@ -578,7 +578,7 @@ export default function AdminActivityDetail() {
                             {(review.date || review.createdAt) && (
                               <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {review.date ||
-                                  new Date(review.createdAt ?? '').toLocaleDateString('en-US', {
+                                  new Date(review.createdAt ?? '').toLocaleDateString('ar-EG', {
                                     month: 'short',
                                     day: 'numeric',
                                     year: 'numeric',
