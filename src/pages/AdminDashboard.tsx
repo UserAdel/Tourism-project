@@ -163,7 +163,7 @@ function PaginationControls({
           disabled={pagination.currentPage === 1}
           className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 font-semibold text-gray-700 hover:text-[var(--teal)] disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4" />
           Previous
         </button>
         <span className="min-w-20 text-center font-medium text-gray-700 dark:text-gray-200">
@@ -176,7 +176,7 @@ function PaginationControls({
           className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 font-semibold text-gray-700 hover:text-[var(--teal)] disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-200"
         >
           Next
-          <ChevronRight className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" />
         </button>
       </div>
     </div>

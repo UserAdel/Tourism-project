@@ -102,6 +102,7 @@ const arabicText: Record<string, string> = {
   Remove: 'إزالة',
   Edit: 'تعديل',
   Add: 'إضافة',
+  New: 'جديد',
   Create: 'إنشاء',
   Update: 'تحديث',
   View: 'عرض',
