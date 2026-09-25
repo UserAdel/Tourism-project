@@ -79,6 +79,12 @@ export default function ActivityDetail() {
     setIsCountryDropdownOpen(false);
   }, [slug]);
 
+  useEffect(() => {
+    if (apiActivity?.slug && slug && apiActivity.slug !== slug) {
+      navigate(`/activities/${apiActivity.slug}`, { replace: true });
+    }
+  }, [apiActivity?.slug, slug, navigate]);
+
   const activities = apiActivities ?? [];
   const activity = apiActivity;
 
