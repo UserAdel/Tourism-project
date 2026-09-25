@@ -10,6 +10,7 @@ import {
   Globe,
   Sparkles,
   ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -68,7 +69,7 @@ export default function FloatingWhatsApp() {
     window.open(finalUrl, '_blank', 'noopener,noreferrer');
   };
 
-  // Funnel decision tree replicating hurghadadream.com with an ultra-premium UI
+  // Funnel decision tree tailored to Hurghada French Guide luxury branding
   const funnelSteps: Record<number, FunnelStep> = useMemo(
     () => ({
       // STEP 0: Language selection
@@ -164,8 +165,8 @@ export default function FloatingWhatsApp() {
 
       2: {
         content: [
-          '<strong>🏝️ Réserver une excursion</strong><br>Retrouvez toutes nos activités incontournables (Orange Bay, Louxor, Safari quad, Nage avec les dauphins...) sur notre catalogue avec guides francophones.',
-          'Pour réserver immédiatement ou poser vos questions, échangez directement avec nos conseillers sur WhatsApp :<br>👇🏽👇🏽👇🏽👇🏽',
+          '<strong>🏝️ Réserver une excursion</strong><br>Retrouvez toutes nos activités incontournables (Orange Bay, Louxor, Safari quad, Nage avec les dauphins...) sur notre catalogue avec guides francophones certifiés.',
+          'Pour réserver immédiatement ou vérifier les disponibilités, échangez directement avec notre équipe sur WhatsApp :<br>👇🏽👇🏽👇🏽👇🏽',
         ],
         options: [
           {
@@ -192,7 +193,7 @@ export default function FloatingWhatsApp() {
           },
           {
             type: 'goto',
-            text: '👈🏽 Revenir en arrière',
+            text: '👈🏽 Revenir au menu principal',
             title: 'Revenir au menu principal',
             isBack: true,
             value: 1,
@@ -202,7 +203,7 @@ export default function FloatingWhatsApp() {
 
       3: {
         content: [
-          '<strong>🏨 Réservation d\'hôtel à Hurghada</strong><br>Hurghada French Guide vous fait bénéficier de tarifs négociés exclusifs sur les plus beaux complexes et resorts de la Mer Rouge ! 🤑<br>Contactez notre agent spécialiste hôtel sur WhatsApp pour recevoir une sélection personnalisée :',
+          '<strong>🏨 Réservation d\'hôtel à Hurghada</strong><br>Hurghada French Guide vous fait bénéficier de tarifs négociés exclusifs sur les plus beaux complexes et resorts de la Mer Rouge ! 🤑<br>Contactez notre spécialiste hôtel sur WhatsApp pour recevoir une sélection personnalisée :',
         ],
         options: [
           {
@@ -220,7 +221,7 @@ export default function FloatingWhatsApp() {
           },
           {
             type: 'goto',
-            text: '👈🏽 Revenir en arrière',
+            text: '👈🏽 Revenir au menu principal',
             title: 'Revenir au menu principal',
             isBack: true,
             value: 1,
@@ -258,7 +259,7 @@ export default function FloatingWhatsApp() {
           },
           {
             type: 'goto',
-            text: '👈🏽 Revenir en arrière',
+            text: '👈🏽 Revenir au menu principal',
             title: 'Revenir au menu principal',
             isBack: true,
             value: 1,
@@ -317,7 +318,7 @@ export default function FloatingWhatsApp() {
           },
           {
             type: 'goto',
-            text: '👈🏽 Revenir en arrière',
+            text: '👈🏽 Revenir au menu principal',
             title: 'Revenir au menu principal',
             isBack: true,
             value: 1,
@@ -584,72 +585,78 @@ export default function FloatingWhatsApp() {
     }
   };
 
+  // Coastal Red Sea Brand Theming matching Hurghada French Guide colors
   const getThemeStyles = (theme?: FunnelOption['theme']) => {
     switch (theme) {
       case 'emerald':
+        // Signature Coastal Turquoise & Marine Teal
         return {
           cardBg:
-            'from-[#162721]/95 via-[#1b2b25]/90 to-[#12201b]/95 hover:from-[#1d352b] hover:via-[#213c32] hover:to-[#172b22]',
-          border: 'border-emerald-500/25 hover:border-[#25D366]/70',
+            'from-[#0b2832]/95 via-[#0e323e]/90 to-[#081f27]/95 hover:from-[#114050] hover:via-[#144859] hover:to-[#0a2934]',
+          border: 'border-[#159c92]/35 hover:border-[#159c92]/90',
           iconBox:
-            'bg-gradient-to-br from-emerald-500/25 to-teal-500/10 border-emerald-500/35 text-emerald-300 shadow-[0_0_15px_rgba(37,211,102,0.15)]',
-          badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
-          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(37,211,102,0.22)]',
-          arrow: 'group-hover:bg-[#25D366] group-hover:text-white',
+            'bg-gradient-to-br from-[#159c92]/30 to-[#0b5361]/20 border border-[#159c92]/45 text-[#2ee06f] shadow-[0_0_18px_rgba(21,156,146,0.3)]',
+          badge: 'bg-[#159c92]/20 text-[#38e8be] border border-[#159c92]/40',
+          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(21,156,146,0.28)]',
+          arrow: 'group-hover:bg-[#159c92] group-hover:text-white',
         };
       case 'amber':
+        // Egyptian Warm Desert Gold & Sand
         return {
           cardBg:
-            'from-[#292113]/95 via-[#2f2515]/90 to-[#1f180e]/95 hover:from-[#372b17] hover:via-[#3d2f19] hover:to-[#292012]',
-          border: 'border-amber-500/25 hover:border-amber-400/70',
+            'from-[#231e13]/95 via-[#2b2516]/90 to-[#1a160d]/95 hover:from-[#362f1c] hover:via-[#3d341f] hover:to-[#221c0e]',
+          border: 'border-[#d5a34f]/35 hover:border-[#d5a34f]/90',
           iconBox:
-            'bg-gradient-to-br from-amber-500/25 to-orange-500/10 border-amber-500/35 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.15)]',
-          badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(245,158,11,0.22)]',
-          arrow: 'group-hover:bg-amber-500 group-hover:text-white',
+            'bg-gradient-to-br from-[#d5a34f]/30 to-[#e4b76b]/15 border border-[#d5a34f]/45 text-[#f5c364] shadow-[0_0_18px_rgba(213,163,79,0.3)]',
+          badge: 'bg-[#d5a34f]/20 text-[#fcd34d] border border-[#d5a34f]/40',
+          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(213,163,79,0.28)]',
+          arrow: 'group-hover:bg-[#d5a34f] group-hover:text-white',
         };
       case 'indigo':
+        // Royal Sapphire Navy & Support Violet
         return {
           cardBg:
-            'from-[#1e1c2d]/95 via-[#252239]/90 to-[#181625]/95 hover:from-[#2a2642] hover:via-[#2f294a] hover:to-[#1d1b2b]',
-          border: 'border-indigo-500/25 hover:border-indigo-400/70',
+            'from-[#131b2e]/95 via-[#18233a]/90 to-[#0e1424]/95 hover:from-[#1d2948] hover:via-[#223155] hover:to-[#11182c]',
+          border: 'border-indigo-400/35 hover:border-indigo-400/90',
           iconBox:
-            'bg-gradient-to-br from-indigo-500/25 to-purple-500/10 border-indigo-500/35 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.15)]',
-          badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
-          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(99,102,241,0.22)]',
+            'bg-gradient-to-br from-indigo-500/30 to-blue-600/15 border border-indigo-400/45 text-indigo-300 shadow-[0_0_18px_rgba(99,102,241,0.3)]',
+          badge: 'bg-indigo-500/20 text-indigo-300 border border-indigo-400/40',
+          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(99,102,241,0.28)]',
           arrow: 'group-hover:bg-indigo-500 group-hover:text-white',
         };
       case 'sky':
+        // Red Sea Clear Sky & Coastal Cyan
         return {
           cardBg:
-            'from-[#12242f]/95 via-[#172c39]/90 to-[#0e1a23]/95 hover:from-[#1b3546] hover:via-[#1e3c4e] hover:to-[#122530]',
-          border: 'border-sky-500/25 hover:border-sky-400/70',
+            'from-[#0a2333]/95 via-[#0e2c40]/90 to-[#071925]/95 hover:from-[#123952] hover:via-[#16425e] hover:to-[#0a2436]',
+          border: 'border-sky-400/35 hover:border-sky-400/90',
           iconBox:
-            'bg-gradient-to-br from-sky-500/25 to-cyan-500/10 border-sky-500/35 text-sky-300 shadow-[0_0_15px_rgba(14,165,233,0.15)]',
-          badge: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
-          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(14,165,233,0.22)]',
+            'bg-gradient-to-br from-sky-500/30 to-cyan-500/15 border border-sky-400/45 text-sky-300 shadow-[0_0_18px_rgba(14,165,233,0.3)]',
+          badge: 'bg-sky-500/20 text-sky-300 border border-sky-400/40',
+          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(14,165,233,0.28)]',
           arrow: 'group-hover:bg-sky-500 group-hover:text-white',
         };
       case 'teal':
+        // Deep Coral Reef Teal
         return {
           cardBg:
-            'from-[#122425]/95 via-[#172c2e]/90 to-[#0e1a1b]/95 hover:from-[#1b3537] hover:via-[#1e3d3f] hover:to-[#122425]',
-          border: 'border-teal-500/25 hover:border-teal-400/70',
+            'from-[#0b2729]/95 via-[#0f3235]/90 to-[#081e20]/95 hover:from-[#133e43] hover:via-[#17484e] hover:to-[#0b2729]',
+          border: 'border-[#159c92]/35 hover:border-teal-300/80',
           iconBox:
-            'bg-gradient-to-br from-teal-500/25 to-emerald-500/10 border-teal-500/35 text-teal-300 shadow-[0_0_15px_rgba(20,184,166,0.15)]',
-          badge: 'bg-teal-500/20 text-teal-300 border-teal-500/30',
-          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(20,184,166,0.22)]',
-          arrow: 'group-hover:bg-teal-500 group-hover:text-white',
+            'bg-gradient-to-br from-[#159c92]/30 to-teal-400/15 border border-[#159c92]/45 text-teal-300 shadow-[0_0_18px_rgba(20,184,166,0.3)]',
+          badge: 'bg-teal-500/20 text-teal-300 border border-teal-500/40',
+          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(20,184,166,0.28)]',
+          arrow: 'group-hover:bg-[#159c92] group-hover:text-white',
         };
       case 'slate':
       default:
         return {
           cardBg:
-            'from-[#1b272f]/95 via-[#202e37]/90 to-[#162127]/95 hover:from-[#24343f] hover:via-[#283a46] hover:to-[#1b272f]',
-          border: 'border-white/10 hover:border-white/30',
-          iconBox: 'bg-white/10 border-white/15 text-gray-200',
-          badge: 'bg-white/10 text-gray-300 border-white/15',
-          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(0,0,0,0.3)]',
+            'from-[#0e212b]/95 via-[#122a36]/90 to-[#0a1820]/95 hover:from-[#183645] hover:via-[#1d3f52] hover:to-[#0e212b]',
+          border: 'border-white/10 hover:border-white/35',
+          iconBox: 'bg-white/10 border border-white/20 text-gray-200',
+          badge: 'bg-white/10 text-gray-300 border border-white/20',
+          hoverGlow: 'hover:shadow-[0_8px_25px_rgba(0,0,0,0.35)]',
           arrow: 'group-hover:bg-white/20 group-hover:text-white',
         };
     }
@@ -657,16 +664,19 @@ export default function FloatingWhatsApp() {
 
   return (
     <>
-      {/* Floating Launcher Button (visible when chat is closed) */}
+      {/* Floating Launcher Button - Luxury Brand beacon with Turquoise/Gold aura */}
       {!isOpen && (
         <div className="fixed bottom-6 right-6 z-50">
           <div className="relative">
             {showTooltip && (
-              <div className="absolute bottom-full right-0 mb-3 px-4 py-2 bg-[#111b21] border border-[#25D366]/40 text-white rounded-xl shadow-2xl whitespace-nowrap animate-in fade-in slide-in-from-bottom-2 text-sm font-medium z-10">
-                {language === 'fr'
-                  ? '💬 Discutez avec nous sur WhatsApp !'
-                  : '💬 Chat with us on WhatsApp!'}
-                <div className="absolute bottom-0 right-5 w-2.5 h-2.5 bg-[#111b21] border-r border-b border-[#25D366]/40 transform rotate-45 translate-y-1/2" />
+              <div className="absolute bottom-full right-0 mb-3 px-4 py-2.5 bg-[#081f2a]/95 backdrop-blur-md border border-[#d5a34f]/40 text-white rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.6)] whitespace-nowrap animate-in fade-in slide-in-from-bottom-2 text-sm font-medium z-10 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#159c92] animate-pulse" />
+                <span>
+                  {language === 'fr'
+                    ? '💬 Discutez en direct avec notre équipe 🇫🇷'
+                    : '💬 Chat live with our team!'}
+                </span>
+                <div className="absolute bottom-0 right-6 w-2.5 h-2.5 bg-[#081f2a] border-r border-b border-[#d5a34f]/40 transform rotate-45 translate-y-1/2" />
               </div>
             )}
 
@@ -678,21 +688,21 @@ export default function FloatingWhatsApp() {
               }}
               onMouseEnter={() => setShowTooltip(true)}
               onMouseLeave={() => setShowTooltip(false)}
-              className="group relative flex items-center justify-center w-16 h-16 bg-[#25D366] hover:bg-[#20ba59] active:scale-95 rounded-full shadow-[0_8px_28px_rgba(37,211,102,0.45)] transition-all duration-300 hover:scale-110 cursor-pointer"
+              className="group relative flex items-center justify-center w-16 h-16 bg-gradient-to-tr from-[#0b5361] via-[#159c92] to-[#25D366] hover:brightness-110 active:scale-95 rounded-full shadow-[0_10px_35px_rgba(21,156,146,0.5)] border-2 border-[#d5a34f]/40 hover:border-[#d5a34f] transition-all duration-300 hover:scale-110 cursor-pointer"
               aria-label={language === 'fr' ? 'Ouvrir WhatsApp' : 'Open WhatsApp'}
             >
-              <div className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-50" />
-              <FaWhatsapp className="w-9 h-9 text-white relative z-10" />
+              <div className="absolute inset-0 rounded-full bg-[#159c92] animate-ping opacity-35" />
+              <FaWhatsapp className="w-8 h-8 text-white relative z-10 drop-shadow-md" />
 
-              <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center animate-pulse border-2 border-white dark:border-[#111b21] z-20 shadow-md">
-                <span className="text-white text-xs font-bold">1</span>
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-red-500 to-rose-600 rounded-full flex items-center justify-center animate-pulse border-2 border-white dark:border-[#071a26] z-20 shadow-md">
+                <span className="text-white text-[11px] font-bold">1</span>
               </div>
             </button>
           </div>
         </div>
       )}
 
-      {/* WhatsApp Chat Widget Modal */}
+      {/* WhatsApp Chat Widget Modal - Infused with Hurghada French Guide Brand Aesthetics */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -700,66 +710,57 @@ export default function FloatingWhatsApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 25, scale: 0.94 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 w-[385px] max-w-[calc(100vw-1.5rem)] h-[620px] max-h-[88vh] bg-[#111b21] rounded-[26px] shadow-[0_24px_70px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden border border-white/10 ring-1 ring-black/20"
+            className="fixed bottom-6 right-6 z-50 w-[390px] max-w-[calc(100vw-1.5rem)] h-[620px] max-h-[88vh] bg-[#071a26]/95 backdrop-blur-xl rounded-[28px] shadow-[0_25px_80px_rgba(7,26,38,0.9)] flex flex-col overflow-hidden border border-[#159c92]/30 ring-1 ring-[#d5a34f]/25"
             role="dialog"
             aria-modal="true"
             aria-label="WhatsApp Chat"
           >
-            {/* Elevated WhatsApp Header */}
-            <div className="bg-gradient-to-r from-[#00a884] via-[#128c7e] to-[#0d6e63] px-3.5 py-3 flex items-center justify-between text-white shadow-lg select-none shrink-0 border-b border-white/10">
+            {/* Elevated Branded Header - Marine Navy & Warm Gold Accent */}
+            <div className="relative bg-gradient-to-r from-[#07242f] via-[#0b3c48] to-[#082a35] px-4 py-3.5 flex items-center justify-between text-white shadow-lg select-none shrink-0 border-b border-[#159c92]/25">
+              {/* Subtle Gold Brand Accent Line at bottom of header */}
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#d5a34f] to-transparent opacity-75" />
+
               <div className="flex items-center gap-3 min-w-0">
-                {/* Official Avatar with Online Badge */}
+                {/* Official Brand Avatar with Gold Ring & Pulsing Status */}
                 <div className="relative shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-white/15 border-2 border-white/30 overflow-hidden flex items-center justify-center p-0.5 shadow-md">
-                    <img
-                      src="/logo.png"
-                      alt="Hurghada French Guide"
-                      className="w-full h-full object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
-                    />
+                  <div className="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-[#d5a34f] via-[#159c92] to-white shadow-md flex items-center justify-center">
+                    <div className="w-full h-full rounded-full bg-[#07242f] overflow-hidden flex items-center justify-center p-0.5">
+                      <img
+                        src="/logo.png"
+                        alt="Hurghada French Guide"
+                        className="w-full h-full object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
                   </div>
                   {/* Pulsing Green Online Dot */}
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#25D366] border-2 border-[#128c7e] rounded-full animate-pulse" />
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#25D366] border-2 border-[#07242f] rounded-full ring-1 ring-[#d5a34f]/60 animate-pulse" />
                 </div>
 
-                {/* Title & Status */}
+                {/* Title & Concierge Status */}
                 <div className="flex flex-col min-w-0">
-                  <span className="font-bold text-[14.5px] leading-tight text-white truncate">
+                  <span className="font-bold text-[14.5px] leading-tight text-white tracking-wide truncate">
                     Hurghada French Guide
                   </span>
-                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-100 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" />
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#2dd4bf] font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
                     <span className="truncate">
                       {language === 'fr'
-                        ? 'En ligne • Réponse en direct'
-                        : 'Online • Fast live response'}
+                        ? 'Conciergerie 🇫🇷 • En direct'
+                        : 'Concierge Service • Live'}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons: Language quick-toggle + Close */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const nextLang = language === 'fr' ? 'en' : 'fr';
-                    setLanguage(nextLang);
-                    setCurrentStep(nextLang === 'fr' ? 1 : 6);
-                  }}
-                  className="px-2 py-1 rounded-lg bg-black/20 hover:bg-black/35 active:scale-95 text-white text-xs font-semibold tracking-wider flex items-center gap-1 transition-all border border-white/15 cursor-pointer"
-                  title={language === 'fr' ? 'Switch to English' : 'Passer en français'}
-                >
-                  <Globe className="w-3 h-3 opacity-80" />
-                  <span>{language === 'fr' ? '🇬🇧 EN' : '🇫🇷 FR'}</span>
-                </button>
-
+              {/* Close Button */}
+              <div className="flex items-center shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="w-8 h-8 rounded-full bg-black/20 hover:bg-black/35 active:scale-90 flex items-center justify-center text-white transition-all cursor-pointer border border-white/10"
+                  className="w-8 h-8 rounded-full bg-white/[0.08] hover:bg-white/[0.18] active:scale-90 flex items-center justify-center text-white transition-all cursor-pointer border border-white/10"
                   aria-label={language === 'fr' ? 'Fermer le chat' : 'Close chat'}
                 >
                   <X className="w-4 h-4 stroke-[2.5]" />
@@ -767,24 +768,24 @@ export default function FloatingWhatsApp() {
               </div>
             </div>
 
-            {/* Chat Messages Body with WhatsApp subtle wallpaper background */}
+            {/* Chat Messages Body with Luxury Marine & Desert Sand ambiance */}
             <div
               ref={chatScrollRef}
-              className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#111b21] scrollbar-thin scrollbar-thumb-white/10"
+              className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#071a26] scrollbar-thin scrollbar-thumb-[#159c92]/20"
               style={{
                 backgroundImage:
-                  'radial-gradient(circle at 50% 30%, rgba(37,211,102,0.04) 0%, transparent 70%), radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
-                backgroundSize: '100% 100%, 20px 20px',
+                  'radial-gradient(circle at 50% 20%, rgba(21,156,146,0.08) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(213,163,79,0.05) 0%, transparent 50%), radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px)',
+                backgroundSize: '100% 100%, 100% 100%, 22px 22px',
               }}
             >
               {/* Message Bubbles for Current Step */}
               {activeStep.content.map((htmlText, idx) => (
                 <div
                   key={idx}
-                  className="relative rounded-2xl rounded-bl-sm p-3.5 bg-[#202c33] text-[#e9edef] text-[13.5px] leading-relaxed shadow-[0_3px_12px_rgba(0,0,0,0.3)] border border-white/[0.06] animate-in fade-in slide-in-from-bottom-1 duration-200"
+                  className="relative rounded-2xl rounded-bl-sm p-3.5 bg-[#0c2533] text-[#eef6f5] text-[13.5px] leading-relaxed shadow-[0_4px_18px_rgba(7,26,38,0.5)] border border-[#159c92]/20 animate-in fade-in slide-in-from-bottom-1 duration-200"
                 >
-                  {/* WhatsApp tail on the bottom-left */}
-                  <div className="absolute -left-1.5 bottom-2.5 w-0 h-0 border-t-[6px] border-t-transparent border-r-[8px] border-r-[#202c33] border-b-[4px] border-b-transparent" />
+                  {/* Tail seamlessly matched to bubble */}
+                  <div className="absolute -left-1.5 bottom-2.5 w-0 h-0 border-t-[6px] border-t-transparent border-r-[8px] border-r-[#0c2533] border-b-[4px] border-b-transparent" />
 
                   <div
                     dangerouslySetInnerHTML={{ __html: htmlText }}
@@ -799,13 +800,13 @@ export default function FloatingWhatsApp() {
                         }
                       }
                     }}
-                    className="[&_a]:text-[#25D366] [&_a]:underline [&_a]:font-medium [&_a:hover]:text-[#2ee06f] [&_strong]:text-white [&_strong]:font-semibold space-y-1"
+                    className="[&_a]:text-[#159c92] [&_a]:underline [&_a]:font-semibold [&_a:hover]:text-[#38bdf8] [&_strong]:text-white [&_strong]:font-semibold space-y-1"
                   />
 
                   {/* WhatsApp Timestamp & double read checkmarks */}
                   <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-gray-400 select-none">
                     <span>{currentTime}</span>
-                    <CheckCheck className="w-3.5 h-3.5 text-[#53bdeb]" />
+                    <CheckCheck className="w-3.5 h-3.5 text-[#159c92]" />
                   </div>
                 </div>
               ))}
@@ -827,7 +828,7 @@ export default function FloatingWhatsApp() {
                         <button
                           type="button"
                           onClick={() => handleOptionClick(option)}
-                          className="px-5 py-2 rounded-full border border-emerald-500/40 bg-[#16232b] hover:bg-[#1f303a] hover:border-[#25D366] text-[#25D366] text-xs font-semibold tracking-wide transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 group"
+                          className="px-5 py-2 rounded-full border border-[#159c92]/40 bg-[#09232e] hover:bg-[#0e3140] hover:border-[#d5a34f] text-[#2dd4bf] hover:text-white text-xs font-semibold tracking-wide transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 group"
                         >
                           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                           <span>{option.title || option.text.replace(/^[👈🏽\s]+/, '')}</span>
@@ -836,21 +837,21 @@ export default function FloatingWhatsApp() {
                     );
                   }
 
-                  // 2. Primary High-Converting WhatsApp CTA Link Button
+                  // 2. Primary High-Converting WhatsApp CTA Link Button (Brand + WhatsApp Fusion)
                   if (option.isPrimaryCta) {
                     return (
                       <button
                         key={idx}
                         type="button"
                         onClick={() => handleOptionClick(option)}
-                        className="group relative w-full p-3.5 rounded-2xl bg-gradient-to-r from-[#25D366] via-[#20ba59] to-[#128C7E] hover:from-[#2cf176] hover:to-[#17a392] active:scale-[0.985] text-white shadow-[0_8px_25px_rgba(37,211,102,0.32)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.48)] transition-all duration-300 flex items-center gap-3 overflow-hidden cursor-pointer text-left"
+                        className="group relative w-full p-3.5 rounded-2xl bg-gradient-to-r from-[#0b5361] via-[#159c92] to-[#25D366] hover:from-[#0e6374] hover:via-[#1cb2a7] hover:to-[#2ee06f] active:scale-[0.985] text-white shadow-[0_8px_25px_rgba(21,156,146,0.38)] hover:shadow-[0_12px_32px_rgba(37,211,102,0.48)] transition-all duration-300 flex items-center gap-3 overflow-hidden cursor-pointer text-left border border-white/20"
                       >
                         {/* Shimmer overlay */}
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
 
                         {/* WhatsApp Icon Box */}
                         <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl shrink-0 shadow-inner">
-                          <FaWhatsapp className="w-6 h-6 text-white" />
+                          <FaWhatsapp className="w-6 h-6 text-white drop-shadow" />
                         </div>
 
                         {/* Title & Online Hours */}
@@ -859,9 +860,9 @@ export default function FloatingWhatsApp() {
                             <span className="font-bold text-[14px] leading-tight text-white drop-shadow-sm truncate">
                               {option.title || option.text}
                             </span>
-                            <Sparkles className="w-3.5 h-3.5 text-amber-200 shrink-0 animate-pulse" />
+                            <Sparkles className="w-3.5 h-3.5 text-[#f5c364] shrink-0 animate-pulse" />
                           </div>
-                          <p className="text-[12px] text-white/90 leading-tight truncate">
+                          <p className="text-[12px] text-emerald-50 leading-tight truncate">
                             {option.subtitle || (language === 'fr' ? 'Échangez en direct avec un conseiller' : 'Chat live with an advisor')}
                           </p>
                           {option.onlineHours && (
@@ -880,14 +881,14 @@ export default function FloatingWhatsApp() {
                   // 3. Language Switcher Special Pill / Card
                   if (option.isLanguage) {
                     return (
-                      <div key={idx} className="pt-1.5 border-t border-white/10">
+                      <div key={idx} className="pt-1.5 border-t border-[#159c92]/15">
                         <button
                           type="button"
                           onClick={() => handleOptionClick(option)}
-                          className="w-full py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.99] border border-white/10 hover:border-white/20 transition-all flex items-center justify-between group cursor-pointer"
+                          className="w-full py-2.5 px-3 rounded-xl bg-white/[0.04] hover:bg-[#159c92]/10 active:scale-[0.99] border border-white/10 hover:border-[#159c92]/40 transition-all flex items-center justify-between group cursor-pointer"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-sm shrink-0 text-teal-300">
+                            <div className="w-7 h-7 rounded-lg bg-[#159c92]/20 border border-[#159c92]/35 flex items-center justify-center text-sm shrink-0 text-[#2dd4bf]">
                               <Globe className="w-4 h-4" />
                             </div>
                             <div className="text-left min-w-0">
@@ -899,7 +900,7 @@ export default function FloatingWhatsApp() {
                               </span>
                             </div>
                           </div>
-                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#25D366]/15 text-[#25D366] border border-[#25D366]/30 shrink-0">
+                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#159c92]/20 text-[#2dd4bf] border border-[#159c92]/35 shrink-0">
                             {option.badge || (language === 'fr' ? 'FR ⇄ EN' : 'EN ⇄ FR')}
                           </span>
                         </button>
@@ -940,13 +941,13 @@ export default function FloatingWhatsApp() {
                         </div>
 
                         {option.subtitle && (
-                          <p className="text-[11.5px] text-gray-300/85 group-hover:text-gray-200 leading-snug line-clamp-1 transition-colors">
+                          <p className="text-[11.5px] text-gray-300/85 group-hover:text-gray-100 leading-snug line-clamp-1 transition-colors">
                             {option.subtitle}
                           </p>
                         )}
 
                         {option.onlineHours && (
-                          <span className="inline-flex items-center gap-1 mt-1 text-[11px] text-emerald-400 font-medium">
+                          <span className="inline-flex items-center gap-1 mt-1 text-[11px] text-[#2dd4bf] font-medium">
                             <Clock className="w-3 h-3" />
                             {option.onlineHours}
                           </span>
@@ -969,16 +970,20 @@ export default function FloatingWhatsApp() {
               </div>
             </div>
 
-            {/* Subtle WhatsApp Official Badge Footer */}
-            <div className="py-2.5 px-4 bg-[#111b21] border-t border-white/5 text-center shrink-0 select-none">
-              <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
-                <span>
+            {/* Subtle Brand Reassurance Bar (Official French Guide Concierge) */}
+            <div className="py-2.5 px-4 bg-[#061620] border-t border-[#159c92]/15 text-center shrink-0 select-none">
+              <div className="flex items-center justify-center gap-2 text-[11px] text-gray-400 font-medium">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#159c92]" />
+                <span className="truncate">
                   {language === 'fr'
-                    ? 'Sélectionnez une option pour continuer'
-                    : 'Select an option to continue'}
+                    ? 'Guide officiel francophone • Hurghada'
+                    : 'Certified French Guide • Hurghada'}
                 </span>
-              </p>
+                <span className="text-[#d5a34f]">•</span>
+                <span className="text-gray-400">
+                  {language === 'fr' ? 'Support 7j/7' : '7/7 Support'}
+                </span>
+              </div>
             </div>
           </motion.div>
         )}
