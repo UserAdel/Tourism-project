@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FaWhatsapp } from 'react-icons/fa';
 import {
   X,
-  Send,
   ChevronRight,
   ArrowLeft,
   Clock,
@@ -39,7 +38,6 @@ export default function FloatingWhatsApp() {
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [customMessage, setCustomMessage] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -68,13 +66,6 @@ export default function FloatingWhatsApp() {
       finalUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(urlOrText)}`;
     }
     window.open(finalUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleSendCustomMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customMessage.trim()) return;
-    openWhatsAppUrl(customMessage.trim());
-    setCustomMessage('');
   };
 
   // Funnel decision tree replicating hurghadadream.com with an ultra-premium UI
@@ -978,29 +969,16 @@ export default function FloatingWhatsApp() {
               </div>
             </div>
 
-            {/* Custom WhatsApp Message Input Footer */}
-            <div className="p-3 bg-[#202c33] border-t border-white/10 shrink-0">
-              <form onSubmit={handleSendCustomMessage} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={customMessage}
-                  onChange={(e) => setCustomMessage(e.target.value)}
-                  placeholder={
-                    language === 'fr'
-                      ? 'Écrivez votre message WhatsApp...'
-                      : 'Write your WhatsApp message...'
-                  }
-                  className="flex-1 bg-[#2a3942] text-white placeholder-gray-400 text-sm px-4 py-2.5 rounded-full outline-none focus:ring-2 focus:ring-[#25D366]/60 transition-all border border-transparent focus:border-[#25D366]/40"
-                />
-                <button
-                  type="submit"
-                  disabled={!customMessage.trim()}
-                  className="w-10 h-10 rounded-full bg-[#25D366] hover:bg-[#20ba59] active:scale-95 disabled:opacity-40 disabled:hover:bg-[#25D366] flex items-center justify-center text-white transition-all cursor-pointer shrink-0 shadow-md"
-                  aria-label={language === 'fr' ? 'Envoyer sur WhatsApp' : 'Send on WhatsApp'}
-                >
-                  <Send className="w-4 h-4 ml-0.5" />
-                </button>
-              </form>
+            {/* Subtle WhatsApp Official Badge Footer */}
+            <div className="py-2.5 px-4 bg-[#111b21] border-t border-white/5 text-center shrink-0 select-none">
+              <p className="text-[11px] text-gray-400 flex items-center justify-center gap-1.5 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#25D366]" />
+                <span>
+                  {language === 'fr'
+                    ? 'Sélectionnez une option pour continuer'
+                    : 'Select an option to continue'}
+                </span>
+              </p>
             </div>
           </motion.div>
         )}
