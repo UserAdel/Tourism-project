@@ -45,7 +45,7 @@ export default function Footer() {
     // Prioritize popular activities matching keywords
     for (const keyword of priorityKeywords) {
       const found = activities.find(
-        (act) => act.slug.includes(keyword) && !matched.some((m) => m._id === act._id)
+        (act) => act.slug.includes(keyword) && !matched.some((m) => m.id === act.id)
       );
       if (found) {
         matched.push(found);
@@ -55,7 +55,7 @@ export default function Footer() {
     // Fill any remaining slots with featured activities from database
     if (matched.length < 4) {
       const rest = activities.filter(
-        (act) => act.featured && !matched.some((m) => m._id === act._id)
+        (act) => act.featured && !matched.some((m) => m.id === act.id)
       );
       matched.push(...rest.slice(0, 4 - matched.length));
     }
