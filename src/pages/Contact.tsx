@@ -6,6 +6,7 @@ import { Phone, Mail, MapPin, MessageCircle, Clock, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCreateContactRequest } from '../hooks/queries';
 import { useSEO } from '../hooks/useSEO';
+import { contactInfo } from '../data/contactInfo';
 
 function getContactErrorMessage(error: unknown, language: 'en' | 'fr') {
   const fallback =
@@ -87,7 +88,7 @@ export default function Contact() {
       setFormData(payload);
       setSubmitted(true);
       // window.open(
-      //   `https://wa.me/201234567890?text=${encodeURIComponent(whatsappMessage)}`,
+      //   `${contactInfo.whatsappUrl}?text=${encodeURIComponent(whatsappMessage)}`,
       //   '_blank'
       // );
     } catch (error) {
@@ -123,29 +124,31 @@ export default function Contact() {
                     {t('contact.phone')}
                   </h3>
                   <a
-                    href="tel:+201234567890"
+                    href={contactInfo.whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-gray-600 dark:text-gray-300 hover:text-[var(--teal)] transition-colors"
                   >
-                    +20 123 456 7890
+                    {contactInfo.phoneNumber}
                   </a>
                 </div>
               </div>
 
               <div className="contact-info-item flex items-start gap-4">
-                <div className="w-12 h-12 bg-[var(--sand)] rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-[var(--sand)] dark:bg-[#0B1E42] rounded-lg flex items-center justify-center flex-shrink-0">
                   <MessageCircle className="w-6 h-6 text-[var(--teal)]" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-[var(--navy)] mb-1">
+                  <h3 className="font-semibold text-[var(--navy)] dark:text-white mb-1">
                     {t('contact.whatsapp')}
                   </h3>
                   <a
-                    href="https://wa.me/201234567890"
+                    href={contactInfo.whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-600 hover:text-[var(--teal)] transition-colors"
+                    className="text-gray-600 dark:text-gray-300 hover:text-[var(--teal)] transition-colors"
                   >
-                    +20 123 456 7890
+                    {contactInfo.phoneNumber}
                   </a>
                 </div>
               </div>

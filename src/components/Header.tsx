@@ -30,7 +30,7 @@ export default function Header() {
               <img
                 src={logoPath}
                 alt="Hurghada French Guide"
-                className="h-16 w-16 object-contain"
+                className="h-[63px] w-[63px] object-contain relative -top-[1px]"
               />
             </div>
             <div className="hidden sm:block">

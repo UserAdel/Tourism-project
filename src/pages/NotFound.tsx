@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Button from '../components/Button';
 import { Home, Search } from 'lucide-react';
+import { contactInfo } from '../data/contactInfo';
 
 export default function NotFound() {
   const { language } = useLanguage();
@@ -47,7 +48,7 @@ export default function NotFound() {
               : 'Besoin d\'aide pour trouver ce que vous cherchez?'}
           </p>
           <a
-            href="https://wa.me/201234567890"
+            href={contactInfo.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-4 text-[var(--gold)] hover:text-white transition-colors font-medium"

@@ -3,6 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { ChevronDown, MessageCircle } from 'lucide-react';
 import Button from '../components/Button';
 import { useSEO } from '../hooks/useSEO';
+import { contactInfo } from '../data/contactInfo';
 
 export default function FAQ() {
   const { language } = useLanguage();
@@ -199,7 +200,7 @@ export default function FAQ() {
               : 'Contactez-nous directement sur WhatsApp et notre équipe se fera un plaisir de vous aider'}
           </p>
           <a
-            href="https://wa.me/201234567890"
+            href={contactInfo.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
           >

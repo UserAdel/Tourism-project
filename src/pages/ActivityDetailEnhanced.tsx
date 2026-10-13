@@ -14,6 +14,7 @@ import { useActivities, useActivity, useCreateActivityReview } from '../hooks/qu
 import { formatPricingLabel, getPrimaryPricingField, getPricingFields } from '../utils/pricing';
 import { handleActivityImageError } from '../utils/activityImages';
 import { countries } from '../data/countries';
+import { contactInfo } from '../data/contactInfo';
 import { useSEO } from '../hooks/useSEO';
 import {
   Clock,
@@ -865,8 +866,10 @@ export default function ActivityDetail() {
               </Link>
 
               <a
-                href={`https://wa.me/201234567890?text=${encodeURIComponent(
-                  `Hi, I'm interested in ${activity.name.en}`
+                href={`https://wa.me/${contactInfo.whatsappNumber}?text=${encodeURIComponent(
+                  language === 'fr'
+                    ? `Bonjour, je suis intéressé(e) par l'activité : ${activity.name.fr}`
+                    : `Hi, I'm interested in ${activity.name.en}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

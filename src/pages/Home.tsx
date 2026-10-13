@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Loading from '../components/Loading';
 import { tourismImages } from '../data/tourismImages';
+import { contactInfo } from '../data/contactInfo';
 import TopExperiencesSlider from '../components/TopExperiencesSlider';
 import Button from '../components/Button';
 import {
@@ -106,7 +107,7 @@ export default function Home() {
         availableLanguage: ['French', 'English'],
       },
       sameAs: [
-        'https://wa.me/201234567890',
+        contactInfo.whatsappUrl,
         'https://www.instagram.com/Hurghada_french_guide',
         'https://www.tiktok.com/@hurghada_french_guide',
         'https://www.snapchat.com/add/french_guide',
@@ -184,7 +185,7 @@ export default function Home() {
               </Button>
             </Link>
             <a
-              href="https://wa.me/201234567890"
+              href={contactInfo.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white bg-white/10 px-8 py-4 text-lg font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white hover:text-[var(--navy)] focus:outline-none focus:ring-2 focus:ring-white/70 sm:w-auto dark:border-[var(--gold)] dark:hover:bg-[var(--gold)] dark:hover:text-[#041B4A]"
@@ -387,7 +388,7 @@ export default function Home() {
               </Button>
             </Link>
             <a
-              href="https://wa.me/201234567890"
+              href={contactInfo.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-full items-center justify-center rounded-xl border-2 border-white/70 bg-transparent px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-200 hover:bg-white hover:text-[#041B4A] focus:outline-none focus:ring-2 focus:ring-white/70 sm:w-auto"

@@ -5,6 +5,7 @@ import { useActivities } from '../hooks/queries';
 import { Phone, Mail } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { socialProfiles } from '../data/socialProfiles';
+import { contactInfo } from '../data/contactInfo';
 import SocialPlatformIcon from './SocialPlatformIcon';
 
 export default function Footer() {
@@ -126,21 +127,23 @@ export default function Footer() {
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 mt-0.5 text-[var(--turquoise)] flex-shrink-0" />
                 <a
-                  href="tel:+201234567890"
+                  href={contactInfo.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-300 hover:text-[var(--turquoise)] transition-colors text-sm"
                 >
-                  +20 123 456 7890
+                  {contactInfo.phoneNumber}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <FaWhatsapp className="w-4 h-4 mt-0.5 text-[var(--turquoise)] flex-shrink-0" />
                 <a
-                  href="https://wa.me/201234567890"
+                  href={contactInfo.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-[var(--turquoise)] transition-colors text-sm"
                 >
-                  +20 123 456 7890
+                  {contactInfo.phoneNumber}
                 </a>
               </li>
               <li className="flex items-start gap-2">

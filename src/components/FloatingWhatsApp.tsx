@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { contactInfo } from '../data/contactInfo';
 
 interface FunnelOption {
   type: 'goto' | 'link';
@@ -42,7 +43,7 @@ export default function FloatingWhatsApp() {
   const [showTooltip, setShowTooltip] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  const whatsappNumber = '201234567890';
+  const whatsappNumber = contactInfo.whatsappNumber;
 
   // Initial step based on current language (1 for FR, 6 for EN)
   const initialStep = language === 'fr' ? 1 : 6;
